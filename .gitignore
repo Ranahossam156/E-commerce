@@ -1,0 +1,24 @@
+# Xcode
+DerivedData/
+*.xcuserstate
+*.xcuserdata
+*.xccheckout
+*.xcscmblueprint
+*.xcscheme
+!default.xcscheme
+build/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+!default.pbxuser
+
+# macOS
+.DS_Store
+
+# Swift Package Manager
+.swiftpm
+.build/
+
+# CocoaPods
+Pods/
