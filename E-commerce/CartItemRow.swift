@@ -12,20 +12,11 @@ import Kingfisher
 
 struct CartItemRow: View {
     let item: CartItem
-    let isSelected: Bool
-    let toggleSelection: () -> Void
     let updateQuantity: (Int) -> Void
     
     var body: some View {
         HStack(spacing: 12) {
-            // Selection checkbox
-            Button(action: toggleSelection) {
-                Image(systemName: isSelected ? "checkmark.square.fill" : "square")
-                    .foregroundColor(isSelected ? .blue : .gray)
-                    .font(.system(size: 20))
-            }
-            .buttonStyle(PlainButtonStyle())
-            
+                   
             // Product image
             ZStack {
                 RoundedRectangle(cornerRadius: 8)

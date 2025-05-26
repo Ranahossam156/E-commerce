@@ -12,7 +12,6 @@ import Combine
 class CartViewModel: ObservableObject {
     @Published var cartItems: [CartItem] = []
     @Published var total: Double = 0
-    @Published var selectedItems: Set<UUID> = Set()
     
     init() {
         // Initialize with dummy data for now
@@ -56,20 +55,10 @@ class CartViewModel: ObservableObject {
     func clearCart() {
         cartItems.removeAll()
         total = 0
-        selectedItems.removeAll()
     }
     
-    func toggleItemSelection(itemId: UUID) {
-        if selectedItems.contains(itemId) {
-            selectedItems.remove(itemId)
-        } else {
-            selectedItems.insert(itemId)
-        }
-    }
     
-    func isItemSelected(itemId: UUID) -> Bool {
-        return selectedItems.contains(itemId)
-    }
+   
     
     // For future API integration
     func loadProductsFromAPI() {

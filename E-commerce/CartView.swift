@@ -33,10 +33,6 @@ struct CartView: View {
                             ForEach(viewModel.cartItems) { item in
                                 CartItemRow(
                                     item: item,
-                                    isSelected: viewModel.isItemSelected(itemId: item.id),
-                                    toggleSelection: {
-                                        viewModel.toggleItemSelection(itemId: item.id)
-                                    },
                                     updateQuantity: { quantity in
                                         viewModel.updateQuantity(for: item, quantity: quantity)
                                     }
@@ -45,7 +41,7 @@ struct CartView: View {
                                 
                                 if item.id != viewModel.cartItems.last?.id {
                                     Divider()
-                                        .padding(.leading, 100)
+                                        .padding(.leading, 80)
                                 }
                             }
                         }
