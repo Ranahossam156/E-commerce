@@ -8,11 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		227C3BB12DE5E6D3006B0E52 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227C3BB02DE5E6D3006B0E52 /* NetworkService.swift */; };
-		227C3BB42DE5E740006B0E52 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 227C3BB32DE5E740006B0E52 /* Alamofire */; };
 		227C3BC22DE5E9A1006B0E52 /* SingleProductResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227C3BC12DE5E9A1006B0E52 /* SingleProductResponse.swift */; };
 		227C3BC52DE5F3AD006B0E52 /* ProductDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227C3BC42DE5F3AD006B0E52 /* ProductDetailsViewModel.swift */; };
 		227C3BC72DE60518006B0E52 /* VariantsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227C3BC62DE60518006B0E52 /* VariantsResponse.swift */; };
 		227C3BC92DE60904006B0E52 /* ProductImagesResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227C3BC82DE60904006B0E52 /* ProductImagesResponse.swift */; };
+		227C3BDB2DE62B2E006B0E52 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 227C3BDA2DE62B2E006B0E52 /* Kingfisher */; };
 		229EFA6E2DE35A0C006F0D77 /* E_commerceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229EFA6D2DE35A0C006F0D77 /* E_commerceApp.swift */; };
 		229EFA702DE35A0C006F0D77 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229EFA6F2DE35A0C006F0D77 /* ContentView.swift */; };
 		229EFA722DE35A0F006F0D77 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 229EFA712DE35A0F006F0D77 /* Assets.xcassets */; };
@@ -20,12 +20,12 @@
 		229EFA7F2DE35A0F006F0D77 /* E_commerceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229EFA7E2DE35A0F006F0D77 /* E_commerceTests.swift */; };
 		229EFA892DE35A10006F0D77 /* E_commerceUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229EFA882DE35A10006F0D77 /* E_commerceUITests.swift */; };
 		229EFA8B2DE35A10006F0D77 /* E_commerceUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229EFA8A2DE35A10006F0D77 /* E_commerceUITestsLaunchTests.swift */; };
+		22E81D242DE62DD800CE941C /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 22E81D232DE62DD800CE941C /* Alamofire */; };
 		E17102E32DE4EA1400C511CC /* Product.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17102E22DE4EA1400C511CC /* Product.swift */; };
 		E17102E52DE4EA5600C511CC /* CartItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17102E42DE4EA5600C511CC /* CartItem.swift */; };
 		E17102E82DE4EA7E00C511CC /* CartViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17102E72DE4EA7E00C511CC /* CartViewModel.swift */; };
 		E17102EA2DE4EAC800C511CC /* CheckoutViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17102E92DE4EAC800C511CC /* CheckoutViewModel.swift */; };
 		E17102EC2DE4EAD900C511CC /* CartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17102EB2DE4EAD900C511CC /* CartView.swift */; };
-		E17102F02DE4EB7200C511CC /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = E17102EF2DE4EB7200C511CC /* Kingfisher */; };
 		E17102F22DE4EBAE00C511CC /* CartHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17102F12DE4EBAE00C511CC /* CartHeaderView.swift */; };
 		E17102F42DE4EBCB00C511CC /* CartItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17102F32DE4EBCB00C511CC /* CartItemRow.swift */; };
 		E17102F62DE4EBDF00C511CC /* CartFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17102F52DE4EBDF00C511CC /* CartFooterView.swift */; };
@@ -81,7 +81,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				227C3BB42DE5E740006B0E52 /* Alamofire in Frameworks */,
+				227C3BDB2DE62B2E006B0E52 /* Kingfisher in Frameworks */,
+				22E81D242DE62DD800CE941C /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -132,7 +133,6 @@
 		227C3BCC2DE6195A006B0E52 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				229EFA6F2DE35A0C006F0D77 /* ContentView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -254,7 +254,8 @@
 			);
 			name = "E-commerce";
 			packageProductDependencies = (
-				227C3BB32DE5E740006B0E52 /* Alamofire */,
+				227C3BDA2DE62B2E006B0E52 /* Kingfisher */,
+				22E81D232DE62DD800CE941C /* Alamofire */,
 			);
 			productName = "E-commerce";
 			productReference = 229EFA6A2DE35A0C006F0D77 /* E-commerce.app */;
@@ -329,7 +330,8 @@
 			);
 			mainGroup = 229EFA612DE35A0C006F0D77;
 			packageReferences = (
-				227C3BB22DE5E740006B0E52 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				227C3BD92DE62B2E006B0E52 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				22E81D222DE62DD800CE941C /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			productRefGroup = 229EFA6B2DE35A0C006F0D77 /* Products */;
 			projectDirPath = "";
@@ -709,20 +711,33 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		227C3BB22DE5E740006B0E52 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+		227C3BD92DE62B2E006B0E52 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = exactVersion;
+				version = 6.0.0;
+			};
+		};
+		22E81D222DE62DD800CE941C /* XCRemoteSwiftPackageReference "Alamofire" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.0.0;
+				kind = exactVersion;
+				version = 5.6.4;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		227C3BB32DE5E740006B0E52 /* Alamofire */ = {
+		227C3BDA2DE62B2E006B0E52 /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 227C3BB22DE5E740006B0E52 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			package = 227C3BD92DE62B2E006B0E52 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+		22E81D232DE62DD800CE941C /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 22E81D222DE62DD800CE941C /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
 		};
 /* End XCSwiftPackageProductDependency section */

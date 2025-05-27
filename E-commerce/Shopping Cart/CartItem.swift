@@ -13,6 +13,7 @@ struct CartItem: Identifiable {
     var quantity: Int
     
     var subtotal: Double {
-        return Double(product.price)! * Double(quantity)
+        return 0.0
+        //Double(product.price)! * Double(quantity)
     }
 }
