@@ -115,19 +115,11 @@
 		229EFA6C2DE35A0C006F0D77 /* E-commerce */ = {
 			isa = PBXGroup;
 			children = (
-				229EFA6D2DE35A0C006F0D77 /* E_commerceApp.swift */,
+				E1BF34542DE619CB00F8DCCC /* Shopping Cart */,
 				229EFA6F2DE35A0C006F0D77 /* ContentView.swift */,
+				229EFA6D2DE35A0C006F0D77 /* E_commerceApp.swift */,
 				229EFA712DE35A0F006F0D77 /* Assets.xcassets */,
 				229EFA732DE35A0F006F0D77 /* Preview Content */,
-				E17102E22DE4EA1400C511CC /* Product.swift */,
-				E17102E42DE4EA5600C511CC /* CartItem.swift */,
-				E17102E72DE4EA7E00C511CC /* CartViewModel.swift */,
-				E17102E92DE4EAC800C511CC /* CheckoutViewModel.swift */,
-				E17102EB2DE4EAD900C511CC /* CartView.swift */,
-				E17102F12DE4EBAE00C511CC /* CartHeaderView.swift */,
-				E17102F32DE4EBCB00C511CC /* CartItemRow.swift */,
-				E17102F52DE4EBDF00C511CC /* CartFooterView.swift */,
-				E17102F72DE4EBF300C511CC /* EmptyCartView.swift */,
 			);
 			path = "E-commerce";
 			sourceTree = "<group>";
@@ -162,6 +154,30 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E1BF34542DE619CB00F8DCCC /* Shopping Cart */ = {
+			isa = PBXGroup;
+			children = (
+				E1BF34552DE61A0100F8DCCC /* ViewModel */,
+				E17102E22DE4EA1400C511CC /* Product.swift */,
+				E17102E42DE4EA5600C511CC /* CartItem.swift */,
+				E17102E72DE4EA7E00C511CC /* CartViewModel.swift */,
+				E17102EB2DE4EAD900C511CC /* CartView.swift */,
+				E17102F12DE4EBAE00C511CC /* CartHeaderView.swift */,
+				E17102F32DE4EBCB00C511CC /* CartItemRow.swift */,
+				E17102F52DE4EBDF00C511CC /* CartFooterView.swift */,
+				E17102F72DE4EBF300C511CC /* EmptyCartView.swift */,
+			);
+			path = "Shopping Cart";
+			sourceTree = "<group>";
+		};
+		E1BF34552DE61A0100F8DCCC /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				E17102E92DE4EAC800C511CC /* CheckoutViewModel.swift */,
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
