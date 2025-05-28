@@ -15,9 +15,11 @@ struct CartView: View {
     
     var body: some View {
         ZStack {
+            // Background
             Color(.systemBackground)
-                .edgesIgnoringSafeArea(.all)
+                .ignoresSafeArea()
             
+            // Main content
             VStack(spacing: 0) {
                 // Header with navigation
                 CartHeaderView(dismissAction: {
@@ -25,7 +27,9 @@ struct CartView: View {
                 })
                 
                 if viewModel.cartItems.isEmpty {
+                    Spacer()
                     EmptyCartView()
+                    Spacer()
                 } else {
                     // Cart items list
                     ScrollView {
@@ -35,6 +39,9 @@ struct CartView: View {
                                     item: item,
                                     updateQuantity: { quantity in
                                         viewModel.updateQuantity(for: item, quantity: quantity)
+                                    },
+                                    removeItem: {
+                                        viewModel.removeFromCart(variantId: item.selectedVariant.id)
                                     }
                                 )
                                 .padding(.vertical, 10)
@@ -44,17 +51,32 @@ struct CartView: View {
                                         .padding(.leading, 80)
                                 }
                             }
+                            
+                            // Add padding at bottom to prevent content from hiding behind footer
+                            Color.clear
+                                .frame(height: 120) // Height of footer approximately
                         }
                         .padding(.horizontal)
                     }
+                }
+            }
+            
+            // Footer pinned to bottom
+            if !viewModel.cartItems.isEmpty {
+                VStack {
+                    Spacer()
                     
-                    // Bottom area with total and checkout button
-                    CartFooterView(
-                        total: viewModel.total,
-                        checkoutAction: {
-                            // Navigate to checkout
-                        }
-                    )
+                    VStack(spacing: 0) {
+                        Divider()
+                        
+                        CartFooterView(
+                            total: viewModel.total,
+                            checkoutAction: {
+                                // Navigate to checkout
+                            }
+                        )
+                    }
+                    .background(Color(.systemBackground))
                 }
             }
         }
@@ -62,4 +84,8 @@ struct CartView: View {
     }
 }
 
-
+struct CartView_Previews: PreviewProvider {
+    static var previews: some View {
+        CartView()
+    }
+}

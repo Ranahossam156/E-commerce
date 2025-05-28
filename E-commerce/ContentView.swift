@@ -9,10 +9,9 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        CartView()
         TabView {
             NavigationView {
-                //HomeView()
+                HomeView()
             }
             .tabItem {
                 Label("Home", systemImage: "house")
@@ -34,6 +33,25 @@ struct ContentView: View {
         }
     }
 }
+
+
+// dummy homeView
+struct HomeView: View {
+    @State private var showCart = false
+    
+    var body: some View {
+        VStack {
+            Text("Home Content")
+        }
+        .navigationTitle("Home")
+        .navigationBarItems(trailing:
+            NavigationLink(destination: CartView()) {
+                Image(systemName: "cart")
+            }
+        )
+    }
+}
+
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()

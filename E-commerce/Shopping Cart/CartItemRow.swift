@@ -13,10 +13,10 @@ import Kingfisher
 struct CartItemRow: View {
     let item: CartItem
     let updateQuantity: (Int) -> Void
+    let removeItem: () -> Void
     
     var body: some View {
         HStack(spacing: 12) {
-                   
             // Product image
             ZStack {
                 RoundedRectangle(cornerRadius: 8)
@@ -37,9 +37,20 @@ struct CartItemRow: View {
                     .font(.system(size: 14, weight: .medium))
                     .lineLimit(1)
                 
-                Text("Color: \(item.color)")
-                    .font(.system(size: 12))
-                    .foregroundColor(.gray)
+                // Show variant details (size/color)
+                HStack(spacing: 8) {
+                    if !item.size.isEmpty {
+                        Text("Size: \(item.size)")
+                            .font(.system(size: 12))
+                            .foregroundColor(.gray)
+                    }
+                    
+                    if !item.color.isEmpty && item.color != item.size {
+                        Text("Color: \(item.color)")
+                            .font(.system(size: 12))
+                            .foregroundColor(.gray)
+                    }
+                }
                 
                 // Quantity controls
                 HStack(spacing: 15) {
@@ -71,14 +82,25 @@ struct CartItemRow: View {
                             .cornerRadius(11)
                     }
                     .buttonStyle(PlainButtonStyle())
+                    .disabled(item.quantity >= item.selectedVariant.inventoryQuantity)
                 }
             }
             
             Spacer()
             
-            // Price
-            Text("$\(item.product.price)")
-                .font(.system(size: 16, weight: .semibold))
+            VStack(alignment: .trailing, spacing: 4) {
+                // Price
+                Text("$\(item.selectedVariant.price)")
+                    .font(.system(size: 16, weight: .semibold))
+                
+                // Delete button
+                Button(action: removeItem) {
+                    Image(systemName: "trash")
+                        .font(.system(size: 14))
+                        .foregroundColor(.red)
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
         }
     }
 }
