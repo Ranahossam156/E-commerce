@@ -13,15 +13,15 @@ struct CartView: View {
     @Environment(\.presentationMode) var presentationMode
     @StateObject private var viewModel = CartViewModel()
     
+    @State private var showDeleteAlert = false
+    @State private var itemToDelete: CartItem?
+    
     var body: some View {
         ZStack {
-            // Background
             Color(.systemBackground)
                 .ignoresSafeArea()
             
-            // Main content
             VStack(spacing: 0) {
-                // Header with navigation
                 CartHeaderView(dismissAction: {
                     presentationMode.wrappedValue.dismiss()
                 })
@@ -31,7 +31,6 @@ struct CartView: View {
                     EmptyCartView()
                     Spacer()
                 } else {
-                    // Cart items list
                     ScrollView {
                         VStack(spacing: 0) {
                             ForEach(viewModel.cartItems) { item in
@@ -41,7 +40,8 @@ struct CartView: View {
                                         viewModel.updateQuantity(for: item, quantity: quantity)
                                     },
                                     removeItem: {
-                                        viewModel.removeFromCart(variantId: item.selectedVariant.id)
+                                        itemToDelete = item
+                                        showDeleteAlert = true
                                     }
                                 )
                                 .padding(.vertical, 10)
@@ -52,9 +52,9 @@ struct CartView: View {
                                 }
                             }
                             
-                            // Add padding at bottom to prevent content from hiding behind footer
+                           
                             Color.clear
-                                .frame(height: 120) // Height of footer approximately
+                                .frame(height: 120) // Height of footer
                         }
                         .padding(.horizontal)
                     }
@@ -81,6 +81,17 @@ struct CartView: View {
             }
         }
         .navigationBarHidden(true)
+        .alert("Remove Item", isPresented: $showDeleteAlert, actions: {
+            Button("Cancel",role: .cancel) {}
+            Button("Remove",role:.destructive){
+                if let item = itemToDelete {
+                    viewModel.removeFromCart(variantId: item.selectedVariant.id)
+                }
+            }
+        }, message: {
+            Text("Are you sure you want to remove \(itemToDelete?.product.title ?? "this item") from your cart?")
+
+        })
     }
 }
 
