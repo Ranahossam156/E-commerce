@@ -23,7 +23,7 @@ struct CartItemRow: View {
                     .fill(Color.gray.opacity(0.2))
                     .frame(width: 70, height: 70)
                 
-                KFImage(URL(string: item.product.imageURL))
+                KFImage(URL(string: item.product.image.src))
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 60, height: 60)
@@ -37,7 +37,7 @@ struct CartItemRow: View {
                     .font(.system(size: 14, weight: .medium))
                     .lineLimit(1)
                 
-                Text("Color: \(item.product.color)")
+                Text("Color: \(item.color)")
                     .font(.system(size: 12))
                     .foregroundColor(.gray)
                 

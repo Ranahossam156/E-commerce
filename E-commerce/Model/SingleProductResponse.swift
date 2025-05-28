@@ -37,6 +37,9 @@ struct Product: Codable, Identifiable {
         case publishedScope = "published_scope"
         case adminGraphqlAPIID = "admin_graphql_api_id"
     }
+    
+    
+   
 }
 
 // MARK: - Variant

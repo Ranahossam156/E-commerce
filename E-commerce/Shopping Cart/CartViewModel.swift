@@ -14,39 +14,38 @@ class CartViewModel: ObservableObject {
     @Published var total: Double = 0
     
     init() {
-        // Initialize with dummy data for now
         loadDummyData()
     }
     
     private func loadDummyData() {
         // Add dummy products to cart
-        Product.dummyProducts.forEach { product in
-            self.addToCart(product: product, quantity: 1)
-        }
+//        Product.dummyProducts.forEach { product in
+//            self.addToCart(product: product, quantity: 1)
+//        }
     }
     
-    func addToCart(product: Product, quantity: Int = 1) {
-        if let index = cartItems.firstIndex(where: { $0.product.id == product.id }) {
-            cartItems[index].quantity += quantity
-        } else {
-            let newItem = CartItem(product: product, quantity: quantity)
-            cartItems.append(newItem)
-        }
-        calculateTotal()
-    }
+    func addToCart(product: Product, variant: Variant, quantity: Int = 1) {
+          if let index = cartItems.firstIndex(where: { $0.selectedVariant.id == variant.id }) {
+              cartItems[index].quantity += quantity
+          } else {
+              let newItem = CartItem(product: product, selectedVariant: variant, quantity: quantity)
+              cartItems.append(newItem)
+          }
+          calculateTotal()
+      }
     
-    func removeFromCart(productId: Int) {
-        cartItems.removeAll(where: { $0.product.id == productId })
-        calculateTotal()
-    }
+    func removeFromCart(variantId: Int) {
+            cartItems.removeAll(where: { $0.selectedVariant.id == variantId })
+            calculateTotal()
+        }
     
     func updateQuantity(for item: CartItem, quantity: Int) {
-        if let index = cartItems.firstIndex(where: { $0.id == item.id }) {
-            let maxQuantity = item.product.inventory
-            cartItems[index].quantity = min(maxQuantity, max(1, quantity))
-        }
-        calculateTotal()
-    }
+          if let index = cartItems.firstIndex(where: { $0.id == item.id }) {
+              let maxQuantity = item.selectedVariant.inventoryQuantity
+              cartItems[index].quantity = min(maxQuantity, max(1, quantity))
+          }
+          calculateTotal()
+      }
     
     func calculateTotal() {
         total = cartItems.reduce(0) { $0 + $1.subtotal }
@@ -57,8 +56,6 @@ class CartViewModel: ObservableObject {
         total = 0
     }
     
-    
-   
     
     // For future API integration
     func loadProductsFromAPI() {

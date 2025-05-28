@@ -10,10 +10,20 @@ import Foundation
 struct CartItem: Identifiable {
     let id = UUID()
     let product: Product
+    let selectedVariant: Variant
     var quantity: Int
     
     var subtotal: Double {
-        return 0.0
-        //Double(product.price)! * Double(quantity)
-    }
+            return Double(selectedVariant.price)! * Double(quantity)
+        }
+        
+        // Helper to get color (usually option2 in Shopify)
+        var color: String {
+            return selectedVariant.option2 ?? selectedVariant.option1 ?? ""
+        }
+        
+        // Helper to get size (usually option1 in Shopify)
+        var size: String {
+            return selectedVariant.option1 ?? ""
+        }
 }
