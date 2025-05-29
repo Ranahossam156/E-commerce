@@ -12,7 +12,7 @@ struct HomeView: View {
         NavigationStack{
             VStack{
                 CustomHeaderView()
-                HomeContentView()
+                TabSelectorView()
                 Spacer()
             }
         }
