@@ -24,7 +24,7 @@ struct BrandsSectionView: View {
                 HStack(spacing: 42) {
                     ForEach(brands) { brand in
                         NavigationLink(
-                            destination: BrandProductsView(brand: brand.title)
+                            destination: BrandProductsView(vendor: brand.title ?? "Nike")
                         ) {
                             GeometryReader { geo in
                                 let midX = geo.frame(in: .global).midX

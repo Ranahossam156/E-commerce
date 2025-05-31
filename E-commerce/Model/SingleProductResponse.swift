@@ -128,3 +128,7 @@ struct ProductImage: Codable {
         case variantIDs = "variant_ids"
     }
 }
+
+struct ProductImagesResponse: Codable {
+    let images: [ProductImage]
+}
