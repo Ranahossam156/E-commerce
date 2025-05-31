@@ -14,7 +14,7 @@ struct CartItem: Identifiable {
     var quantity: Int
     
     var subtotal: Double {
-            return Double(selectedVariant.price)! * Double(quantity)
+        return Double(selectedVariant.price)! * Double(quantity)
         }
         
         // Helper to get color (usually option2 in Shopify)
