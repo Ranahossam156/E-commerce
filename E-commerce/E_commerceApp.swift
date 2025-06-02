@@ -11,7 +11,8 @@ import SwiftUI
 struct E_commerceApp: App {
     var body: some Scene {
         WindowGroup {
-            HomeView()
+            //HomeView()
+            SettingsView()
         }
     }
 }
