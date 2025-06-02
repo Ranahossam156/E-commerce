@@ -10,34 +10,44 @@ import SwiftUI
 
 struct PromoCarousel: View {
     @State private var currentIndex = 0
-    let timer = Timer.publish(every: 3, on: .main, in: .common).autoconnect()
+    @State private var priceRules: [PriceRule] = []
+    @State private var showCopiedAlert = false
+    @State private var copiedCode = ""
     
-    let promotions = [
-        Promotion(title: "24% off shipping today\non bag purchases", subtitle: "By Kutuku Store", image: "promo1"),
-        Promotion(title: "Buy 1 Get 1 Free", subtitle: "By Fabrix", image: "promo1"),
-        Promotion(title: "New Arrivals", subtitle: "By ModeStore", image: "promo1")
-    ]
-
+    let timer = Timer.publish(every: 3, on: .main, in: .common).autoconnect()
     
     var body: some View {
         VStack {
             TabView(selection: $currentIndex) {
-                ForEach(0..<promotions.count, id: \.self) { index in
-                    PromoCardView(promo: promotions[index])
-                        .tag(index)
-                        .padding(.horizontal, 16)
+                ForEach(Array(priceRules.prefix(3).enumerated()), id: \.element.id) { index, priceRule in
+                    PromoCardView(
+                        title: priceRule.title,
+                        subtitle: "Tap to copy code",
+                        image: "promo1"
+                    )
+                    .tag(index)
+                    .padding(.horizontal, 16)
+                    .onTapGesture {
+                        // Extract coupon code from title (assuming it's the first word)
+                        let code = priceRule.title.components(separatedBy: " ").first ?? priceRule.title
+                        UIPasteboard.general.string = code
+                        copiedCode = code
+                        showCopiedAlert = true
+                    }
                 }
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             .frame(height: 200)
             .onReceive(timer) { _ in
-                withAnimation {
-                    currentIndex = (currentIndex + 1) % promotions.count
+                if priceRules.count > 0 {
+                    withAnimation {
+                        currentIndex = (currentIndex + 1) % min(priceRules.count, 3)
+                    }
                 }
             }
 
             HStack(spacing: 8) {
-                ForEach(0..<promotions.count, id: \.self) { index in
+                ForEach(0..<min(priceRules.count, 3), id: \.self) { index in
                     Circle()
                         .fill(index == currentIndex ? Color("primaryColor") : Color.gray.opacity(0.3))
                         .frame(width: 8, height: 8)
@@ -45,47 +55,65 @@ struct PromoCarousel: View {
             }
             .padding(.top, 4)
         }
+        .onAppear {
+            fetchPriceRules()
+        }
+        .alert("Copied!", isPresented: $showCopiedAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("Coupon code '\(copiedCode)' has been copied!")
+        }
+    }
+    
+    private func fetchPriceRules() {
+        PriceRuleNetworkService.fetchDataFromAPI { response, error in
+            if let response = response {
+                DispatchQueue.main.async {
+                    self.priceRules = response.priceRules
+                }
+            }
+        }
     }
 }
 
 struct PromoCardView: View {
-    let promo : Promotion
+    let title: String
+    let subtitle: String
+    let image: String
+    
     var body: some View {
-            ZStack {
-               
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color(UIColor.systemGray6))
-                    .overlay(
-                        HStack {
-                            Spacer()
-                            Image(promo.image)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: 180)
-                                .clipShape(RoundedCorner(radius: 16, corners: [.topRight, .bottomRight]))
-                        }
-                    )
-                    .clipped()
-
-
-                
-                HStack {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(promo.title)
-                            .font(.system(size: 18, weight: .semibold))
-                            .foregroundColor(.black)
-
-                        Text(promo.subtitle)
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
+        ZStack {
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(UIColor.systemGray6))
+                .overlay(
+                    HStack {
+                        Spacer()
+                        Image(image)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 180)
+                            .clipShape(RoundedCorner(radius: 16, corners: [.topRight, .bottomRight]))
                     }
-                    Spacer()
+                )
+                .clipped()
+            
+            HStack {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(title)
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundColor(.black)
+                        .lineLimit(2)
+                    
+                    Text(subtitle)
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
                 }
-                .padding()
+                Spacer()
             }
-            .frame(height: 180)
-            .padding(.top, 16)
-//            .padding(.horizontal)
+            .padding()
+        }
+        .frame(height: 180)
+        .padding(.top, 16)
     }
 }
 
@@ -103,11 +131,8 @@ struct RoundedCorner: Shape {
     }
 }
 
-
-
 struct PromoCarousel_Previews: PreviewProvider {
     static var previews: some View {
         PromoCarousel()
     }
 }
-
