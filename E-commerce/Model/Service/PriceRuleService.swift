@@ -49,4 +49,27 @@ class PriceRuleNetworkService: PriceRuleNetworkServiceProtocol {
                 }
             }
     }
+    
+    static func fetchDiscountCodes(for priceRuleId: Int, completion: @escaping ([DiscountCode]?, Error?) -> Void) {
+        guard let url = URL(string: "https://ios4-sv.myshopify.com/admin/api/2025-04/price_rules/\(priceRuleId)/discount_codes.json") else {
+            print("Invalid URL")
+            return
+        }
+        
+        let headers: HTTPHeaders = [
+            "Content-Type": "application/json",
+            "X-Shopify-Access-Token": "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"
+        ]
+        
+        session.request(url, headers: headers)
+            .validate()
+            .responseDecodable(of: DiscountCodesResponse.self) { response in
+                switch response.result {
+                case .success(let result):
+                    completion(result.discountCodes, nil)
+                case .failure(let error):
+                    completion(nil, error)
+                }
+            }
+    }
 }
