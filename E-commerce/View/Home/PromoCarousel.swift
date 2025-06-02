@@ -9,8 +9,9 @@
 import SwiftUI
 
 struct PromoCarousel: View {
+    
+    @ObservedObject var viewModel: CouponViewModel
     @State private var currentIndex = 0
-    @State private var priceRules: [PriceRule] = []
     @State private var showCopiedAlert = false
     @State private var copiedCode = ""
     
@@ -19,7 +20,7 @@ struct PromoCarousel: View {
     var body: some View {
         VStack {
             TabView(selection: $currentIndex) {
-                ForEach(Array(priceRules.prefix(3).enumerated()), id: \.element.id) { index, priceRule in
+                ForEach(Array(viewModel.priceRules.prefix(3).enumerated()), id: \.element.id) { index, priceRule in
                     PromoCardView(
                         title: priceRule.title,
                         subtitle: "Tap to copy code",
@@ -28,7 +29,6 @@ struct PromoCarousel: View {
                     .tag(index)
                     .padding(.horizontal, 16)
                     .onTapGesture {
-                        // Extract coupon code from title (assuming it's the first word)
                         let code = priceRule.couponCode
                         UIPasteboard.general.string = code
                         copiedCode = code
@@ -39,15 +39,15 @@ struct PromoCarousel: View {
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             .frame(height: 200)
             .onReceive(timer) { _ in
-                if priceRules.count > 0 {
+                if viewModel.priceRules.count > 0 {
                     withAnimation {
-                        currentIndex = (currentIndex + 1) % min(priceRules.count, 3)
+                        currentIndex = (currentIndex + 1) % min(viewModel.priceRules.count, 3)
                     }
                 }
             }
 
             HStack(spacing: 8) {
-                ForEach(0..<min(priceRules.count, 3), id: \.self) { index in
+                ForEach(0..<min(viewModel.priceRules.count, 3), id: \.self) { index in
                     Circle()
                         .fill(index == currentIndex ? Color("primaryColor") : Color.gray.opacity(0.3))
                         .frame(width: 8, height: 8)
@@ -56,22 +56,12 @@ struct PromoCarousel: View {
             .padding(.top, 4)
         }
         .onAppear {
-            fetchPriceRules()
+            viewModel.fetchPriceRules()
         }
         .alert("Copied!", isPresented: $showCopiedAlert) {
             Button("OK", role: .cancel) { }
         } message: {
             Text("Coupon code '\(copiedCode)' has been copied!")
-        }
-    }
-    
-    private func fetchPriceRules() {
-        PriceRuleNetworkService.fetchDataFromAPI { response, error in
-            if let response = response {
-                DispatchQueue.main.async {
-                    self.priceRules = response.priceRules
-                }
-            }
         }
     }
 }
@@ -133,7 +123,6 @@ struct RoundedCorner: Shape {
 
 struct PromoCarousel_Previews: PreviewProvider {
     static var previews: some View {
-        PromoCarousel()
+        PromoCarousel(viewModel: CouponViewModel())
     }
 }
-

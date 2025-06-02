@@ -17,25 +17,7 @@ class CouponViewModel: ObservableObject {
     init() {
         fetchPriceRules()
     }
-    
-    func fetchPriceRules() {
-        isLoading = true
-        errorMessage = nil
-        
-        PriceRuleNetworkService.fetchDataFromAPI { [weak self] response, error in
-            DispatchQueue.main.async {
-                self?.isLoading = false
-                
-                if let error = error {
-                    self?.errorMessage = error.localizedDescription
-                    print("Failed to fetch price rules: \(error)")
-                } else if let response = response {
-                    self?.priceRules = response.priceRules
-                    print("Fetched \(response.priceRules.count) price rules")
-                }
-            }
-        }
-    }
+
     
     func applyPriceRule(_ priceRule: PriceRule, to total: Double) -> Double {
         appliedPriceRule = priceRule
@@ -56,4 +38,14 @@ class CouponViewModel: ObservableObject {
     func validateCouponCode(_ code: String) -> PriceRule? {
         return priceRules.first { $0.couponCode == code.uppercased() }
     }
+    
+     func fetchPriceRules() {
+          PriceRuleNetworkService.fetchDataFromAPI { response, error in
+              if let response = response {
+                  DispatchQueue.main.async {
+                      self.priceRules = response.priceRules
+                  }
+              }
+          }
+      }
 }
