@@ -20,7 +20,7 @@ struct PromoCarousel: View {
     var body: some View {
         VStack {
             TabView(selection: $currentIndex) {
-                ForEach(Array(viewModel.priceRules.prefix(3).enumerated()), id: \.element.id) { index, priceRule in
+                ForEach(Array(viewModel.priceRules.enumerated()), id: \.element.id) { index, priceRule in
                     PromoCardView(
                         title: priceRule.title,
                         subtitle: "Tap to copy code",
@@ -47,8 +47,7 @@ struct PromoCarousel: View {
             }
 
             HStack(spacing: 8) {
-                ForEach(0..<min(viewModel.priceRules.count, 3), id: \.self) { index in
-                    Circle()
+                ForEach(0..<viewModel.priceRules.count, id: \.self) { index in                    Circle()
                         .fill(index == currentIndex ? Color("primaryColor") : Color.gray.opacity(0.3))
                         .frame(width: 8, height: 8)
                 }
