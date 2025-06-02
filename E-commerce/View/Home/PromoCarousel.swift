@@ -29,7 +29,7 @@ struct PromoCarousel: View {
                     .padding(.horizontal, 16)
                     .onTapGesture {
                         // Extract coupon code from title (assuming it's the first word)
-                        let code = priceRule.title.components(separatedBy: " ").first ?? priceRule.title
+                        let code = priceRule.couponCode
                         UIPasteboard.general.string = code
                         copiedCode = code
                         showCopiedAlert = true
@@ -136,3 +136,4 @@ struct PromoCarousel_Previews: PreviewProvider {
         PromoCarousel()
     }
 }
+
