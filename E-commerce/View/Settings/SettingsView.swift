@@ -7,7 +7,12 @@ import SwiftUI
 struct SettingsView: View {
     @StateObject private var viewModel: SettingsViewModel = SettingsViewModel()
     @StateObject private var userModel: UserModel = UserModel()
-
+    @StateObject private var currencyService: CurrencyService = CurrencyService()
+    
+    init() {
+        _viewModel = StateObject(wrappedValue: SettingsViewModel(currencyService: currencyService))
+    }
+    
     var body: some View {
         NavigationView {
             List {
@@ -19,24 +24,24 @@ struct SettingsView: View {
                             .frame(width: 50, height: 50)
                             .foregroundColor(.gray)
                             .accessibilityHidden(true)
-
+                        
                         VStack(alignment: .leading, spacing: 6) {
                             Text(userModel.name.isEmpty ? "User Name" : userModel.name)
                                 .font(.title3)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.primary)
                                 .accessibilityLabel("User name: \(userModel.name.isEmpty ? "Not set" : userModel.name)")
-
+                            
                             Text(userModel.email.isEmpty ? "email@example.com" : userModel.email)
                                 .font(.subheadline)
                                 .foregroundColor(.gray)
                                 .accessibilityLabel("Email: \(userModel.email.isEmpty ? "Not set" : userModel.email)")
-
+                            
                             Text("Address: \(userModel.address.isEmpty ? "Not Set" : userModel.address)")
                                 .font(.subheadline)
                                 .foregroundColor(.gray)
                                 .accessibilityLabel("Current address: \(userModel.address.isEmpty ? "Not set" : userModel.address)")
-
+                            
                             Text("Phone : \(userModel.phoneNumber.isEmpty ? "Not Set" : userModel.phoneNumber)")
                                 .font(.subheadline)
                                 .foregroundColor(.gray)
@@ -49,26 +54,28 @@ struct SettingsView: View {
                     }
                     .padding(.vertical, 12)
                 }
-
+                
                 // Settings Section
                 Section(header:Text("Settings").font(.caption).foregroundColor(.gray)) {
+                    
                     NavigationLink(destination: Text("Orders View")) {
                         Text("Orders")
                             .font(.body)
                             .foregroundColor(.primary)
                     }
                     .accessibilityLabel("Go to orders")
-
+                    
                     NavigationLink(destination: AddressesView(userModel: userModel)) {
                         Text("Addresses")
                             .font(.body)
                             .foregroundColor(.primary)
                     }
                     .accessibilityLabel("Go to addresses")
-
-                    Picker("Currency", selection: $viewModel.selectedCurrency) {
-                        ForEach(viewModel.currencies, id: \.self) { currency in
-                            Text(currency).tag(currency)
+                    
+                    Picker("Currency", selection: $currencyService.selectedCurrency) {
+                        ForEach(currencyService.supportedCurrencies, id: \.self) { currency in
+                            Text("\(currencyService.getCurrencySymbol(for: currency)) \(currency)")
+                                .tag(currency)
                         }
                     }
                     .pickerStyle(.menu)
@@ -76,20 +83,20 @@ struct SettingsView: View {
                     .onChange(of: viewModel.selectedCurrency) { _ in
                         viewModel.saveSettings()
                     }
-
-                  
+                    
+                    
                 }
-
-//                // Support Section
-//                Section(header: Text("SUPPORT").font(.caption).foregroundColor(.gray)) {
-//                    NavigationLink(destination: Text("About Us View")) {
-//                        Text("About Us")
-//                            .font(.body)
-//                            .foregroundColor(.primary)
-//                    }
-//                    .accessibilityLabel("Go to about us")
-//                }
-
+                
+                //                // Support Section
+                //                Section(header: Text("SUPPORT").font(.caption).foregroundColor(.gray)) {
+                //                    NavigationLink(destination: Text("About Us View")) {
+                //                        Text("About Us")
+                //                            .font(.body)
+                //                            .foregroundColor(.primary)
+                //                    }
+                //                    .accessibilityLabel("Go to about us")
+                //                }
+                
                 // Version Section
                 Section(header: Text("POLICY").font(.caption).foregroundColor(.gray)) {
                     HStack {
@@ -103,7 +110,7 @@ struct SettingsView: View {
                     }
                     .accessibilityLabel("App version 1.0.0")
                 }
-
+                
                 // Logout Section
                 Section(header: Text("ACCOUNT").font(.caption).foregroundColor(.gray)) {
                     Button(action: {
@@ -122,6 +129,7 @@ struct SettingsView: View {
             .onAppear {
                 viewModel.loadSettings()
                 userModel.loadUserData()
+                currencyService.fetchExchangeRates() 
             }
         }
     }
@@ -129,7 +137,7 @@ struct SettingsView: View {
 
 struct AddressesView: View {
     @ObservedObject var userModel: UserModel
-
+    
     var body: some View {
         Form {
             Section(header: Text("Edit Address").font(.headline).foregroundColor(.primary)) {
@@ -144,7 +152,7 @@ struct AddressesView: View {
                         .cornerRadius(8)
                         .accessibilityLabel("Enter recipient name")
                 }
-
+                
                 // Mobile Number
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Mobile Number")
@@ -157,7 +165,7 @@ struct AddressesView: View {
                         .keyboardType(.phonePad)
                         .accessibilityLabel("Enter mobile number")
                 }
-
+                
                 // Address
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Address")

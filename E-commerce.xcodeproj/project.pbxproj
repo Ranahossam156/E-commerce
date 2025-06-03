@@ -23,6 +23,8 @@
 		E11F26922DEE39930063716E /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11F26912DEE39930063716E /* SettingsView.swift */; };
 		E11F26942DEE3D060063716E /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11F26932DEE3D060063716E /* SettingsViewModel.swift */; };
 		E15A59262DEF4EC600FB39E5 /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15A59252DEF4EC600FB39E5 /* UserModel.swift */; };
+		E15A59292DEF652A00FB39E5 /* CurrencyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15A59282DEF652A00FB39E5 /* CurrencyService.swift */; };
+		E15A592B2DEF677800FB39E5 /* FreeCurrencyRateResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15A592A2DEF677800FB39E5 /* FreeCurrencyRateResponse.swift */; };
 		E17102E52DE4EA5600C511CC /* CartItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17102E42DE4EA5600C511CC /* CartItem.swift */; };
 		E17102E82DE4EA7E00C511CC /* CartViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17102E72DE4EA7E00C511CC /* CartViewModel.swift */; };
 		E17102EA2DE4EAC800C511CC /* CheckoutViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17102E92DE4EAC800C511CC /* CheckoutViewModel.swift */; };
@@ -90,6 +92,8 @@
 		E11F26912DEE39930063716E /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		E11F26932DEE3D060063716E /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		E15A59252DEF4EC600FB39E5 /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
+		E15A59282DEF652A00FB39E5 /* CurrencyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyService.swift; sourceTree = "<group>"; };
+		E15A592A2DEF677800FB39E5 /* FreeCurrencyRateResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeCurrencyRateResponse.swift; sourceTree = "<group>"; };
 		E17102E42DE4EA5600C511CC /* CartItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartItem.swift; sourceTree = "<group>"; };
 		E17102E72DE4EA7E00C511CC /* CartViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartViewModel.swift; sourceTree = "<group>"; };
 		E17102E92DE4EAC800C511CC /* CheckoutViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckoutViewModel.swift; sourceTree = "<group>"; };
@@ -161,6 +165,7 @@
 				FA524F362DEB17FB008FEA88 /* CategoryResponse.swift */,
 				FA9C0D322DEB86BE00618379 /* ProductsResponse.swift */,
 				E15A59252DEF4EC600FB39E5 /* UserModel.swift */,
+				E15A592A2DEF677800FB39E5 /* FreeCurrencyRateResponse.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -173,6 +178,7 @@
 				FA524F3A2DEB1920008FEA88 /* CategoryService.swift */,
 				FA9C0D2E2DEB852B00618379 /* ProductService.swift */,
 				E198F4262DED8000001656DE /* PriceRuleService.swift */,
+				E15A59282DEF652A00FB39E5 /* CurrencyService.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -480,6 +486,7 @@
 				FA805C392DE89EC400853AA4 /* CategoriesView.swift in Sources */,
 				E17102E82DE4EA7E00C511CC /* CartViewModel.swift in Sources */,
 				FAC8895C2DE8BC570041EF40 /* Brand.swift in Sources */,
+				E15A59292DEF652A00FB39E5 /* CurrencyService.swift in Sources */,
 				FAC889642DE8C1950041EF40 /* BrandsSectionView.swift in Sources */,
 				FA805B762DE892E500853AA4 /* SearchView.swift in Sources */,
 				FA805B742DE8925500853AA4 /* CustomHeaderView.swift in Sources */,
@@ -490,6 +497,7 @@
 				FA9C0DF22DEB8AA100618379 /* ProductsViewModel.swift in Sources */,
 				FA859AAD2DE8A2260017C6D5 /* HomeContentView.swift in Sources */,
 				229EFA6E2DE35A0C006F0D77 /* E_commerceApp.swift in Sources */,
+				E15A592B2DEF677800FB39E5 /* FreeCurrencyRateResponse.swift in Sources */,
 				E17102F62DE4EBDF00C511CC /* CartFooterView.swift in Sources */,
 				E17102F22DE4EBAE00C511CC /* CartHeaderView.swift in Sources */,
 				E198F4292DED806B001656DE /* Coupons.swift in Sources */,
