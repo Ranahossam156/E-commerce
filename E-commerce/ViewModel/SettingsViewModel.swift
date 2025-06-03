@@ -67,6 +67,19 @@ class SettingsViewModel: ObservableObject {
             errorMessage = "Failed to log out: \(error.localizedDescription)"
         }
     }
+    
+    // Load settings from UserDefaults
+    func loadSettings() {
+        selectedCurrency = UserDefaults.standard.string(forKey: "selectedCurrency") ?? "USD"
+       
+    }
+
+    // Save settings to UserDefaults
+    func saveSettings() {
+        UserDefaults.standard.set(selectedCurrency, forKey: "selectedCurrency")
+       
+    }
+
 }
 
 // Models for API responses
