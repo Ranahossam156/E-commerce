@@ -114,7 +114,7 @@ struct ProductCardView: View {
             
             if let priceString = product.variants?.first?.price,
                let price = Double(priceString) {
-                Text(String(format: "\(currencyService.getCurrencySymbol(for: currencyService.selectedCurrency))%.2f",
+                Text(String(format: "\(currencyService.getCurrencySymbol(for: currencyService.selectedCurrency)) %.2f ",
                             currencyService.convert(price: price)))                        .font(.system(size: 14, weight: .medium))
                     .foregroundColor(.black)
             } else {

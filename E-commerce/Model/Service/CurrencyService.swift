@@ -14,9 +14,26 @@ class CurrencyService: ObservableObject {
     }
     @Published var exchangeRates: [String: Double] = [:]
     
-    let supportedCurrencies = ["USD", "EGP", "EUR", "GBP"]
+   // let supportedCurrencies = ["USD", "EGP", "EUR", "GBP"]
     private var cancellables = Set<AnyCancellable>()
     private let baseCurrency = "USD" // Fixed base currency for API
+    
+    // Predefined list of 10 currencies
+    let supportedCurrencies: [String] = ["USD", "EUR","EGP", "GBP", "JPY", "CAD", "AUD", "CHF", "CNY", "INR", "BRL"]
+    
+    // Hardcoded currency symbols
+    private let currencySymbols: [String: String] = [
+        "USD": "$",
+        "EUR": "€",
+        "GBP": "£",
+        "JPY": "¥",
+        "CAD": "CA$",
+        "AUD": "AU$",
+        "CHF": "CHF",
+        "CNY": "CN¥",
+        "INR": "Rs",
+        "BRL": "R$"
+    ]
     
     init() {
         if let savedCurrency = UserDefaults.standard.string(forKey: "selectedCurrency"),
@@ -59,14 +76,8 @@ class CurrencyService: ObservableObject {
         return (price / baseRate) * targetRate
     }
     
-    func getCurrencySymbol(for currency: String) -> String {
-        switch currency {
-        case "USD": return "$"
-        case "EGP": return "E£"
-        case "EUR": return "€"
-        case "GBP": return "£"
-        default: return "$"
-        }
+    func getCurrencySymbol(for code: String) -> String {
+        return currencySymbols[code] ?? code
     }
     
     func saveSelectedCurrency() {
