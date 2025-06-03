@@ -16,7 +16,7 @@ class CurrencyService:ObservableObject{
     private var cancellables = Set<AnyCancellable>()
     
     // Predefined list of 10 currencies
-    private let supportedCurrencies: [String] = ["USD", "EUR", "GBP", "JPY", "CAD", "AUD", "CHF", "CNY", "INR", "BRL"]
+     let supportedCurrencies: [String] = ["USD", "EUR", "GBP", "JPY", "CAD", "AUD", "CHF", "CNY", "INR", "BRL"]
     
     // Hardcoded currency symbols
     private let currencySymbols: [String: String] = [

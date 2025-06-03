@@ -8,11 +8,13 @@
 import SwiftUI
 
 @main
-struct E_commerceApp: App {
+struct ECommerceApp: App {
+    @StateObject private var currencyService = CurrencyService()
+
     var body: some Scene {
         WindowGroup {
-            //HomeView()
             SettingsView()
+                .environmentObject(currencyService)
         }
     }
 }
