@@ -109,7 +109,7 @@ struct SettingsSection: View {
             }
             .pickerStyle(.menu)
             .accessibilityLabel("Select currency")
-            .onChange(of: currencyService.selectedCurrency) { _ in // Fix to watch currencyService
+            .onChange(of: currencyService.selectedCurrency) { _ in 
                 viewModel.saveSettings()
             }
         }

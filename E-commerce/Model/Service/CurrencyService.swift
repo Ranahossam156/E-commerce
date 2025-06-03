@@ -31,6 +31,18 @@ class CurrencyService:ObservableObject{
         "INR": "Rs",
         "BRL": "R$"
     ]
+    
+    init() {
+            // Load saved currency or default to USD
+            if let savedCurrency = UserDefaults.standard.string(forKey: "selectedCurrency"),
+               supportedCurrencies.contains(savedCurrency) {
+                self.selectedCurrency = savedCurrency
+            } else {
+                self.selectedCurrency = "USD"
+            }
+            fetchExchangeRates()
+        }
+    
     private let apiKey: String = "fca_live_Ao03oTRD4jjg7dSVpytiiqja06ivyygwDuo3TNyP"
     
     // Load selected currency from UserDefaults
@@ -38,10 +50,10 @@ class CurrencyService:ObservableObject{
         selectedCurrency = UserDefaults.standard.string(forKey: "selectedCurrency") ?? "USD"
     }
     
-    // Save selected currency to UserDefaults
     func saveSelectedCurrency() {
-        UserDefaults.standard.set(selectedCurrency, forKey: "selectedCurrency")
-    }
+            UserDefaults.standard.set(selectedCurrency, forKey: "selectedCurrency")
+            print("Saved currency: \(selectedCurrency)") // For debugging
+        }
     
     func fetchExchangeRates() {
         
