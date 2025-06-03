@@ -1,102 +1,80 @@
-//
-//  CurrencyService.swift
-//  E-commerce
-//
-//  Created by Kerolos on 03/06/2025.
-//
+// CurrencyService.swift
+// E-commerce
+// Created by Kerolos on 02/06/2025. (Last updated: 09:50 PM EEST, June 03, 2025)
 
 import Foundation
 import Combine
 
-class CurrencyService:ObservableObject{
+class CurrencyService: ObservableObject {
+    @Published var selectedCurrency: String {
+        didSet {
+            saveSelectedCurrency()
+            fetchExchangeRates() // Fetch new rates when currency changes
+        }
+    }
+    @Published var exchangeRates: [String: Double] = [:]
     
-    @Published var selectedCurrency: String = "USD" // Default currency
-    @Published var exchangeRates: [String: Double] = [:] // Exchange rates relative to USD
-    
+    let supportedCurrencies = ["USD", "EGP", "EUR", "GBP"]
     private var cancellables = Set<AnyCancellable>()
-    
-    // Predefined list of 10 currencies
-     let supportedCurrencies: [String] = ["USD", "EUR", "GBP", "JPY", "CAD", "AUD", "CHF", "CNY", "INR", "BRL"]
-    
-    // Hardcoded currency symbols
-    private let currencySymbols: [String: String] = [
-        "USD": "$",
-        "EUR": "€",
-        "GBP": "£",
-        "JPY": "¥",
-        "CAD": "CA$",
-        "AUD": "AU$",
-        "CHF": "CHF",
-        "CNY": "CN¥",
-        "INR": "Rs",
-        "BRL": "R$"
-    ]
+    private let baseCurrency = "USD" // Fixed base currency for API
     
     init() {
-            // Load saved currency or default to USD
-            if let savedCurrency = UserDefaults.standard.string(forKey: "selectedCurrency"),
-               supportedCurrencies.contains(savedCurrency) {
-                self.selectedCurrency = savedCurrency
-            } else {
-                self.selectedCurrency = "USD"
-            }
-            fetchExchangeRates()
+        if let savedCurrency = UserDefaults.standard.string(forKey: "selectedCurrency"),
+           supportedCurrencies.contains(savedCurrency) {
+            self.selectedCurrency = savedCurrency
+        } else {
+            self.selectedCurrency = "USD"
         }
+        fetchExchangeRates()
+    }
     
-    private let apiKey: String = "fca_live_Ao03oTRD4jjg7dSVpytiiqja06ivyygwDuo3TNyP"
+    func fetchExchangeRates() {
+        guard let url = URL(string: "https://api.exchangerate-api.com/v4/latest/\(baseCurrency)") else {
+            print("Invalid exchange rate URL")
+            return
+        }
+        
+        URLSession.shared.dataTaskPublisher(for: url)
+            .map { $0.data }
+            .decode(type: ExchangeRateResponse.self, decoder: JSONDecoder())
+            .receive(on: DispatchQueue.main)
+            .sink { completion in
+                if case .failure(let error) = completion {
+                    print("Error fetching exchange rates: \(error.localizedDescription)")
+                }
+            } receiveValue: { [weak self] response in
+                self?.exchangeRates = response.rates
+                print("Updated exchange rates: \(self?.exchangeRates ?? [:])") // Debug log
+            }
+            .store(in: &cancellables)
+    }
     
-    // Load selected currency from UserDefaults
-    func loadSelectedCurrency() {
-        selectedCurrency = UserDefaults.standard.string(forKey: "selectedCurrency") ?? "USD"
+    func convert(price: Double) -> Double {
+        guard !exchangeRates.isEmpty, let baseRate = exchangeRates[baseCurrency],
+              let targetRate = exchangeRates[selectedCurrency] else {
+            print("Exchange rates not available, using 1.0 as fallback")
+            return price // Fallback to original price if rates are missing
+        }
+        // Convert from baseCurrency to selectedCurrency: (price / baseRate) * targetRate
+        return (price / baseRate) * targetRate
+    }
+    
+    func getCurrencySymbol(for currency: String) -> String {
+        switch currency {
+        case "USD": return "$"
+        case "EGP": return "E£"
+        case "EUR": return "€"
+        case "GBP": return "£"
+        default: return "$"
+        }
     }
     
     func saveSelectedCurrency() {
-            UserDefaults.standard.set(selectedCurrency, forKey: "selectedCurrency")
-            print("Saved currency: \(selectedCurrency)") // For debugging
-        }
-    
-    func fetchExchangeRates() {
-        
-        var components = URLComponents(string: "https://api.freecurrencyapi.com/v1/latest")!
-        components.queryItems = [
-            URLQueryItem(name: "apikey", value: apiKey),
-            URLQueryItem(name: "base_currency", value: "USD"),
-            URLQueryItem(name: "currencies", value: supportedCurrencies.joined(separator: ","))
-        ]
-    
-        guard let url = components.url else {
-                    print("Invalid URL for exchange rates API")
-                   // exchangeRates = ["USD": 1.0] // Fallback
-                    return
-                }
-        URLSession.shared.dataTaskPublisher(for: url)
-                    .map { $0.data }
-                    .decode(type: FreeCurrencyRateResponse.self, decoder: JSONDecoder())
-                    .receive(on: DispatchQueue.main)
-                    .sink { completion in
-                        if case .failure(let error) = completion {
-                            print("Failed to fetch exchange rates: \(error.localizedDescription)")
-                        }
-                    } receiveValue: { [weak self] response in
-                        self?.exchangeRates = response.data
-                        if self?.exchangeRates.isEmpty ?? true {
-                            self?.exchangeRates = ["USD": 1.0] // Fallback
-                        }
-                    }
-                    .store(in: &cancellables)
-            }
-    
-    // Convert price to the selected currency
-        func convert(price: Double, fromCurrency: String = "USD") -> Double {
-            guard let rate = exchangeRates[selectedCurrency], let baseRate = exchangeRates[fromCurrency] else {
-                return price // Return original price if rates are unavailable
-            }
-            return price * (rate / baseRate)
-        }
-    
-    // Get currency symbol
-        func getCurrencySymbol(for code: String) -> String {
-            return currencySymbols[code] ?? code
-        }
-    
+        UserDefaults.standard.set(selectedCurrency, forKey: "selectedCurrency")
+        print("Saved currency: \(selectedCurrency)")
+    }
+}
+
+struct ExchangeRateResponse: Codable {
+    let rates: [String: Double]
 }
