@@ -102,8 +102,8 @@ struct SettingsSection: View {
 
             Picker("Currency", selection: $currencyService.selectedCurrency) {
                 ForEach(currencyService.supportedCurrencies, id: \.self) { currency in
-                    let symbol = currencyService.getCurrencySymbol(for: currency) // Break up expression
-                    Text("\(symbol) \(currency)")
+                 
+                    Text("\(currency)")
                         .tag(currency)
                 }
             }
