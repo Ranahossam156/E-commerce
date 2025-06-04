@@ -5,6 +5,7 @@
 //  Created by MacBook on 31/05/2025.
 //
 
+
 import SwiftUI
 import Kingfisher
 
@@ -15,42 +16,47 @@ struct BrandProductsView: View {
     
     let viewModel = ProductsViewModel()
     let vendor: String
-    
-    
     let columns = [
         GridItem(.flexible(), spacing: 20),
         GridItem(.flexible())
     ]
-    
+
     var body: some View {
-        ScrollView {
-            LazyVGrid(columns: columns, spacing: 20) {
-                ForEach(products) { product in
-                    ProductCardView(
-                        product: product,
-                        isFavorited: favoriteProductIDs.contains(product.id ?? -1),
-                        onHeartTap: {
-                            let id = product.id ?? -1
-                            if favoriteProductIDs.contains(id) {
-                                favoriteProductIDs.remove(id)
-                                print("\(product.title ?? "") removed from favorites")
-                            } else {
-                                favoriteProductIDs.insert(id)
-                                print("\(product.title ?? "") added to favorites")
-                            }
-                        },
-                        currencyService:currencyService
-                    )
-                }
-            }
-            .padding()
-        }
         
-        .onAppear() {
-            self.getBrandProducts()
+        NavigationView {
+            ScrollView {
+                LazyVGrid(columns: columns, spacing: 20) {
+                    ForEach(products) { product in
+                        NavigationLink(destination: ProductInfoView(productID: product.id ?? 0)) {
+                            ProductCardView(
+                                product: product,
+                                isFavorited: favoriteProductIDs.contains(product.id ?? -1),
+                                onHeartTap: {
+                                    let id = product.id ?? -1
+                                    if favoriteProductIDs.contains(id) {
+                                        favoriteProductIDs.remove(id)
+                                        print("\(product.title ?? "") removed from favorites")
+                                    } else {
+                                        favoriteProductIDs.insert(id)
+                                        print("\(product.title ?? "") added to favorites")
+                                    }
+                                },
+                                
+                                currencyService:currencyService
+                            )
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                }
+                .padding()
+            }
+            .navigationTitle(vendor)
+            .onAppear() {
+                self.getBrandProducts()
+            }
         }
     }
-    
+
     func getBrandProducts() {
         viewModel.getBrandProducts(vendor: vendor) { result, error in
             if let error = error {

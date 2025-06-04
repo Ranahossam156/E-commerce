@@ -33,6 +33,7 @@
 		E17102F42DE4EBCB00C511CC /* CartItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17102F32DE4EBCB00C511CC /* CartItemRow.swift */; };
 		E17102F62DE4EBDF00C511CC /* CartFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17102F52DE4EBDF00C511CC /* CartFooterView.swift */; };
 		E17102F82DE4EBF300C511CC /* EmptyCartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17102F72DE4EBF300C511CC /* EmptyCartView.swift */; };
+		E19745162DF044E700F0AA4C /* ProductInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19745142DF044E700F0AA4C /* ProductInfoView.swift */; };
 		E198F4272DED8000001656DE /* PriceRuleService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E198F4262DED8000001656DE /* PriceRuleService.swift */; };
 		E198F4292DED806B001656DE /* Coupons.swift in Sources */ = {isa = PBXBuildFile; fileRef = E198F4282DED806B001656DE /* Coupons.swift */; };
 		E198F42B2DED80C6001656DE /* CouponViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E198F42A2DED80C6001656DE /* CouponViewModel.swift */; };
@@ -102,6 +103,7 @@
 		E17102F32DE4EBCB00C511CC /* CartItemRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartItemRow.swift; sourceTree = "<group>"; };
 		E17102F52DE4EBDF00C511CC /* CartFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartFooterView.swift; sourceTree = "<group>"; };
 		E17102F72DE4EBF300C511CC /* EmptyCartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyCartView.swift; sourceTree = "<group>"; };
+		E19745142DF044E700F0AA4C /* ProductInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductInfoView.swift; sourceTree = "<group>"; };
 		E198F4262DED8000001656DE /* PriceRuleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceRuleService.swift; sourceTree = "<group>"; };
 		E198F4282DED806B001656DE /* Coupons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coupons.swift; sourceTree = "<group>"; };
 		E198F42A2DED80C6001656DE /* CouponViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouponViewModel.swift; sourceTree = "<group>"; };
@@ -200,6 +202,7 @@
 		227C3BCC2DE6195A006B0E52 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				E19745152DF044E700F0AA4C /* ProductInfo  */,
 				E11F26902DEE397B0063716E /* Settings */,
 				FA9C0DF32DEB8B5500618379 /* BrandProducts */,
 				FA805B642DE88BCD00853AA4 /* Home */,
@@ -289,6 +292,14 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E19745152DF044E700F0AA4C /* ProductInfo  */ = {
+			isa = PBXGroup;
+			children = (
+				E19745142DF044E700F0AA4C /* ProductInfoView.swift */,
+			);
+			path = "ProductInfo ";
 			sourceTree = "<group>";
 		};
 		E1BF34542DE619CB00F8DCCC /* ShoppingCart */ = {
@@ -493,6 +504,7 @@
 				227C3BB12DE5E6D3006B0E52 /* NetworkService.swift in Sources */,
 				FAC8895E2DE8BC780041EF40 /* BrandService.swift in Sources */,
 				227C3BC72DE60518006B0E52 /* VariantsResponse.swift in Sources */,
+				E19745162DF044E700F0AA4C /* ProductInfoView.swift in Sources */,
 				FAC88A232DE8DD350041EF40 /* PromoCarousel.swift in Sources */,
 				FA9C0DF22DEB8AA100618379 /* ProductsViewModel.swift in Sources */,
 				FA859AAD2DE8A2260017C6D5 /* HomeContentView.swift in Sources */,
