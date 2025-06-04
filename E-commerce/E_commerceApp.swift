@@ -23,6 +23,11 @@ struct ECommerceApp: App {
                     .tabItem {
                         Label("My Profile", systemImage: "person.fill")
                     }
+                
+                FavoriteScreen()
+                    .tabItem {
+                        Label("Favorites", systemImage: "heart.fill")
+                    }
             }
             .environmentObject(currencyService)
         }
