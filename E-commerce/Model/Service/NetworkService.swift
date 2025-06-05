@@ -36,6 +36,7 @@ class NetworkService : NetworkSProtocol{
     }
     
 
+
     
     static func fetchProductVariants(productID: Int, completionHandler: @escaping (VariantsResponse?) -> Void) {
         let productURL = "https://ios4-sv.myshopify.com/admin/api/2025-04/products/\(productID)/variants.json"
@@ -78,20 +79,5 @@ class NetworkService : NetworkSProtocol{
                 }
             }
     }
-//    
-//    static func feetchEmployees(completionHandler: @escaping (EmployeeResponse?) -> Void) {
-//        let employeesUrl = "https://dl.dropboxusercontent.com/s/1y7yqdefyayegzo/employeelist.json?dl=0"
-//        AF.request(employeesUrl, method: .get, encoding: URLEncoding.default)
-//            .responseDecodable(of: EmployeeResponse.self) { response in
-//                switch response.result {
-//                case .success(let employees):
-//                    completionHandler(employees)
-//                    print("employees fetched successfully")
-//                case .failure(let error):
-//                    completionHandler(nil)
-//                    print("Error fetching employees: \(error)")
-//                }
-//            }
-//    }
-    
+
 }

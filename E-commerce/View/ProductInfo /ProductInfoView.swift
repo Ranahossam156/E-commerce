@@ -12,6 +12,12 @@ import Kingfisher
 struct ProductInfoView: View {
 
     @Environment(\.presentationMode) var presentationMode
+    @State private var isFavorited = false
+    @State private var localImagesData: [Data]? = nil
+    @State private var successfullyLoadedImageURLs: Set<String> = []
+    @State private var isOfflineMode = false
+    @State private var imageLoadTrigger = false
+
     @State private var quantity = 1
     @State private var selectedColorName: String? = nil
     @State private var selectedSize: String? = nil
@@ -35,17 +41,40 @@ struct ProductInfoView: View {
                     VStack(spacing: 0) {
                         ZStack(alignment: .top) {
                             TabView(selection: $selectedImageIndex) {
-                                ForEach(Array(product.images.enumerated()), id: \.element.id) { index, image in
-                                    if let url = URL(string: image.src) {
-                                        KFImage(url)
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                            .tag(index)
-                                            .frame(maxWidth: .infinity)
-                                            .clipped()
+                                if isOfflineMode, let localImagesData = localImagesData {
+                                    ForEach(Array(localImagesData.enumerated()), id: \.offset) { index, imageData in
+                                        if let uiImage = UIImage(data: imageData) {
+                                            Image(uiImage: uiImage)
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fit)
+                                                .tag(index)
+                                                .frame(maxWidth: .infinity)
+                                                .clipped()
+                                        }
+                                    }
+                                } else {
+                                    ForEach(Array(product.images.enumerated()), id: \.element.id) { index, image in
+                                        if let url = URL(string: image.src) {
+                                            KFImage(url)
+                                                .placeholder {
+                                                    ProgressView()
+                                                }
+                                                .onSuccess { result in
+                                                    print("DEBUG: SUCCESS - Image loaded for index \(index), URL: \(result.source.url?.absoluteString ?? "N/A")")
+                                                }
+                                                .onFailure { error in
+                                                    print("DEBUG: FAILURE - Image loading failed for index \(index), URL: \(image.src), Error: \(error.localizedDescription)")
+                                                }
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fit)
+                                                .tag(index)
+                                                .frame(maxWidth: .infinity)
+                                                .clipped()
+                                        }
                                     }
                                 }
                             }
+                            .id(imageLoadTrigger)
                             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic))
                             .frame(height: 350)
                             .indexViewStyle(PageIndexViewStyle())
@@ -92,14 +121,13 @@ struct ProductInfoView: View {
                             }
 
                             HStack {
-                                Label("4.8", systemImage: "star.fill")
-                                    .foregroundColor(.yellow)
-                                    .font(.subheadline)
-                                Text("(320 Review)")
+                                Text("\(product.vendor)")
                                     .foregroundColor(.gray)
                                     .font(.subheadline)
+                                    .offset(y: -6)
                                 Spacer()
                                 Text("Available in stock")
+                                    .offset(y: -6)
                                     .font(.subheadline)
                             }
 
@@ -197,11 +225,38 @@ struct ProductInfoView: View {
                 ProgressView("Loading...")
             }
         }
+        .toolbar(.hidden, for: .tabBar)
         .onAppear {
+            isFavorited = FavoriteManager.shared.isFavorited(id: Int64(productID))
+
             UIPageControl.appearance().currentPageIndicatorTintColor = UIColor.darkGray
             UIPageControl.appearance().pageIndicatorTintColor = UIColor.lightGray
-            viewModel.getProductByID(productID: productID)
+            
+            if NetworkMonitor.shared.isConnected {
+                isOfflineMode = false
+                print("ProductInfoView: Network is Connected. Fetching product online.")
+                viewModel.getProductByID(productID: productID)
+            } else {
+                isOfflineMode = true
+                print("ProductInfoView: Network is Disconnected. Attempting to load from favorites.")
+                if let savedProduct = FavoriteManager.shared.getFavoriteById(id: Int64(productID)) {
+                    print("ProductInfoView: Product found in favorites. ID: \(productID)")
+                    self.localImagesData = savedProduct.imagesData
+                    let product = savedProduct.toProduct()
+                    DispatchQueue.main.async {
+                        viewModel.singleProductResponse = SingleProductResponse(product: product)
+                        imageLoadTrigger.toggle()
+                    }
+                } else {
+                    print("ProductInfoView: Product NOT found in favorites for ID: \(productID). Displaying no data or error.")
+                    DispatchQueue.main.async {
+                         viewModel.singleProductResponse = nil
+                    }
+                }
+            }
+            
         }
+
         .background(Color.white)
         .edgesIgnoringSafeArea(.bottom)
         .navigationTitle("Product Details")
@@ -219,11 +274,39 @@ struct ProductInfoView: View {
 
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
+                    guard let product = viewModel.singleProductResponse?.product else { return }
+                    
+                    let productId = Int64(product.id)
+                    
+                    if isFavorited {
+                        FavoriteManager.shared.removeFromFavorites(id: productId)
+                        isFavorited = false
+                    } else {
+                        let sizes = product.options.first(where: { $0.name.lowercased() == "size" })?.values ?? []
+                        let colors = product.options.first(where: { $0.name.lowercased() == "color" })?.values ?? []
+                        let imageURLs = product.images.map { $0.src }
+
+                        let model = FavoriteProductModel(
+                            id: productId,
+                            title: product.title,
+                            bodyHTML: product.bodyHTML,
+                            price: product.variants.first?.price ?? "0.00",
+                            colors: colors,
+                            sizes: sizes,
+                            imageURLs: imageURLs
+                        )
+                        Task {
+                            await FavoriteManager.shared.addToFavorites(product: model)
+                            isFavorited = true
+                        }
+                    }
+
                 }) {
-                    Image(systemName: "heart")
-                        .foregroundColor(.black)
+                    Image(systemName: isFavorited ? "heart.fill" : "heart")
+                        .foregroundColor(isFavorited ? .red : .black)
                 }
             }
+
         }
     }
 }
