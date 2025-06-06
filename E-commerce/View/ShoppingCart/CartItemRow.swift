@@ -25,11 +25,11 @@ struct CartItemRow: View {
                 
                 KFImage(URL(string: item.product.image.src))
                     .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 60, height: 60)
-                    .cornerRadius(6)
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 70, height: 70)
+                    .clipped()
+                    .cornerRadius(8)
             }
-            .frame(width: 70, height: 70)
             
             // Product details
             VStack(alignment: .leading, spacing: 4) {
@@ -95,8 +95,8 @@ struct CartItemRow: View {
                 
                 // Delete button
                 Button(action: removeItem) {
-                    Image(systemName: "trash")
-                        .font(.system(size: 14))
+                    Image(systemName: "trash.fill")
+                        .font(.system(size: 16))
                         .foregroundColor(.red)
                 }
                 .buttonStyle(PlainButtonStyle())

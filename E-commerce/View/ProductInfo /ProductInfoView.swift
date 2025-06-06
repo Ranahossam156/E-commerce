@@ -26,6 +26,8 @@ struct ProductInfoView: View {
     
     @State private var showAddedToCartAlert = false
     @State private var showSelectOptionsAlert = false
+    
+    @State private var navigateToCart = false
 
     let productID: Int
 
@@ -267,11 +269,18 @@ struct ProductInfoView: View {
                 presentationMode.wrappedValue.dismiss()
             }
             Button("View Cart") {
-                NavigationLink("", destination: CartView() )
+                navigateToCart = true
             }
         } message: {
             Text("\(quantity) × \(viewModel.singleProductResponse?.product.title ?? "Item") added to cart")
         }
+        
+        // Add this NavigationLink somewhere in your view (hidden)
+        .background(
+            NavigationLink(destination: CartView(), isActive: $navigateToCart) {
+                EmptyView()
+            }
+        )
         
         .toolbar(.hidden, for: .tabBar)
         .onAppear {

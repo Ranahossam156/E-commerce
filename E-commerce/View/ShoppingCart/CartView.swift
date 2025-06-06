@@ -54,7 +54,7 @@ struct CartView: View {
                             
                            
                             Color.clear
-                                .frame(height: 120) // Height of footer
+                                .frame(height: 140) // Height of footer
                         }
                         .padding(.horizontal)
                     }
