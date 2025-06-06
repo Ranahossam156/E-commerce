@@ -213,6 +213,7 @@
 		227C3BC32DE5F37A006B0E52 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
+				E17102E72DE4EA7E00C511CC /* CartViewModel.swift */,
 				FAC8895F2DE8BCD00041EF40 /* BrandViewModel.swift */,
 				E17102E92DE4EAC800C511CC /* CheckoutViewModel.swift */,
 				227C3BC42DE5F3AD006B0E52 /* ProductDetailsViewModel.swift */,
@@ -353,7 +354,6 @@
 			isa = PBXGroup;
 			children = (
 				E17102E42DE4EA5600C511CC /* CartItem.swift */,
-				E17102E72DE4EA7E00C511CC /* CartViewModel.swift */,
 				E17102EB2DE4EAD900C511CC /* CartView.swift */,
 				E17102F12DE4EBAE00C511CC /* CartHeaderView.swift */,
 				E17102F32DE4EBCB00C511CC /* CartItemRow.swift */,
