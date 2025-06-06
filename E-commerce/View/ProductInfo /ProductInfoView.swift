@@ -23,6 +23,9 @@ struct ProductInfoView: View {
     @State private var selectedSize: String? = nil
     @StateObject private var viewModel = ProductDetailsViewModel()
     @State private var selectedImageIndex = 0
+    
+    @State private var showAddedToCartAlert = false
+    @State private var showSelectOptionsAlert = false
 
     let productID: Int
 
@@ -205,6 +208,33 @@ struct ProductInfoView: View {
                     }
                     Spacer()
                     Button(action: {
+                        guard let product = viewModel.singleProductResponse?.product else { return }
+                        
+                        // Validate selections if options exist
+                        if !sizeOptions.isEmpty && selectedSize == nil {
+                            showSelectOptionsAlert = true
+                            return
+                        }
+                        
+                        if !colorOptions.isEmpty && selectedColorName == nil {
+                            showSelectOptionsAlert = true
+                            return
+                        }
+                        
+                        // Find matching variant or use first one
+                        let variant: Variant
+                        if let matchingVariant = findMatchingVariant(product: product) {
+                            variant = matchingVariant
+                        } else {
+                            variant = product.variants.first!
+                        }
+                        
+                        // Add to cart
+                        CartViewModel.shared.addToCart(product: product, variant: variant, quantity: quantity)
+                        showAddedToCartAlert = true
+                        
+                        // Reset quantity after adding
+                        quantity = 1
                     }) {
                         HStack {
                             Image(systemName: "cart")
@@ -225,6 +255,24 @@ struct ProductInfoView: View {
                 ProgressView("Loading...")
             }
         }
+        .alert("Select Options", isPresented: $showSelectOptionsAlert) {
+            Button("OK"){}
+        }message: {
+            Text("Please select all available options before adding to cart.")
+
+        }
+        
+        .alert("Added to Cart!", isPresented: $showAddedToCartAlert) {
+            Button("Continue Shopping") {
+                presentationMode.wrappedValue.dismiss()
+            }
+            Button("View Cart") {
+                // Navigate to cart - implement your navigation
+            }
+        } message: {
+            Text("\(quantity) × \(viewModel.singleProductResponse?.product.title ?? "Item") added to cart")
+        }
+        
         .toolbar(.hidden, for: .tabBar)
         .onAppear {
             isFavorited = FavoriteManager.shared.isFavorited(id: Int64(productID))
@@ -309,6 +357,8 @@ struct ProductInfoView: View {
 
         }
     }
+    
+    
 }
 
 struct ProductInfo_Previews: PreviewProvider {
