@@ -8,10 +8,30 @@
 import SwiftUI
 
 @main
-struct E_commerceApp: App {
+struct ECommerceApp: App {
+    @StateObject private var currencyService = CurrencyService()
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            TabView {
+                HomeView()
+                    .tabItem {
+                        Label("Home", systemImage: "house.fill")
+                    }
+                
+                FavoriteScreen()
+                    .tabItem {
+                        Label("Favorites", systemImage: "heart.fill")
+                    }
+                
+                SettingsView()
+                    .tabItem {
+                        Label("My Profile", systemImage: "person.fill")
+                    }
+                
+            }
+            .environmentObject(currencyService)
         }
     }
 }
+

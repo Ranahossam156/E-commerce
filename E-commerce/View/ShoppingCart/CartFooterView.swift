@@ -28,6 +28,8 @@ struct CartFooterView: View {
                     .font(.system(size: 18, weight: .bold))
             }
             .padding(.horizontal)
+            .padding(.top, 15) // Add top padding after divider
+
             
             Button(action: checkoutAction) {
                 Text("Checkout")
