@@ -11,8 +11,8 @@ import Kingfisher
 
 struct CartView: View {
     @Environment(\.presentationMode) var presentationMode
-    @StateObject private var viewModel = CartViewModel()
-    
+    @ObservedObject private var viewModel = CartViewModel.shared // Use shared instance
+
     @State private var showDeleteAlert = false
     @State private var itemToDelete: CartItem?
     

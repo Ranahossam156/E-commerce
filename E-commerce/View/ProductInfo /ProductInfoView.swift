@@ -267,7 +267,7 @@ struct ProductInfoView: View {
                 presentationMode.wrappedValue.dismiss()
             }
             Button("View Cart") {
-                // Navigate to cart - implement your navigation
+                NavigationLink("", destination: CartView() )
             }
         } message: {
             Text("\(quantity) × \(viewModel.singleProductResponse?.product.title ?? "Item") added to cart")
@@ -358,6 +358,21 @@ struct ProductInfoView: View {
         }
     }
     
+    private func findMatchingVariant(product: Product) -> Variant? {
+            return product.variants.first { variant in
+                var matches = true
+                
+                if let size = selectedSize {
+                    matches = matches && (variant.option1 == size || variant.option2 == size || variant.option3 == size)
+                }
+                
+                if let color = selectedColorName {
+                    matches = matches && (variant.option1 == color || variant.option2 == color || variant.option3 == color)
+                }
+                
+                return matches
+            }
+        }
     
 }
 

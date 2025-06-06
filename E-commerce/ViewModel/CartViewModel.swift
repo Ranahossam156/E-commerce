@@ -16,7 +16,7 @@ class CartViewModel: ObservableObject {
     static let shared = CartViewModel()
 
     private init() {
-            // Private init for singleton
+        print("CartViewModel initialized")
         }
 
     
