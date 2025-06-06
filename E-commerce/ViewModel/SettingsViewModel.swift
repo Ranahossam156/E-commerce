@@ -8,23 +8,19 @@ import Combine
 
 class SettingsViewModel: ObservableObject {
     @Published var countries: [String] = []
-    @Published var isDarkMode: Bool = false
-
-    weak var currencyService: CurrencyService? // Weak reference to avoid retain cycles
+    
+    weak var currencyService: CurrencyService?
     private var cancellables = Set<AnyCancellable>()
-
+    
     init() {
         loadSettings()
     }
-
-    // Load settings from UserDefaults
+    
     func loadSettings() {
-        isDarkMode = UserDefaults.standard.bool(forKey: "isDarkMode")
     }
-
+    
     // Save settings to UserDefaults
     func saveSettings() {
-        UserDefaults.standard.set(isDarkMode, forKey: "isDarkMode")
         // Safely unwrap currencyService
         guard let currencyService = currencyService else {
             print("CurrencyService not set in SettingsViewModel")
@@ -32,8 +28,7 @@ class SettingsViewModel: ObservableObject {
         }
         currencyService.saveSelectedCurrency()
     }
-
-    // Fetch countries from a web service (e.g., restcountries.com)
+    
     func fetchCountries() {
         guard let url = URL(string: "https://restcountries.com/v3.1/all") else {
             print("Invalid URL for countries API")
@@ -52,7 +47,7 @@ class SettingsViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
-
+    
     // Logout user
     func logout() {
         print("Logging out ...")

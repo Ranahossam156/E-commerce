@@ -19,15 +19,16 @@ struct ECommerceApp: App {
                         Label("Home", systemImage: "house.fill")
                     }
                 
+                FavoriteScreen()
+                    .tabItem {
+                        Label("Favorites", systemImage: "heart.fill")
+                    }
+                
                 SettingsView()
                     .tabItem {
                         Label("My Profile", systemImage: "person.fill")
                     }
                 
-                FavoriteScreen()
-                    .tabItem {
-                        Label("Favorites", systemImage: "heart.fill")
-                    }
             }
             .environmentObject(currencyService)
         }

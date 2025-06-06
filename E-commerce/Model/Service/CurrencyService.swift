@@ -14,14 +14,11 @@ class CurrencyService: ObservableObject {
     }
     @Published var exchangeRates: [String: Double] = [:]
     
-   // let supportedCurrencies = ["USD", "EGP", "EUR", "GBP"]
     private var cancellables = Set<AnyCancellable>()
-    private let baseCurrency = "USD" // Fixed base currency for API
+    private let baseCurrency = "USD"
     
-    // Predefined list of 10 currencies
     let supportedCurrencies: [String] = ["USD", "EUR","EGP", "GBP", "JPY", "CAD", "AUD", "CHF", "CNY", "INR", "BRL"]
     
-    // Hardcoded currency symbols
     private let currencySymbols: [String: String] = [
         "USD": "$",
         "EUR": "€",
@@ -61,7 +58,7 @@ class CurrencyService: ObservableObject {
                 }
             } receiveValue: { [weak self] response in
                 self?.exchangeRates = response.rates
-                print("Updated exchange rates: \(self?.exchangeRates ?? [:])") // Debug log
+                
             }
             .store(in: &cancellables)
     }
@@ -69,7 +66,6 @@ class CurrencyService: ObservableObject {
     func convert(price: Double) -> Double {
         guard !exchangeRates.isEmpty, let baseRate = exchangeRates[baseCurrency],
               let targetRate = exchangeRates[selectedCurrency] else {
-            print("Exchange rates not available, using 1.0 as fallback")
             return price // Fallback to original price if rates are missing
         }
         // Convert from baseCurrency to selectedCurrency: (price / baseRate) * targetRate
@@ -82,7 +78,6 @@ class CurrencyService: ObservableObject {
     
     func saveSelectedCurrency() {
         UserDefaults.standard.set(selectedCurrency, forKey: "selectedCurrency")
-        print("Saved currency: \(selectedCurrency)")
     }
 }
 
