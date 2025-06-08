@@ -9,7 +9,7 @@ import Foundation
 
 class ProductsViewModel{
     func getBrandProducts(vendor: String, completion: @escaping (ProductsResponse?, Error?) -> Void){
-        ProductNetworkService.fetchDataFromAPI(vendor: vendor){ response, error in
+        BrandProductNetworkService.fetchDataFromAPI(vendor: vendor){ response, error in
             if let error = error {
                 print("\(error.localizedDescription)")
             }
@@ -18,5 +18,18 @@ class ProductsViewModel{
                 completion(response, nil)
             }
         }
+    }
+    
+    func getCategoryProducts(collectionId: Int, completion: @escaping (ProductsResponse?, Error?) -> Void){
+        CategoryProductNetworkService.fetchProducts(for: collectionId) { response, error in
+            if let error = error {
+                print("\(error.localizedDescription)")
+            }
+            
+            if let response = response {
+                completion(response, nil)
+            }
+        }
+        
     }
 }

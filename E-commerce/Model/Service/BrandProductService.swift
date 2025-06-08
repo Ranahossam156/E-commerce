@@ -8,11 +8,11 @@
 import Foundation
 import Alamofire
 
-protocol ProductNetworkServiceProtocol {
+protocol BrandProductNetworkServiceProtocol {
     static func fetchDataFromAPI(vendor : String, completion: @escaping (ProductsResponse?, Error?) -> Void)
 }
 
-class ProductNetworkService: ProductNetworkServiceProtocol {
+class BrandProductNetworkService: BrandProductNetworkServiceProtocol {
     
     private static let session: Session = {
         #if targetEnvironment(simulator)
