@@ -12,6 +12,7 @@ import Combine
 class CartViewModel: ObservableObject {
     @Published var cartItems: [CartItem] = []
     @Published var total: Double = 0
+    @EnvironmentObject var currencyService : CurrencyService
     
     static let shared = CartViewModel()
 
@@ -45,6 +46,7 @@ class CartViewModel: ObservableObject {
     
     func calculateTotal() {
         total = cartItems.reduce(0) { $0 + $1.subtotal }
+        total = currencyService.convert(price: total)
     }
     
     func clearCart() {
