@@ -144,8 +144,8 @@ struct CartView: View {
                 return
             }
             
-            let controller = PKPaymentAuthorizationViewController(paymentRequest: paymentRequest)
-            controller?.delegate = PaymentHandler(isSimulator: ProcessInfo.processInfo.environment["SIMULATOR_DEVICE_NAME"] != nil)
+        let controller = PKPaymentAuthorizationViewController(paymentRequest: paymentRequest)
+                controller?.delegate = PaymentHandler(isSimulator: ProcessInfo.processInfo.environment["SIMULATOR_DEVICE_NAME"] != nil, paymentStatus: $paymentStatus)
             
             if let controller = controller {
                 UIApplication.shared.windows.first?.rootViewController?.present(controller, animated: true)
