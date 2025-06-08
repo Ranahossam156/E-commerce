@@ -1,20 +1,11 @@
-//
-//  ProductInfo.swift
-//  E-commerce
-//
-//  Created by Macos on 03/06/2025.
-//
-
 import SwiftUI
 import Kingfisher
 
-
 struct ProductInfoView: View {
-
+    
     @Environment(\.presentationMode) var presentationMode
     @State private var isFavorited = false
     @State private var localImagesData: [Data]? = nil
-    @State private var successfullyLoadedImageURLs: Set<String> = []
     @State private var isOfflineMode = false
     @State private var imageLoadTrigger = false
 
@@ -64,12 +55,6 @@ struct ProductInfoView: View {
                                                 .placeholder {
                                                     ProgressView()
                                                 }
-                                                .onSuccess { result in
-                                                    print("DEBUG: SUCCESS - Image loaded for index \(index), URL: \(result.source.url?.absoluteString ?? "N/A")")
-                                                }
-                                                .onFailure { error in
-                                                    print("DEBUG: FAILURE - Image loading failed for index \(index), URL: \(image.src), Error: \(error.localizedDescription)")
-                                                }
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fit)
                                                 .tag(index)
@@ -79,10 +64,8 @@ struct ProductInfoView: View {
                                     }
                                 }
                             }
-                            .id(imageLoadTrigger)
                             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic))
                             .frame(height: 350)
-                            .indexViewStyle(PageIndexViewStyle())
                         }
 
                         VStack(alignment: .leading, spacing: 16) {
@@ -90,6 +73,7 @@ struct ProductInfoView: View {
                                 Text(product.title)
                                     .font(.title3.bold())
                                 Spacer()
+                                
                                 HStack(spacing: 20) {
                                     Button(action: {
                                         if quantity > 1 { quantity -= 1 }
@@ -129,63 +113,64 @@ struct ProductInfoView: View {
                                 Text("\(product.vendor)")
                                     .foregroundColor(.gray)
                                     .font(.subheadline)
-                                    .offset(y: -6)
                                 Spacer()
                                 Text("Available in stock")
-                                    .offset(y: -6)
                                     .font(.subheadline)
                             }
 
                             if !colorOptions.isEmpty {
-                                Text("Available Colors")
+                                VStack(alignment: .leading) {
+                                    Text("Available Colors")
+                                        .font(.headline)
+                                    ScrollView(.horizontal, showsIndicators: false) {
+                                        HStack {
+                                            ForEach(colorOptions, id: \.self) { color in
+                                                Circle()
+                                                    .fill(Color.from(name: color))
+                                                    .frame(width: 30, height: 30)
+                                                    .overlay(
+                                                        Circle()
+                                                            .stroke(selectedColorName == color ? Color("primaryColor") : Color.clear, lineWidth: 3)
+                                                    )
+                                                    .onTapGesture {
+                                                        selectedColorName = color
+                                                    }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            VStack(alignment: .leading) {
+                                Text("Description")
                                     .font(.headline)
-                                ScrollView(.horizontal, showsIndicators: false) {
+                                Text(product.bodyHTML.isEmpty ? "No description available." : product.bodyHTML)
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                            }
+
+                            if !sizeOptions.isEmpty {
+                                VStack(alignment: .leading) {
+                                    Text("Available Sizes")
+                                        .font(.headline)
                                     HStack {
-                                        ForEach(colorOptions, id: \.self) { color in
-                                            Circle()
-                                                .fill(Color.from(name: color))
-                                                .frame(width: 30, height: 30)
-                                                .overlay(
-                                                    Circle()
-                                                        .stroke(selectedColorName == color ? Color("primaryColor") : Color.clear, lineWidth: 3)
-                                                )
+                                        ForEach(sizeOptions, id: \.self) { size in
+                                            Text(size)
+                                                .font(.system(size: 16, weight:.medium))
+                                                .lineLimit(1)
+                                                .minimumScaleFactor(0.8)
+                                                .padding(.horizontal, 10)
+                                                .frame(height: 40)
+                                                .background(selectedSize == size ? Color("primaryColor") : Color.gray.opacity(0.2))
+                                                .foregroundColor(selectedSize == size ? .white : .black)
+                                                .cornerRadius(10)
                                                 .onTapGesture {
-                                                    selectedColorName = color
+                                                    selectedSize = size
                                                 }
                                         }
                                     }
-                                    .padding(.vertical, 4)
                                 }
                             }
-
-
-                            Text("Description")
-                                .font(.headline)
-                            Text(product.bodyHTML.isEmpty ? "No description available." : product.bodyHTML)
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
-
-                            if !sizeOptions.isEmpty {
-                                Text("Available Sizes")
-                                    .font(.headline)
-                                HStack {
-                                    ForEach(sizeOptions, id: \.self) { size in
-                                        Text(size)
-                                            .font(.system(size: 16, weight:.medium))
-                                            .lineLimit(1)
-                                            .minimumScaleFactor(0.8)
-                                            .padding(.horizontal, 10)
-                                            .frame(height: 40)
-                                            .background(selectedSize == size ? Color("primaryColor") : Color.gray.opacity(0.2))
-                                            .foregroundColor(selectedSize == size ? .white : .black)
-                                            .cornerRadius(10)
-                                            .onTapGesture {
-                                                selectedSize = size
-                                            }
-                                    }
-                                }
-                            }
-
                         }
                         .padding()
                         .background(
@@ -319,6 +304,7 @@ struct ProductInfoView: View {
         .navigationTitle("Product Details")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
+        .background(Color.white.ignoresSafeArea())
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button(action: {
@@ -331,39 +317,83 @@ struct ProductInfoView: View {
 
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
-                    guard let product = viewModel.singleProductResponse?.product else { return }
-                    
-                    let productId = Int64(product.id)
-                    
-                    if isFavorited {
-                        FavoriteManager.shared.removeFromFavorites(id: productId)
-                        isFavorited = false
-                    } else {
-                        let sizes = product.options.first(where: { $0.name.lowercased() == "size" })?.values ?? []
-                        let colors = product.options.first(where: { $0.name.lowercased() == "color" })?.values ?? []
-                        let imageURLs = product.images.map { $0.src }
-
-                        let model = FavoriteProductModel(
-                            id: productId,
-                            title: product.title,
-                            bodyHTML: product.bodyHTML,
-                            price: product.variants.first?.price ?? "0.00",
-                            colors: colors,
-                            sizes: sizes,
-                            imageURLs: imageURLs
-                        )
-                        Task {
-                            await FavoriteManager.shared.addToFavorites(product: model)
-                            isFavorited = true
-                        }
-                    }
-
+                    toggleFavorite()
                 }) {
                     Image(systemName: isFavorited ? "heart.fill" : "heart")
                         .foregroundColor(isFavorited ? .red : .black)
                 }
             }
+        }
+        .onAppear {
+            setupInitialState()
 
+            let appearance = UINavigationBarAppearance()
+            appearance.configureWithOpaqueBackground()
+            appearance.backgroundColor = .white
+            appearance.shadowColor = .clear
+
+            UINavigationBar.appearance().standardAppearance = appearance
+            UINavigationBar.appearance().compactAppearance = appearance
+            UINavigationBar.appearance().scrollEdgeAppearance = appearance
+
+            UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
+            UINavigationBar.appearance().shadowImage = UIImage()
+        }
+
+    }
+    
+    private func toggleFavorite() {
+        guard let product = viewModel.singleProductResponse?.product else { return }
+        
+        let productId = Int64(product.id)
+        
+        if isFavorited {
+            FavoriteManager.shared.removeFromFavorites(id: productId)
+            isFavorited = false
+        } else {
+            let sizes = product.options.first(where: { $0.name.lowercased() == "size" })?.values ?? []
+            let colors = product.options.first(where: { $0.name.lowercased() == "color" })?.values ?? []
+            let imageURLs = product.images.map { $0.src }
+
+            let model = FavoriteProductModel(
+                id: productId,
+                title: product.title,
+                bodyHTML: product.bodyHTML,
+                price: product.variants.first?.price ?? "0.00",
+                colors: colors,
+                sizes: sizes,
+                imageURLs: imageURLs
+            )
+            Task {
+                await FavoriteManager.shared.addToFavorites(product: model)
+                isFavorited = true
+            }
+        }
+    }
+    
+    private func setupInitialState() {
+        isFavorited = FavoriteManager.shared.isFavorited(id: Int64(productID))
+
+        UIPageControl.appearance().currentPageIndicatorTintColor = UIColor.darkGray
+        UIPageControl.appearance().pageIndicatorTintColor = UIColor.lightGray
+        
+        if NetworkMonitor.shared.isConnected {
+            isOfflineMode = false
+            viewModel.getProductByID(productID: productID)
+        } else {
+            isOfflineMode = true
+            if let savedProduct = FavoriteManager.shared.getFavoriteById(id: Int64(productID)) {
+                self.localImagesData = savedProduct.imagesData
+                let product = savedProduct.toProduct()
+                DispatchQueue.main.async {
+                    viewModel.singleProductResponse = SingleProductResponse(product: product)
+                    imageLoadTrigger.toggle()
+                }
+            } else {
+                DispatchQueue.main.async {
+                    viewModel.singleProductResponse = nil
+                }
+            }
         }
     }
     
@@ -387,11 +417,12 @@ struct ProductInfoView: View {
 
 struct ProductInfo_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
+        NavigationStack {
             ProductInfoView(productID: 8696738939189)
         }
     }
 }
+
 extension Color {
     static func from(name: String) -> Color {
         switch name.lowercased() {
