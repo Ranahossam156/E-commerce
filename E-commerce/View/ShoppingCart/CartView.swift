@@ -24,7 +24,7 @@ struct CartView: View {
     // Properly initialized payment request
       private var paymentRequest: PKPaymentRequest {
           let request = PKPaymentRequest()    // Required fields
-     request.merchantIdentifier = "merchant.com.yourdomain.ecommerce" // REPLACE WITH YOUR MERCHANT ID
+     request.merchantIdentifier = "merchant.ITI.E-commerce" // REPLACE WITH YOUR MERCHANT ID
      request.countryCode = "US" // Must be a valid ISO country code
      request.currencyCode = "USD" // Must match your merchant account
      

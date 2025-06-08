@@ -129,6 +129,7 @@
 		E198F4262DED8000001656DE /* PriceRuleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceRuleService.swift; sourceTree = "<group>"; };
 		E198F4282DED806B001656DE /* Coupons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coupons.swift; sourceTree = "<group>"; };
 		E198F42A2DED80C6001656DE /* CouponViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouponViewModel.swift; sourceTree = "<group>"; };
+		E1B0EFF52DF5C686007D03F0 /* E-commerce.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "E-commerce.entitlements"; sourceTree = "<group>"; };
 		E1BF8A792DF0B3E10021E458 /* FavoritesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesScreen.swift; sourceTree = "<group>"; };
 		FA524F362DEB17FB008FEA88 /* CategoryResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryResponse.swift; sourceTree = "<group>"; };
 		FA524F3A2DEB1920008FEA88 /* CategoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryService.swift; sourceTree = "<group>"; };
@@ -275,6 +276,7 @@
 		229EFA6C2DE35A0C006F0D77 /* E-commerce */ = {
 			isa = PBXGroup;
 			children = (
+				E1B0EFF52DF5C686007D03F0 /* E-commerce.entitlements */,
 				22FC15CF2DF0F716000FD95C /* Utils */,
 				227C3BCC2DE6195A006B0E52 /* View */,
 				227C3BC32DE5F37A006B0E52 /* ViewModel */,
@@ -749,9 +751,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "E-commerce/E-commerce.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"E-commerce/Preview Content\"";
+				DEVELOPMENT_TEAM = X8DY4326ZW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -777,9 +781,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "E-commerce/E-commerce.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"E-commerce/Preview Content\"";
+				DEVELOPMENT_TEAM = X8DY4326ZW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
