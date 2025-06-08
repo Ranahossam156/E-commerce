@@ -8,13 +8,49 @@
 import Foundation
 import SwiftUI
 import Kingfisher
+import PassKit
+
 
 struct CartView: View {
     @Environment(\.presentationMode) var presentationMode
-    @ObservedObject private var viewModel = CartViewModel.shared // Use shared instance
-
+    @ObservedObject private var viewModel = CartViewModel.shared
+    
     @State private var showDeleteAlert = false
     @State private var itemToDelete: CartItem?
+    
+    @State private var paymentStatus : String?
+    @State private var paymentSheetPresented = false
+    
+    // Properly initialized payment request
+      private var paymentRequest: PKPaymentRequest {
+          let request = PKPaymentRequest()    // Required fields
+     request.merchantIdentifier = "merchant.com.yourdomain.ecommerce" // REPLACE WITH YOUR MERCHANT ID
+     request.countryCode = "US" // Must be a valid ISO country code
+     request.currencyCode = "USD" // Must match your merchant account
+     
+     // Supported payment networks
+     request.supportedNetworks = [.visa, .masterCard, .amex, .discover]
+     request.merchantCapabilities = [.capability3DS, .capabilityCredit, .capabilityDebit]
+     
+     // Payment summary items
+     request.paymentSummaryItems = [
+         PKPaymentSummaryItem(label: "Subtotal", amount: NSDecimalNumber(value: viewModel.total)),
+         PKPaymentSummaryItem(label: "Shipping", amount: NSDecimalNumber(value: 0.0)),
+         PKPaymentSummaryItem(label: "Total", amount: NSDecimalNumber(value: viewModel.total))
+     ]
+     
+     return request
+ }
+  
+    
+    private func updatePaymentSummaryItems() {
+        let totalInSelectedCurrency = viewModel.total
+        paymentRequest.paymentSummaryItems = [
+            PKPaymentSummaryItem(label: "Subtotal", amount: NSDecimalNumber(value: totalInSelectedCurrency)),
+            PKPaymentSummaryItem(label: "Shipping", amount: NSDecimalNumber(value: 0.0)),
+            PKPaymentSummaryItem(label: "Total", amount: NSDecimalNumber(value: totalInSelectedCurrency))
+        ]
+    }
     
     var body: some View {
         ZStack {
@@ -38,6 +74,7 @@ struct CartView: View {
                                     item: item,
                                     updateQuantity: { quantity in
                                         viewModel.updateQuantity(for: item, quantity: quantity)
+                                        updatePaymentSummaryItems() // Update payment total
                                     },
                                     removeItem: {
                                         itemToDelete = item
@@ -52,9 +89,9 @@ struct CartView: View {
                                 }
                             }
                             
-                           
+                            
                             Color.clear
-                                .frame(height: 140) // Height of footer
+                                .frame(height: 160) // Height of footer
                         }
                         .padding(.horizontal)
                     }
@@ -70,30 +107,54 @@ struct CartView: View {
                         Divider()
                         
                         CartFooterView(
-                            total: viewModel.total,
+                            total: viewModel.total, // Converted total
                             checkoutAction: {
-                                // Navigate to checkout
+                                updatePaymentSummaryItems()
+                                startApplePay()
                             }
-                        )
-                    }
-                    .background(Color(.systemBackground))
+                    
+                    )
                 }
+                .background(Color(.systemBackground))
             }
         }
+    }
         .navigationBarHidden(true)
         .alert("Remove Item", isPresented: $showDeleteAlert, actions: {
             Button("Cancel",role: .cancel) {}
             Button("Remove",role:.destructive){
                 if let item = itemToDelete {
                     viewModel.removeFromCart(variantId: item.selectedVariant.id)
+                    updatePaymentSummaryItems() // Update payment total
                 }
             }
         }, message: {
             Text("Are you sure you want to remove \(itemToDelete?.product.title ?? "this item") from your cart?")
-
+            
         })
+    
+        .onChange(of: viewModel.total) { _ in
+            updatePaymentSummaryItems() // Update when total changes
+        }
     }
+    
+    private func startApplePay() {
+            guard PKPaymentAuthorizationViewController.canMakePayments(usingNetworks: paymentRequest.supportedNetworks) else {
+                paymentStatus = "Apple Pay not available or cards not supported"
+                return
+            }
+            
+            let controller = PKPaymentAuthorizationViewController(paymentRequest: paymentRequest)
+            controller?.delegate = PaymentHandler(isSimulator: ProcessInfo.processInfo.environment["SIMULATOR_DEVICE_NAME"] != nil)
+            
+            if let controller = controller {
+                UIApplication.shared.windows.first?.rootViewController?.present(controller, animated: true)
+            }
+        }
+
 }
+
+
 
 struct CartView_Previews: PreviewProvider {
     static var previews: some View {

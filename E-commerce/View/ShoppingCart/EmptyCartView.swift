@@ -27,16 +27,7 @@ struct EmptyCartView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
             
-            Button(action: {
-                // Action to go back to shopping
-            }) {
-                Text("Continue Shopping")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(Color.blue)
-                    .cornerRadius(10)
-            }
+          
             .padding(.top)
             
             Spacer()

@@ -1,4 +1,5 @@
 {
+  "originHash" : "3d28db95d5a81feb0d800109fb3ccc41df6c3780dfd63d3ca60031a638f3d13d",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -26,7 +27,25 @@
         "branch" : "master",
         "revision" : "21d1dc412cfecbe6e34f1f4c4eb88d3f912654a6"
       }
+    },
+    {
+      "identity" : "shellout",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JohnSundell/ShellOut.git",
+      "state" : {
+        "revision" : "e1577acf2b6e90086d01a6d5e2b8efdaae033568",
+        "version" : "2.3.0"
+      }
+    },
+    {
+      "identity" : "walletpassgenerator",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ljw980105/WalletPassGenerator.git",
+      "state" : {
+        "revision" : "5a425de6f597a44dac4a68c126d470c44153062b",
+        "version" : "1.0.0"
+      }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

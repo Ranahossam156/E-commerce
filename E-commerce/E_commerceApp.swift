@@ -10,6 +10,8 @@ import SwiftUI
 @main
 struct ECommerceApp: App {
     @StateObject private var currencyService = CurrencyService()
+    @StateObject private var cartViewModel = CartViewModel(currencyService: CurrencyService())
+
     
     var body: some Scene {
         WindowGroup {
@@ -31,6 +33,8 @@ struct ECommerceApp: App {
                 
             }
             .environmentObject(currencyService)
+            .environmentObject(cartViewModel)  // If needed in child views
+
         }
     }
 }
