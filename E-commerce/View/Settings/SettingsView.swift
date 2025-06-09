@@ -2,14 +2,16 @@
 // E-commerce
 // Created by Kerolos on 02/06/2025. (Last updated: 08:42 PM EEST, June 03, 2025)
 
+
 import SwiftUI
+import MapKit
+import Combine
+import CoreLocation
 
 struct SettingsView: View {
-    @StateObject private var viewModel: SettingsViewModel = SettingsViewModel()
-    @StateObject private var userModel: UserModel = UserModel()
-    @EnvironmentObject var currencyService: CurrencyService // Use EnvironmentObject
-
-   
+    @StateObject private var viewModel = SettingsViewModel()
+    @StateObject private var userModel = UserModel()
+    @EnvironmentObject var currencyService: CurrencyService
 
     var body: some View {
         NavigationView {
@@ -24,8 +26,8 @@ struct SettingsView: View {
             .onAppear {
                 viewModel.loadSettings()
                 userModel.loadUserData()
-                currencyService.fetchExchangeRates() // Correct method call
-                viewModel.currencyService = currencyService // Assuming you add this property
+                currencyService.fetchExchangeRates()
+                viewModel.currencyService = currencyService
             }
         }
     }
@@ -37,44 +39,124 @@ struct UserInfoHeader: View {
 
     var body: some View {
         Section {
-            HStack(alignment: .center, spacing: 12) {
+            HStack(alignment: .center, spacing: 6) {
                 Image(systemName: "person.circle.fill")
                     .resizable()
-                    .frame(width: 50, height: 50)
+                    .frame(width: 60, height: 60)
                     .foregroundColor(.gray)
                     .accessibilityHidden(true)
+                    .padding(6)
 
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(userModel.name.isEmpty ? "User Name" : userModel.name)
+                    Text(userModel.name.isEmpty ? "Guest" : userModel.name)
                         .font(.title3)
                         .fontWeight(.semibold)
                         .foregroundColor(.primary)
-                        .accessibilityLabel("User name: \(userModel.name.isEmpty ? "Not set" : userModel.name)")
+                        .accessibilityLabel("Username: \(userModel.name.isEmpty ? "Not set" : userModel.name)")
 
-                    Text(userModel.email.isEmpty ? "email@example.com" : userModel.email)
+                    Text(userModel.email.isEmpty ? "Email: email@example.com" : "Email: \(userModel.email)")
+                        .lineLimit(2)
                         .font(.subheadline)
                         .foregroundColor(.gray)
                         .accessibilityLabel("Email: \(userModel.email.isEmpty ? "Not set" : userModel.email)")
 
-                    Text("Address: \(userModel.address.isEmpty ? "Not Set" : userModel.address)")
+                    Text("Address: \(userModel.defaultAddress)")
                         .font(.subheadline)
                         .foregroundColor(.gray)
-                        .accessibilityLabel("Current address: \(userModel.address.isEmpty ? "Not set" : userModel.address)")
+                        .accessibilityLabel("Current address: \(userModel.defaultAddress)")
+                        .lineLimit(6) // Allow multiple lines for long addresses
 
                     Text("Phone: \(userModel.phoneNumber.isEmpty ? "Not Set" : userModel.phoneNumber)")
                         .font(.subheadline)
                         .foregroundColor(.gray)
                         .accessibilityLabel("Phone number: \(userModel.phoneNumber.isEmpty ? "Not set" : userModel.phoneNumber)")
                 }
+                
 
                 Spacer()
 
-                Image(systemName: "pencil.circle.fill")
-                    .foregroundColor(.gray)
-                    .accessibilityLabel("Edit profile")
+                NavigationLink(destination: EditProfileView(userModel: userModel)) {
+            
+                }.frame(width: 1)
             }
             .padding(.vertical, 12)
         }
+    }
+}
+
+// Subview for Editing Profile
+struct EditProfileView: View {
+    @ObservedObject var userModel: UserModel
+    @Environment(\.dismiss) var dismiss
+    @State private var editedName: String
+    @State private var editedPhoneNumber: String
+    @State private var editedEmail: String
+
+
+    init(userModel: UserModel) {
+        self.userModel = userModel
+        _editedName = State(initialValue: userModel.name)
+        _editedPhoneNumber = State(initialValue: userModel.phoneNumber)
+        _editedEmail = State(initialValue: userModel.email)
+    }
+
+    var body: some View {
+        Form {
+            Section(header: Text("Edit Profile").font(.headline)) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Name")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                    TextField("Enter name", text: $editedName)
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                        .accessibilityLabel("Enter name")
+                }
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Email")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                    TextField("Enter Email", text: $editedEmail)
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                        .accessibilityLabel("Enter Email")
+                }
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Phone Number")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                    TextField("Enter phone number", text: $editedPhoneNumber)
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                        .keyboardType(.phonePad)
+                        .accessibilityLabel("Enter phone number")
+                }
+            }
+
+            Button(action: {
+                userModel.name = editedName
+                userModel.phoneNumber = editedPhoneNumber
+                userModel.email = editedEmail
+                userModel.saveUserData()
+                dismiss()
+            }) {
+                Text("Save Changes")
+                    .font(.body)
+                    .foregroundColor(.white)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(editedName.isEmpty ? Color.gray : Color.blue)
+                    .cornerRadius(8)
+            }
+            .disabled(editedName.isEmpty)
+            .accessibilityLabel("Save profile changes")
+        }
+        .navigationTitle("Edit Profile")
     }
 }
 
@@ -102,14 +184,13 @@ struct SettingsSection: View {
 
             Picker("Currency", selection: $currencyService.selectedCurrency) {
                 ForEach(currencyService.supportedCurrencies, id: \.self) { currency in
-                 
-                    Text("\(currency)")
+                    Text(currency)
                         .tag(currency)
                 }
             }
             .pickerStyle(.menu)
             .accessibilityLabel("Select currency")
-            .onChange(of: currencyService.selectedCurrency) { _ in 
+            .onChange(of: currencyService.selectedCurrency) { _ in
                 viewModel.saveSettings()
             }
         }
@@ -155,64 +236,118 @@ struct LogoutSection: View {
 
 struct AddressesView: View {
     @ObservedObject var userModel: UserModel
-
+    @StateObject private var mapViewModel = MapViewModel()
+    
     var body: some View {
         Form {
-            Section(header: Text("Edit Address").font(.headline).foregroundColor(.primary)) {
-                // Recipient Name
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Recipient Name")
-                        .font(.caption)
+            Section(header: Text("Your Addresses").font(.headline)) {
+                if userModel.addresses.isEmpty {
+                    Text("No addresses added")
+                        .font(.subheadline)
                         .foregroundColor(.gray)
-                    TextField("Enter your name", text: $userModel.name)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                        .accessibilityLabel("Enter recipient name")
+                } else {
+                    ForEach(userModel.addresses) { address in
+                        HStack {
+                            Text(address.addressText)
+                            Spacer()
+                            if userModel.defaultAddressId == address.id {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(.green)
+                            }
+                        }
+                        .onTapGesture {
+                            userModel.setDefaultAddress(id: address.id)
+                        }
+                    }
+                    .onDelete(perform: deleteAddresses)
                 }
+            }
 
-                // Mobile Number
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Mobile Number")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                    TextField("Enter your phone number", text: $userModel.phoneNumber)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                        .keyboardType(.phonePad)
-                        .accessibilityLabel("Enter mobile number")
-                }
-
-                // Address
+            Section(header: Text("Add New Address").font(.headline)) {
+                MapSubView(mapViewModel: mapViewModel)
+                
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Address")
                         .font(.caption)
                         .foregroundColor(.gray)
-                    TextField("Enter your address", text: $userModel.address)
+                    
+                    Text(mapViewModel.selectedAddress ?? "Select a location on the map")
+                        .font(.body)
+                        .foregroundColor(mapViewModel.selectedAddress == nil ? .gray : .primary)
                         .padding()
+                        .frame(maxWidth: .infinity, alignment: .leading) // Fixed width
+                        .fixedSize(horizontal: false, vertical: true) // Allow vertical expansion
                         .background(Color(.systemGray6))
                         .cornerRadius(8)
-                        .accessibilityLabel("Enter address")
+                        .multilineTextAlignment(.leading) // Align text to leading edge
                 }
+                
+                Button(action: {
+                    if let selectedAddress = mapViewModel.selectedAddress {
+                        userModel.addAddress(addressText: selectedAddress)
+                        mapViewModel.resetSelectedLocation()
+                    }
+                }) {
+                    Text("Add Address")
+                        .font(.body)
+                        .foregroundColor(.white)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(mapViewModel.selectedAddress == nil ? Color.gray : Color.blue)
+                        .cornerRadius(8)
+                }
+                .disabled(mapViewModel.selectedAddress == nil)
             }
         }
         .navigationTitle("Addresses")
-        .onChange(of: userModel.name) { _ in
-            userModel.saveUserData()
+        .toolbar {
+            EditButton()
         }
-        .onChange(of: userModel.phoneNumber) { _ in
-            userModel.saveUserData()
-        }
-        .onChange(of: userModel.address) { _ in
-            userModel.saveUserData()
+    }
+    
+    private func deleteAddresses(at offsets: IndexSet) {
+        offsets.map { userModel.addresses[$0].id }.forEach { userModel.deleteAddress(id: $0) }
+    }
+}
+struct MapSubView: View {
+    @ObservedObject var mapViewModel: MapViewModel
+    private let mapSize = CGSize(width: 250, height: 250)
+
+    var body: some View {
+        ZStack(alignment: .bottomTrailing) {
+            Map(coordinateRegion: $mapViewModel.region,
+                interactionModes: .all,
+                showsUserLocation: true,
+                annotationItems: mapViewModel.selectedLocation != nil ? [mapViewModel.selectedLocation!] : []) { location in
+                MapMarker(coordinate: location.coordinate, tint: .red)
+            }
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .onEnded { value in
+                        let tapPoint = value.location
+                        mapViewModel.handleMapTap(at: tapPoint, in: mapViewModel.region, mapSize: mapSize)
+                    }
+            )
+            .frame(height: 300)
+            .cornerRadius(8)
+
+//            Button(action: {
+//                mapViewModel.centerOnUserLocation()
+//            }) {
+//                Image(systemName: "location.fill")
+//                    .padding(10)
+//                    .background(Color.white)
+//                    .clipShape(Circle())
+//                    .shadow(radius: 2)
+//            }
+            .padding(16)
         }
     }
 }
 
-//struct SettingsView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        SettingsView(viewModel: <#SettingsViewModel#>)
-//            .environmentObject(CurrencyService()) // Required for previews
-//    }
-//}
+struct SettingsView_Previews: PreviewProvider {
+    static var previews: some View {
+        SettingsView()
+            .environmentObject(CurrencyService()) // Required for previews
+    }
+}
