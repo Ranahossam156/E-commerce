@@ -13,7 +13,7 @@ import SwiftUICore
 class MapViewModel: ObservableObject {
     @Published var region = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194), // Default: San Francisco
-        span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+        span: MKCoordinateSpan(latitudeDelta: 0.09, longitudeDelta: 0.09)
     )
     @Published var selectedLocation: IdentifiableLocation?
     @Published var selectedAddress: String?
@@ -26,17 +26,18 @@ class MapViewModel: ObservableObject {
     }
 
     func requestLocationPermission() {
+//        locationManager.requestWhenInUseAuthorization()
+//        if CLLocationManager.locationServicesEnabled() {
+//            if locationManager.authorizationStatus == .authorizedWhenInUse || locationManager.authorizationStatus == .authorizedAlways {
+//                if let userLocation = locationManager.location?.coordinate {
+//                    region = MKCoordinateRegion(
+//                        center: userLocation,
+//                        span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+//                    )
+//                }
+//            }
+//        }
         locationManager.requestWhenInUseAuthorization()
-        if CLLocationManager.locationServicesEnabled() {
-            if locationManager.authorizationStatus == .authorizedWhenInUse || locationManager.authorizationStatus == .authorizedAlways {
-                if let userLocation = locationManager.location?.coordinate {
-                    region = MKCoordinateRegion(
-                        center: userLocation,
-                        span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-                    )
-                }
-            }
-        }
     }
 
     func handleMapTap(at point: CGPoint, in region: MKCoordinateRegion, mapSize: CGSize) {
@@ -84,6 +85,17 @@ class MapViewModel: ObservableObject {
             }
         }
     }
+    
+    func centerOnUserLocation() {
+           guard let userLocation = locationManager.location?.coordinate else {
+               print("Location unavailable")
+               return
+           }
+           region = MKCoordinateRegion(
+               center: userLocation,
+               span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05) // Smaller span for precision
+           )
+       }
 
     func resetSelectedLocation() {
         selectedLocation = nil

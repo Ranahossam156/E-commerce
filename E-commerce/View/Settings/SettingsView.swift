@@ -237,96 +237,74 @@ struct LogoutSection: View {
 struct AddressesView: View {
     @ObservedObject var userModel: UserModel
     @StateObject private var mapViewModel = MapViewModel()
-    @State private var newAddressText: String = ""
     
     var body: some View {
         Form {
-            Section(header: Text("Your Addresses").font(.headline).foregroundColor(.primary)) {
+            Section(header: Text("Your Addresses").font(.headline)) {
                 if userModel.addresses.isEmpty {
                     Text("No addresses added")
                         .font(.subheadline)
                         .foregroundColor(.gray)
-                        .accessibilityLabel("No addresses added")
                 } else {
                     ForEach(userModel.addresses) { address in
                         HStack {
                             Text(address.addressText)
-                                .font(.body)
-                                .foregroundColor(.primary)
                             Spacer()
                             if userModel.defaultAddressId == address.id {
                                 Image(systemName: "checkmark.circle.fill")
                                     .foregroundColor(.green)
-                                    .accessibilityLabel("Default address")
-                                }
+                            }
                         }
-                        .padding(.vertical, 4)
-                        .contentShape(Rectangle())
                         .onTapGesture {
                             userModel.setDefaultAddress(id: address.id)
                         }
-                        .accessibilityLabel("Address: \(address.addressText). Tap to set as default.")
                     }
                     .onDelete(perform: deleteAddresses)
                 }
+            }
 
-                Section(header: Text("Add New Address").font(.headline).foregroundColor(.primary)) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Select Location")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                        MapSubView(mapViewModel: mapViewModel)
-                            .frame(height: 200)
-                            .cornerRadius(8)
-                        .accessibilityLabel("Map for selecting address location")
-                    }
-
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Address")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                        TextField("Enter address or select from map", text: $newAddressText)
+            Section(header: Text("Add New Address").font(.headline)) {
+                MapSubView(mapViewModel: mapViewModel)
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Address")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                    
+                    Text(mapViewModel.selectedAddress ?? "Select a location on the map")
+                        .font(.body)
+                        .foregroundColor(mapViewModel.selectedAddress == nil ? .gray : .primary)
                         .padding()
+                        .frame(maxWidth: .infinity, alignment: .leading) // Fixed width
+                        .fixedSize(horizontal: false, vertical: true) // Allow vertical expansion
                         .background(Color(.systemGray6))
-                         .cornerRadius(8)
-                        .accessibilityLabel("Enter address")
+                        .cornerRadius(8)
+                        .multilineTextAlignment(.leading) // Align text to leading edge
+                }
+                
+                Button(action: {
+                    if let selectedAddress = mapViewModel.selectedAddress {
+                        userModel.addAddress(addressText: selectedAddress)
+                        mapViewModel.resetSelectedLocation()
                     }
-
-                    Button(action: {
-                        if !newAddressText.isEmpty {
-                            userModel.addAddress(addressText: newAddressText)
-                            newAddressText = ""
-                            mapViewModel.resetSelectedLocation()
-                        }
-                        }) {
-                            Text("Add Address")
-                                .font(.body)
-                                .foregroundColor(.white)
-                                .padding()
-                                .frame(maxWidth: .infinity)
-                                .background(newAddressText.isEmpty ? Color.gray : Color.blue)
-                                .cornerRadius(8)
-                        }
-                        .disabled(newAddressText.isEmpty)
-                        .accessibilityLabel("Add new address")
-                    }
+                }) {
+                    Text("Add Address")
+                        .font(.body)
+                        .foregroundColor(.white)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(mapViewModel.selectedAddress == nil ? Color.gray : Color.blue)
+                        .cornerRadius(8)
+                }
+                .disabled(mapViewModel.selectedAddress == nil)
             }
         }
         .navigationTitle("Addresses")
         .toolbar {
             EditButton()
-                .accessibilityLabel("Edit addresses")
-        }
-        .onChange(of: mapViewModel.selectedAddress) { newAddress in
-            if let address = newAddress {
-                newAddressText = address
-            }
-        }
-        .onAppear {
-            mapViewModel.requestLocationPermission()
         }
     }
-
+    
     private func deleteAddresses(at offsets: IndexSet) {
         offsets.map { userModel.addresses[$0].id }.forEach { userModel.deleteAddress(id: $0) }
     }
@@ -336,21 +314,37 @@ struct MapSubView: View {
     private let mapSize = CGSize(width: 250, height: 250)
 
     var body: some View {
-        Map(coordinateRegion: $mapViewModel.region,
-            interactionModes: .all,
-            showsUserLocation: true,
-            annotationItems: mapViewModel.selectedLocation != nil ? [mapViewModel.selectedLocation!] : []) { location in
-            MapMarker(coordinate: location.coordinate, tint: .red)
+        ZStack(alignment: .bottomTrailing) {
+            Map(coordinateRegion: $mapViewModel.region,
+                interactionModes: .all,
+                showsUserLocation: true,
+                annotationItems: mapViewModel.selectedLocation != nil ? [mapViewModel.selectedLocation!] : []) { location in
+                MapMarker(coordinate: location.coordinate, tint: .red)
+            }
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .onEnded { value in
+                        let tapPoint = value.location
+                        mapViewModel.handleMapTap(at: tapPoint, in: mapViewModel.region, mapSize: mapSize)
+                    }
+            )
+            .frame(height: 300)
+            .cornerRadius(8)
+
+//            Button(action: {
+//                mapViewModel.centerOnUserLocation()
+//            }) {
+//                Image(systemName: "location.fill")
+//                    .padding(10)
+//                    .background(Color.white)
+//                    .clipShape(Circle())
+//                    .shadow(radius: 2)
+//            }
+            .padding(16)
         }
-        .gesture(
-            DragGesture(minimumDistance: 0)
-                .onEnded { value in
-                    let tapPoint = value.location
-                    mapViewModel.handleMapTap(at: tapPoint, in: mapViewModel.region, mapSize: mapSize)
-                }
-        )
     }
 }
+
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         SettingsView()
