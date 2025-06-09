@@ -2,7 +2,7 @@ import SwiftUI
 import Kingfisher
 
 struct ProductInfoView: View {
-    
+
     @Environment(\.presentationMode) var presentationMode
     @State private var isFavorited = false
     @State private var localImagesData: [Data]? = nil
@@ -14,10 +14,9 @@ struct ProductInfoView: View {
     @State private var selectedSize: String? = nil
     @StateObject private var viewModel = ProductDetailsViewModel()
     @State private var selectedImageIndex = 0
-    
+
     @State private var showAddedToCartAlert = false
     @State private var showSelectOptionsAlert = false
-    
     @State private var navigateToCart = false
 
     let productID: Int
@@ -52,9 +51,7 @@ struct ProductInfoView: View {
                                     ForEach(Array(product.images.enumerated()), id: \.element.id) { index, image in
                                         if let url = URL(string: image.src) {
                                             KFImage(url)
-                                                .placeholder {
-                                                    ProgressView()
-                                                }
+                                                .placeholder { ProgressView() }
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fit)
                                                 .tag(index)
@@ -70,33 +67,22 @@ struct ProductInfoView: View {
 
                         VStack(alignment: .leading, spacing: 16) {
                             HStack {
-                                Text(product.title)
-                                    .font(.title3.bold())
+                                Text(product.title).font(.title3.bold())
                                 Spacer()
-                                
                                 HStack(spacing: 20) {
-                                    Button(action: {
-                                        if quantity > 1 { quantity -= 1 }
-                                    }) {
+                                    Button(action: { if quantity > 1 { quantity -= 1 } }) {
                                         Image(systemName: "minus")
                                             .font(.system(size: 24))
-                                            .foregroundColor(.primary)
                                             .frame(width: 30, height: 30)
                                             .background(Color.white)
                                             .clipShape(Circle())
                                             .shadow(color: .gray.opacity(0.2), radius: 2, x: 0, y: 1)
                                     }
-
                                     Text("\(quantity)")
                                         .font(.headline)
-                                        .foregroundColor(.primary)
-
-                                    Button(action: {
-                                        quantity += 1
-                                    }) {
+                                    Button(action: { quantity += 1 }) {
                                         Image(systemName: "plus")
                                             .font(.system(size: 24))
-                                            .foregroundColor(.primary)
                                             .frame(width: 30, height: 30)
                                             .background(Color.white)
                                             .clipShape(Circle())
@@ -120,8 +106,7 @@ struct ProductInfoView: View {
 
                             if !colorOptions.isEmpty {
                                 VStack(alignment: .leading) {
-                                    Text("Available Colors")
-                                        .font(.headline)
+                                    Text("Available Colors").font(.headline)
                                     ScrollView(.horizontal, showsIndicators: false) {
                                         HStack {
                                             ForEach(colorOptions, id: \.self) { color in
@@ -130,7 +115,7 @@ struct ProductInfoView: View {
                                                     .frame(width: 30, height: 30)
                                                     .overlay(
                                                         Circle()
-                                                            .stroke(selectedColorName == color ? Color("primaryColor") : Color.clear, lineWidth: 3)
+                                                            .stroke(selectedColorName == color ? Color("primaryColor") : .clear, lineWidth: 3)
                                                     )
                                                     .onTapGesture {
                                                         selectedColorName = color
@@ -142,8 +127,7 @@ struct ProductInfoView: View {
                             }
 
                             VStack(alignment: .leading) {
-                                Text("Description")
-                                    .font(.headline)
+                                Text("Description").font(.headline)
                                 Text(product.bodyHTML.isEmpty ? "No description available." : product.bodyHTML)
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
@@ -151,14 +135,11 @@ struct ProductInfoView: View {
 
                             if !sizeOptions.isEmpty {
                                 VStack(alignment: .leading) {
-                                    Text("Available Sizes")
-                                        .font(.headline)
+                                    Text("Available Sizes").font(.headline)
                                     HStack {
                                         ForEach(sizeOptions, id: \.self) { size in
                                             Text(size)
-                                                .font(.system(size: 16, weight:.medium))
-                                                .lineLimit(1)
-                                                .minimumScaleFactor(0.8)
+                                                .font(.system(size: 16, weight: .medium))
                                                 .padding(.horizontal, 10)
                                                 .frame(height: 40)
                                                 .background(selectedSize == size ? Color("primaryColor") : Color.gray.opacity(0.2))
@@ -181,74 +162,63 @@ struct ProductInfoView: View {
                     }
                 }
 
-                HStack {
-                    HStack(spacing: 0) {
-                        Text("$")
-                            .font(.title.bold())
-                            .foregroundColor(Color("primaryColor"))
-                        if let priceString = product.variants.first?.price,
-                           let price = Double(priceString) {
-                            Text(String(format: "%.2f", price))
-                                .font(.title2.weight(.bold))
-                                .foregroundColor(.black)
+                VStack {
+                    Divider()
+                    HStack {
+                        HStack(spacing: 0) {
+                            Text("$")
+                                .font(.title.bold())
+                                .foregroundColor(Color("primaryColor"))
+                            if let priceString = product.variants.first?.price,
+                               let price = Double(priceString) {
+                                Text(String(format: "%.2f", price))
+                                    .font(.title2.weight(.bold))
+                                    .foregroundColor(.black)
+                            }
                         }
-                    }
-                    Spacer()
-                    Button(action: {
-                        guard let product = viewModel.singleProductResponse?.product else { return }
-                        
-                        // Validate selections if options exist
-                        if !sizeOptions.isEmpty && selectedSize == nil {
-                            showSelectOptionsAlert = true
-                            return
-                        }
-                        
-                        if !colorOptions.isEmpty && selectedColorName == nil {
-                            showSelectOptionsAlert = true
-                            return
-                        }
-                        
-                        // Find matching variant or use first one
-                        let variant: Variant
-                        if let matchingVariant = findMatchingVariant(product: product) {
-                            variant = matchingVariant
-                        } else {
-                            variant = product.variants.first!
-                        }
-                        
-                        // Add to cart
-                        CartViewModel.shared.addToCart(product: product, variant: variant, quantity: quantity)
-                        showAddedToCartAlert = true
-                        
-                        // Reset quantity after adding
-                        quantity = 1
-                    }) {
-                        HStack {
-                            Image(systemName: "cart")
-                            Text("Add to Cart").font(.system(size: 14))
-                        }
-                        .padding()
-                        .foregroundColor(.white)
-                        .background(Color("primaryColor"))
-                        .cornerRadius(30)
-                    }
-                }
-                .padding(.horizontal)
-                .padding(.top, 20)
-                .padding(.bottom, 20)
-                .background(Color.white.ignoresSafeArea(edges: .bottom))
 
+                        Spacer()
+
+                        Button(action: {
+                            guard let product = viewModel.singleProductResponse?.product else { return }
+
+                            if !sizeOptions.isEmpty && selectedSize == nil {
+                                showSelectOptionsAlert = true
+                                return
+                            }
+
+                            if !colorOptions.isEmpty && selectedColorName == nil {
+                                showSelectOptionsAlert = true
+                                return
+                            }
+
+                            let variant: Variant = findMatchingVariant(product: product) ?? product.variants.first!
+                            CartViewModel.shared.addToCart(product: product, variant: variant, quantity: quantity)
+                            showAddedToCartAlert = true
+                            quantity = 1
+                        }) {
+                            HStack {
+                                Image(systemName: "cart")
+                                Text("Add to Cart").font(.system(size: 14))
+                            }
+                            .padding()
+                            .foregroundColor(.white)
+                            .background(Color("primaryColor"))
+                            .cornerRadius(30)
+                        }
+                    }
+                    .padding()
+                    .background(Color.white.ignoresSafeArea(edges: .bottom))
+                }
             } else {
                 ProgressView("Loading...")
             }
         }
         .alert("Select Options", isPresented: $showSelectOptionsAlert) {
             Button("OK"){}
-        }message: {
+        } message: {
             Text("Please select all available options before adding to cart.")
-
         }
-        
         .alert("Added to Cart!", isPresented: $showAddedToCartAlert) {
             Button("Continue Shopping") {
                 presentationMode.wrappedValue.dismiss()
@@ -259,100 +229,47 @@ struct ProductInfoView: View {
         } message: {
             Text("\(quantity) × \(viewModel.singleProductResponse?.product.title ?? "Item") added to cart")
         }
-        
-        // Add this NavigationLink somewhere in your view (hidden)
         .background(
             NavigationLink(destination: CartView(), isActive: $navigateToCart) {
                 EmptyView()
             }
         )
-        
-        .toolbar(.hidden, for: .tabBar)
+       // .toolbar(.hidden, for: .tabBar)
         .onAppear {
-            isFavorited = FavoriteManager.shared.isFavorited(id: Int64(productID))
+            setupInitialState()
+            setupPageControlAppearance()
 
-            UIPageControl.appearance().currentPageIndicatorTintColor = UIColor.darkGray
-            UIPageControl.appearance().pageIndicatorTintColor = UIColor.lightGray
-            
-            if NetworkMonitor.shared.isConnected {
-                isOfflineMode = false
-                print("ProductInfoView: Network is Connected. Fetching product online.")
-                viewModel.getProductByID(productID: productID)
-            } else {
-                isOfflineMode = true
-                print("ProductInfoView: Network is Disconnected. Attempting to load from favorites.")
-                if let savedProduct = FavoriteManager.shared.getFavoriteById(id: Int64(productID)) {
-                    print("ProductInfoView: Product found in favorites. ID: \(productID)")
-                    self.localImagesData = savedProduct.imagesData
-                    let product = savedProduct.toProduct()
-                    DispatchQueue.main.async {
-                        viewModel.singleProductResponse = SingleProductResponse(product: product)
-                        imageLoadTrigger.toggle()
-                    }
-                } else {
-                    print("ProductInfoView: Product NOT found in favorites for ID: \(productID). Displaying no data or error.")
-                    DispatchQueue.main.async {
-                         viewModel.singleProductResponse = nil
-                    }
-                }
-            }
-            
         }
-
         .background(Color.white)
-        .edgesIgnoringSafeArea(.bottom)
         .navigationTitle("Product Details")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
-        .background(Color.white.ignoresSafeArea())
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: {
-                    presentationMode.wrappedValue.dismiss()
-                }) {
+                Button { presentationMode.wrappedValue.dismiss() } label: {
                     Image(systemName: "chevron.left")
                         .foregroundColor(.black)
                 }
             }
-
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: {
-                    toggleFavorite()
-                }) {
+                Button { toggleFavorite() } label: {
                     Image(systemName: isFavorited ? "heart.fill" : "heart")
                         .foregroundColor(isFavorited ? .red : .black)
                 }
             }
         }
-        .onAppear {
-            setupInitialState()
-
-            let appearance = UINavigationBarAppearance()
-            appearance.configureWithOpaqueBackground()
-            appearance.backgroundColor = .white
-            appearance.shadowColor = .clear
-
-            UINavigationBar.appearance().standardAppearance = appearance
-            UINavigationBar.appearance().compactAppearance = appearance
-            UINavigationBar.appearance().scrollEdgeAppearance = appearance
-
-            UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
-            UINavigationBar.appearance().shadowImage = UIImage()
-        }
-
     }
-    
+
     private func toggleFavorite() {
         guard let product = viewModel.singleProductResponse?.product else { return }
-        
         let productId = Int64(product.id)
-        
+
         if isFavorited {
             FavoriteManager.shared.removeFromFavorites(id: productId)
             isFavorited = false
         } else {
-            let sizes = product.options.first(where: { $0.name.lowercased() == "size" })?.values ?? []
-            let colors = product.options.first(where: { $0.name.lowercased() == "color" })?.values ?? []
+            let sizes = sizeOptions
+            let colors = colorOptions
             let imageURLs = product.images.map { $0.src }
 
             let model = FavoriteProductModel(
@@ -369,14 +286,12 @@ struct ProductInfoView: View {
                 isFavorited = true
             }
         }
+        NotificationCenter.default.post(name: .favoritesChanged, object: nil)
+
     }
-    
+
     private func setupInitialState() {
         isFavorited = FavoriteManager.shared.isFavorited(id: Int64(productID))
-
-        UIPageControl.appearance().currentPageIndicatorTintColor = UIColor.darkGray
-        UIPageControl.appearance().pageIndicatorTintColor = UIColor.lightGray
-        
         if NetworkMonitor.shared.isConnected {
             isOfflineMode = false
             viewModel.getProductByID(productID: productID)
@@ -396,23 +311,19 @@ struct ProductInfoView: View {
             }
         }
     }
-    
+
     private func findMatchingVariant(product: Product) -> Variant? {
-            return product.variants.first { variant in
-                var matches = true
-                
-                if let size = selectedSize {
-                    matches = matches && (variant.option1 == size || variant.option2 == size || variant.option3 == size)
-                }
-                
-                if let color = selectedColorName {
-                    matches = matches && (variant.option1 == color || variant.option2 == color || variant.option3 == color)
-                }
-                
-                return matches
+        return product.variants.first { variant in
+            var matches = true
+            if let size = selectedSize {
+                matches = matches && (variant.option1 == size || variant.option2 == size || variant.option3 == size)
             }
+            if let color = selectedColorName {
+                matches = matches && (variant.option1 == color || variant.option2 == color || variant.option3 == color)
+            }
+            return matches
         }
-    
+    }
 }
 
 struct ProductInfo_Previews: PreviewProvider {
@@ -444,4 +355,8 @@ extension Color {
         default: return .gray.opacity(0.5)
         }
     }
+}
+private func setupPageControlAppearance() {
+    UIPageControl.appearance().currentPageIndicatorTintColor = UIColor.darkGray
+    UIPageControl.appearance().pageIndicatorTintColor = UIColor.lightGray
 }

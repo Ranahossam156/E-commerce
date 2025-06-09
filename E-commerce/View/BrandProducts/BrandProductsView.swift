@@ -12,8 +12,14 @@ import Kingfisher
 struct BrandProductsView: View {
     @State private var products: [BrandProduct] = []
     @State private var favoriteProductIDs: Set<Int> = []
+    @State private var searchText: String = ""
     @EnvironmentObject var currencyService: CurrencyService
-    
+    var filteredProducts: [BrandProduct] {
+        products.filter { product in
+            let matchesSearch = searchText.isEmpty || (product.title?.lowercased().contains(searchText.lowercased()) ?? false)
+            return matchesSearch
+        }
+    }
     let viewModel = ProductsViewModel()
     let vendor: String
     let columns = [
@@ -25,8 +31,25 @@ struct BrandProductsView: View {
         
         NavigationView {
             ScrollView {
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(.gray)
+
+                    TextField("Search something...", text: $searchText)
+                        .foregroundColor(.primary)
+
+                    Spacer()
+
+                }
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                )
+                .padding(.horizontal)
+                .padding(.top, 16)
                 LazyVGrid(columns: columns, spacing: 20) {
-                    ForEach(products) { product in
+                    ForEach(filteredProducts) { product in
                         NavigationLink(destination: ProductInfoView(productID: product.id ?? 0)) {
                             ProductCardView(
                                 product: product,
