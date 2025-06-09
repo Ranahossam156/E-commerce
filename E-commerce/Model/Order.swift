@@ -15,6 +15,7 @@ struct Order: Identifiable {
     let amountPaid: Double
     let currency: String
     let date: Date
+    var items: [OrderItem] = []
     
     var formattedDate: String {
         let formatter = DateFormatter()

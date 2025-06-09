@@ -168,7 +168,7 @@ struct SettingsSection: View {
 
     var body: some View {
         Section(header: Text("Settings").font(.caption).foregroundColor(.gray)) {
-            NavigationLink(destination: Text("Orders View")) {
+            NavigationLink(destination: OrdersView()) {
                 Text("Orders")
                     .font(.body)
                     .foregroundColor(.primary)

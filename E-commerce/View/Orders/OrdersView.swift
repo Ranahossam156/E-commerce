@@ -14,31 +14,117 @@ struct OrdersView: View {
             itemCount: 2,
             address: "Ring Road, Ismaila",
             amountPaid: 328.32,
-            currency: "USD",
-            date: DateFormatter.iso8601.date(from: "2024-06-24T05:18:33-04:00") ?? Date()
+            currency: "EUR",
+            date: DateFormatter.iso8601.date(from: "2024-06-24T05:18:33-04:00") ?? Date(),
+            items: [
+                OrderItem(
+                    name: "Bix Bag Limited Edition 229",
+                    color: "Brown",
+                    quantity: 1,
+                    price: 24.00,
+                    status: "On Progress",
+                    imageName: "bag1"
+                ),
+                
+                OrderItem(
+                    name: "Bix Bag Limited Edition 229",
+                    color: "Brown",
+                    quantity: 1,
+                    price: 24.00,
+                    status: "Shipped",
+                    imageName: "bag1"
+                ),
+                
+                OrderItem(
+                    name: "Bix Bag Limited Edition 229",
+                    color: "Brown",
+                    quantity: 1,
+                    price: 24.00,
+                    status: "Delivered",
+                    imageName: "bag1"
+                )
+            ]
         ),
         Order(
             orderNumber: "#1093",
             itemCount: 1,
             address: "Stockton St, San Francisco",
             amountPaid: 79.80,
-            currency: "USD",
-            date: DateFormatter.iso8601.date(from: "2024-06-23T08:06:56-04:00") ?? Date()
+            currency: "EUR",
+            date: DateFormatter.iso8601.date(from: "2024-06-23T08:06:56-04:00") ?? Date(),
+            items: [
+                OrderItem(
+                    name: "Bix Bag Limited Edition 229",
+                    color: "Brown",
+                    quantity: 1,
+                    price: 24.00,
+                    status: "On Progress",
+                    imageName: "bag1"
+                ),
+                
+                OrderItem(
+                    name: "Bix Bag Limited Edition 229",
+                    color: "Brown",
+                    quantity: 1,
+                    price: 24.00,
+                    status: "Shipped",
+                    imageName: "bag1"
+                ),
+                
+                OrderItem(
+                    name: "Bix Bag Limited Edition 229",
+                    color: "Brown",
+                    quantity: 1,
+                    price: 24.00,
+                    status: "Delivered",
+                    imageName: "bag1"
+                )
+            ]
         ),
         Order(
             orderNumber: "#1092",
             itemCount: 1,
             address: "Stockton St, San Francisco",
             amountPaid: 29.07,
-            currency: "USD",
-            date: DateFormatter.iso8601.date(from: "2024-06-23T08:06:56-04:00") ?? Date()
+            currency: "EUR",
+            date: DateFormatter.iso8601.date(from: "2024-06-23T08:06:56-04:00") ?? Date(),
+            items: [
+                OrderItem(
+                    name: "Bix Bag Limited Edition 229",
+                    color: "Brown",
+                    quantity: 1,
+                    price: 24.00,
+                    status: "On Progress",
+                    imageName: "bag1"
+                ),
+                
+                OrderItem(
+                    name: "Bix Bag Limited Edition 229",
+                    color: "Brown",
+                    quantity: 1,
+                    price: 24.00,
+                    status: "Shipped",
+                    imageName: "bag1"
+                ),
+                
+                OrderItem(
+                    name: "Bix Bag Limited Edition 229",
+                    color: "Brown",
+                    quantity: 1,
+                    price: 24.00,
+                    status: "Delivered",
+                    imageName: "bag1"
+                )
+            ]
         )
     ]
     
     var body: some View {
         NavigationView {
             List(orders) { order in
-                OrderCard(order: order)
+                NavigationLink(destination: OrderDetailView(order: order)){
+                    OrderCard(order: order)
+                }
             }
             .navigationTitle("Orders")
             .listStyle(.plain)
