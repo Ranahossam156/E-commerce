@@ -10,6 +10,9 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var productDetailsViewModel = ProductDetailsViewModel()
     var body: some View {
+        NavigationStack {
+            SignupScreen()
+        }
         VStack {
  
         }.onAppear{
