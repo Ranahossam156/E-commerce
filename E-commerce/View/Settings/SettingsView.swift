@@ -5,6 +5,8 @@
 import SwiftUI
 import _MapKit_SwiftUI
 import Combine
+import MapKit
+import CoreLocation
 
 struct SettingsView: View {
     @StateObject private var viewModel: SettingsViewModel = SettingsViewModel()
@@ -210,13 +212,10 @@ struct AddressesView: View {
                     Text("Select Location")
                         .font(.caption)
                         .foregroundColor(.gray)
-                    Map(coordinateRegion: $mapViewModel.region, annotationItems: mapViewModel.selectedLocation != nil ? [mapViewModel.selectedLocation!] : []) { location in
-                        MapMarker(coordinate: location.coordinate, tint: .red)
-                    }
-                    .frame(height: 200)
-                    .cornerRadius(8)
-                    .onTapGesture(perform: mapViewModel.handleMapTap)
-                    .accessibilityLabel("Map for selecting address location")
+                    MapSubView(mapViewModel: mapViewModel)
+                        .frame(height: 200)
+                        .cornerRadius(8)
+                        .accessibilityLabel("Map for selecting address location")
                 }
 
                 // Recipient Name
@@ -301,11 +300,31 @@ struct AddressesView: View {
         offsets.map { userModel.addresses[$0].id }.forEach { userModel.deleteAddress(id: $0) }
     }
 }
+// Subview for Map to reduce compiler complexity
+struct MapSubView: View {
+    @ObservedObject var mapViewModel: MapViewModel
+    private let mapSize = CGSize(width: 200, height: 200)
 
+    var body: some View {
+        Map(coordinateRegion: $mapViewModel.region,
+            interactionModes: .all,
+            showsUserLocation: true,
+            annotationItems: mapViewModel.selectedLocation != nil ? [mapViewModel.selectedLocation!] : []) { location in
+            MapMarker(coordinate: location.coordinate, tint: .red)
+        }
+        .gesture(
+            DragGesture(minimumDistance: 0)
+                .onEnded { value in
+                    let tapPoint = value.location
+                    mapViewModel.handleMapTap(at: tapPoint, in: mapViewModel.region, mapSize: mapSize)
+                }
+        )
+    }
+}
 
 //struct SettingsView_Previews: PreviewProvider {
 //    static var previews: some View {
-//        SettingsView(viewModel: <#SettingsViewModel#>)
+//        SettingsView(viewModel: SettingsViewModel)
 //            .environmentObject(CurrencyService()) // Required for previews
 //    }
 //}
