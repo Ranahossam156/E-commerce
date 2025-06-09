@@ -1,10 +1,3 @@
-//
-//  BrandsGridView.swift
-//  E-commerce
-//
-//  Created by MacBook on 29/05/2025.
-//
-
 import Kingfisher
 import SwiftUI
 
@@ -21,7 +14,7 @@ struct BrandsSectionView: View {
                 .padding([.leading, .top], 28)
 
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 42) {
+                HStack(spacing: 32) {
                     ForEach(brands) { brand in
                         NavigationLink(
                             destination: BrandProductsView(vendor: brand.title ?? "Nike")
@@ -30,55 +23,38 @@ struct BrandsSectionView: View {
                                 let midX = geo.frame(in: .global).midX
                                 let screenMidX = UIScreen.main.bounds.width / 2
                                 let distance = abs(screenMidX - midX)
-                                let minScale: CGFloat = 0.8
+                                let minScale: CGFloat = 0.9
                                 let maxScale: CGFloat = 1.0
-                                let scale = max(
-                                    maxScale - distance / screenMidX,
-                                    minScale
-                                )
+                                let scale = max(maxScale - distance / screenMidX, minScale)
 
-                                VStack {
-                                    if let url = URL(
-                                        string: brand.image?.src ?? ""
-                                    ) {
+                                VStack(spacing: 6) {
+                                    if let url = URL(string: brand.image?.src ?? "") {
                                         ZStack {
                                             Circle()
                                                 .fill(Color.white)
-                                                .frame(width: 120, height: 120)
-                                                .shadow(
-                                                    color: Color.black.opacity(
-                                                        0.2
-                                                    ),
-                                                    radius: 4,
-                                                    x: 0,
-                                                    y: 2
-                                                )
+                                                .frame(width: 85, height: 85)
+                                                .shadow(color: Color.black.opacity(0.2), radius: 3, x: 0, y: 1)
 
                                             KFImage(url)
                                                 .resizable()
                                                 .scaledToFit()
-                                                .frame(width: 100, height: 100)
+                                                .frame(width: 72, height: 72)
                                                 .clipShape(Circle())
-
                                         }
-                                        .frame(width: 140, height: 140)
+                                        .frame(width: 95, height: 95)
                                     }
 
                                     Text(brand.title ?? "")
-                                        .font(.headline)
+                                        .font(.system(size: 13, weight: .semibold))
                                         .foregroundColor(Color("black"))
-                                        .fontWeight(.bold)
-                                        .lineLimit(nil)
-                                        .fixedSize(
-                                            horizontal: false,
-                                            vertical: false
-                                        )
-                                        .frame(width: 150)
+                                        .multilineTextAlignment(.center)
+                                        .frame(width: 90)
+   
                                 }
-                                .frame(width: 80, height: 160)
+                                .frame(width: 85, height: 140)
                                 .scaleEffect(scale)
                             }
-                            .frame(width: 80, height: 160)
+                            .frame(width: 85, height: 140)
                         }
                     }
                 }
@@ -87,9 +63,7 @@ struct BrandsSectionView: View {
 
                 Spacer()
             }
-
         }
-
         .onAppear {
             self.getBrands()
         }
