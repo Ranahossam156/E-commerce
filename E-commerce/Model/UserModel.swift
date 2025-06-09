@@ -8,21 +8,20 @@
 import Foundation
 import Combine
 
+import Foundation
+import Combine
+
 struct Address: Identifiable, Codable {
-    let id: String // Unique identifier for each address
-    var recipientName: String
-    var phoneNumber: String
+    let id: String
     var addressText: String
 }
 
-class UserModel: ObservableObject
-{
+class UserModel: ObservableObject {
     @Published var name: String = ""
     @Published var email: String = ""
     @Published var addresses: [Address] = []
-    @Published var defaultAddressId: String? // Tracks the default address
+    @Published var defaultAddressId: String?
     @Published var phoneNumber: String = ""
-    
     
     private let addressesKey = "userAddresses"
     private let defaultAddressIdKey = "defaultAddressId"
@@ -36,33 +35,28 @@ class UserModel: ObservableObject
         email = UserDefaults.standard.string(forKey: "userEmail") ?? ""
         phoneNumber = UserDefaults.standard.string(forKey: "userPhoneNumber") ?? ""
         
-        // Load addresses from UserDefaults
         if let data = UserDefaults.standard.data(forKey: addressesKey),
            let savedAddresses = try? JSONDecoder().decode([Address].self, from: data) {
             addresses = savedAddresses
         }
         
-        // Load default address ID
         defaultAddressId = UserDefaults.standard.string(forKey: defaultAddressIdKey)
     }
     
-    // Save user data to UserDefaults
     func saveUserData() {
         UserDefaults.standard.set(name, forKey: "userName")
         UserDefaults.standard.set(email, forKey: "userEmail")
         UserDefaults.standard.set(phoneNumber, forKey: "userPhoneNumber")
         
-        if let encode = try? JSONEncoder().encode(addresses) {
-            UserDefaults.standard.set(encode, forKey: "addressesKey")
+        if let encoded = try? JSONEncoder().encode(addresses) {
+            UserDefaults.standard.set(encoded, forKey: addressesKey) // Fixed key
         }
-        UserDefaults.standard.set(defaultAddressId, forKey: "defaultAddressIdKey")
+        UserDefaults.standard.set(defaultAddressId, forKey: defaultAddressIdKey)
     }
     
-    func addAddress(recipientName: String, phoneNumber: String, addressText: String) {
+    func addAddress(addressText: String) {
         let newAddress = Address(
             id: UUID().uuidString,
-            recipientName: recipientName,
-            phoneNumber: phoneNumber,
             addressText: addressText
         )
         addresses.append(newAddress)
@@ -73,16 +67,15 @@ class UserModel: ObservableObject
         saveUserData()
     }
     
-    func deleteAddress(id:String){
-        addresses.removeAll() {$0.id == id }
+    func deleteAddress(id: String) {
+        addresses.removeAll { $0.id == id }
         
-        if(defaultAddressId == id) {
+        if defaultAddressId == id {
             defaultAddressId = addresses.first?.id
         }
         saveUserData()
     }
     
-    // Set an address as default
     func setDefaultAddress(id: String) {
         if addresses.contains(where: { $0.id == id }) {
             defaultAddressId = id
@@ -90,7 +83,6 @@ class UserModel: ObservableObject
         }
     }
     
-    // Get the default address text
     var defaultAddress: String {
         if let defaultId = defaultAddressId,
            let address = addresses.first(where: { $0.id == defaultId }) {
@@ -99,8 +91,6 @@ class UserModel: ObservableObject
         return addresses.first?.addressText ?? "Not Set"
     }
 }
-    
-    
     /*import FirebaseAuth
      import FirebaseFirestore
      

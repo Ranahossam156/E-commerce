@@ -2,18 +2,16 @@
 // E-commerce
 // Created by Kerolos on 02/06/2025. (Last updated: 08:42 PM EEST, June 03, 2025)
 
+
 import SwiftUI
-import _MapKit_SwiftUI
-import Combine
 import MapKit
+import Combine
 import CoreLocation
 
 struct SettingsView: View {
-    @StateObject private var viewModel: SettingsViewModel = SettingsViewModel()
-    @StateObject private var userModel: UserModel = UserModel()
-    @EnvironmentObject var currencyService: CurrencyService // Use EnvironmentObject
-
-   
+    @StateObject private var viewModel = SettingsViewModel()
+    @StateObject private var userModel = UserModel()
+    @EnvironmentObject var currencyService: CurrencyService
 
     var body: some View {
         NavigationView {
@@ -28,8 +26,8 @@ struct SettingsView: View {
             .onAppear {
                 viewModel.loadSettings()
                 userModel.loadUserData()
-                currencyService.fetchExchangeRates() // Correct method call
-                viewModel.currencyService = currencyService // Assuming you add this property
+                currencyService.fetchExchangeRates()
+                viewModel.currencyService = currencyService
             }
         }
     }
@@ -41,21 +39,23 @@ struct UserInfoHeader: View {
 
     var body: some View {
         Section {
-            HStack(alignment: .center, spacing: 12) {
+            HStack(alignment: .center, spacing: 6) {
                 Image(systemName: "person.circle.fill")
                     .resizable()
-                    .frame(width: 50, height: 50)
+                    .frame(width: 60, height: 60)
                     .foregroundColor(.gray)
                     .accessibilityHidden(true)
+                    .padding(6)
 
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(userModel.name.isEmpty ? "User Name" : userModel.name)
+                    Text(userModel.name.isEmpty ? "Guest" : userModel.name)
                         .font(.title3)
                         .fontWeight(.semibold)
                         .foregroundColor(.primary)
-                        .accessibilityLabel("User name: \(userModel.name.isEmpty ? "Not set" : userModel.name)")
+                        .accessibilityLabel("Username: \(userModel.name.isEmpty ? "Not set" : userModel.name)")
 
-                    Text(userModel.email.isEmpty ? "email@example.com" : userModel.email)
+                    Text(userModel.email.isEmpty ? "Email: email@example.com" : "Email: \(userModel.email)")
+                        .lineLimit(2)
                         .font(.subheadline)
                         .foregroundColor(.gray)
                         .accessibilityLabel("Email: \(userModel.email.isEmpty ? "Not set" : userModel.email)")
@@ -64,21 +64,99 @@ struct UserInfoHeader: View {
                         .font(.subheadline)
                         .foregroundColor(.gray)
                         .accessibilityLabel("Current address: \(userModel.defaultAddress)")
+                        .lineLimit(6) // Allow multiple lines for long addresses
 
                     Text("Phone: \(userModel.phoneNumber.isEmpty ? "Not Set" : userModel.phoneNumber)")
                         .font(.subheadline)
                         .foregroundColor(.gray)
                         .accessibilityLabel("Phone number: \(userModel.phoneNumber.isEmpty ? "Not set" : userModel.phoneNumber)")
                 }
+                
 
                 Spacer()
 
-                Image(systemName: "pencil.circle.fill")
-                    .foregroundColor(.gray)
-                    .accessibilityLabel("Edit profile")
+                NavigationLink(destination: EditProfileView(userModel: userModel)) {
+            
+                }.frame(width: 1)
             }
             .padding(.vertical, 12)
         }
+    }
+}
+
+// Subview for Editing Profile
+struct EditProfileView: View {
+    @ObservedObject var userModel: UserModel
+    @Environment(\.dismiss) var dismiss
+    @State private var editedName: String
+    @State private var editedPhoneNumber: String
+    @State private var editedEmail: String
+
+
+    init(userModel: UserModel) {
+        self.userModel = userModel
+        _editedName = State(initialValue: userModel.name)
+        _editedPhoneNumber = State(initialValue: userModel.phoneNumber)
+        _editedEmail = State(initialValue: userModel.email)
+    }
+
+    var body: some View {
+        Form {
+            Section(header: Text("Edit Profile").font(.headline)) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Name")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                    TextField("Enter name", text: $editedName)
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                        .accessibilityLabel("Enter name")
+                }
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Email")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                    TextField("Enter Email", text: $editedEmail)
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                        .accessibilityLabel("Enter Email")
+                }
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Phone Number")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                    TextField("Enter phone number", text: $editedPhoneNumber)
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                        .keyboardType(.phonePad)
+                        .accessibilityLabel("Enter phone number")
+                }
+            }
+
+            Button(action: {
+                userModel.name = editedName
+                userModel.phoneNumber = editedPhoneNumber
+                userModel.email = editedEmail
+                userModel.saveUserData()
+                dismiss()
+            }) {
+                Text("Save Changes")
+                    .font(.body)
+                    .foregroundColor(.white)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(editedName.isEmpty ? Color.gray : Color.blue)
+                    .cornerRadius(8)
+            }
+            .disabled(editedName.isEmpty)
+            .accessibilityLabel("Save profile changes")
+        }
+        .navigationTitle("Edit Profile")
     }
 }
 
@@ -106,14 +184,13 @@ struct SettingsSection: View {
 
             Picker("Currency", selection: $currencyService.selectedCurrency) {
                 ForEach(currencyService.supportedCurrencies, id: \.self) { currency in
-                 
-                    Text("\(currency)")
+                    Text(currency)
                         .tag(currency)
                 }
             }
             .pickerStyle(.menu)
             .accessibilityLabel("Select currency")
-            .onChange(of: currencyService.selectedCurrency) { _ in 
+            .onChange(of: currencyService.selectedCurrency) { _ in
                 viewModel.saveSettings()
             }
         }
@@ -160,13 +237,10 @@ struct LogoutSection: View {
 struct AddressesView: View {
     @ObservedObject var userModel: UserModel
     @StateObject private var mapViewModel = MapViewModel()
-    @State private var newRecipientName: String = ""
-    @State private var newPhoneNumber: String = ""
     @State private var newAddressText: String = ""
     
     var body: some View {
         Form {
-            // Section for existing addresses
             Section(header: Text("Your Addresses").font(.headline).foregroundColor(.primary)) {
                 if userModel.addresses.isEmpty {
                     Text("No addresses added")
@@ -175,110 +249,67 @@ struct AddressesView: View {
                         .accessibilityLabel("No addresses added")
                 } else {
                     ForEach(userModel.addresses) { address in
-                        VStack(alignment: .leading, spacing: 8) {
-                            HStack {
-                                Text(address.recipientName)
-                                    .font(.body)
-                                    .foregroundColor(.primary)
-                                Spacer()
-                                if userModel.defaultAddressId == address.id {
-                                    Image(systemName: "checkmark.circle.fill")
-                                        .foregroundColor(.green)
-                                        .accessibilityLabel("Default address")
-                                }
-                            }
-                            Text(address.phoneNumber)
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
+                        HStack {
                             Text(address.addressText)
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
+                                .font(.body)
+                                .foregroundColor(.primary)
+                            Spacer()
+                            if userModel.defaultAddressId == address.id {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(.green)
+                                    .accessibilityLabel("Default address")
+                                }
                         }
                         .padding(.vertical, 4)
                         .contentShape(Rectangle())
                         .onTapGesture {
                             userModel.setDefaultAddress(id: address.id)
                         }
-                        .accessibilityLabel("Address: \(address.addressText), Recipient: \(address.recipientName), Phone: \(address.phoneNumber). Tap to set as default.")
+                        .accessibilityLabel("Address: \(address.addressText). Tap to set as default.")
                     }
                     .onDelete(perform: deleteAddresses)
                 }
-            }
 
-            // Section for adding a new address
-            Section(header: Text("Add New Address").font(.headline).foregroundColor(.primary)) {
-                // Map for selecting location
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Select Location")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                    MapSubView(mapViewModel: mapViewModel)
-                        .frame(height: 200)
-                        .cornerRadius(8)
+                Section(header: Text("Add New Address").font(.headline).foregroundColor(.primary)) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Select Location")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                        MapSubView(mapViewModel: mapViewModel)
+                            .frame(height: 200)
+                            .cornerRadius(8)
                         .accessibilityLabel("Map for selecting address location")
-                }
-
-                // Recipient Name
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Recipient Name")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                    TextField("Enter recipient name", text: $newRecipientName)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                        .accessibilityLabel("Enter recipient name")
-                }
-
-                // Mobile Number
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Mobile Number")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                    TextField("Enter phone number", text: $newPhoneNumber)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                        .keyboardType(.phonePad)
-                        .accessibilityLabel("Enter mobile number")
-                }
-
-                // Address (populated by map or manual entry)
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Address")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                    TextField("Enter address or select from map", text: $newAddressText)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                        .accessibilityLabel("Enter address")
-                }
-
-                Button(action: {
-                    if !newRecipientName.isEmpty && !newPhoneNumber.isEmpty && !newAddressText.isEmpty {
-                        userModel.addAddress(
-                            recipientName: newRecipientName,
-                            phoneNumber: newPhoneNumber,
-                            addressText: newAddressText
-                        )
-                        // Clear fields after adding
-                        newRecipientName = ""
-                        newPhoneNumber = ""
-                        newAddressText = ""
-                        mapViewModel.resetSelectedLocation()
                     }
-                }) {
-                    Text("Add Address")
-                        .font(.body)
-                        .foregroundColor(.white)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Address")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                        TextField("Enter address or select from map", text: $newAddressText)
                         .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(newRecipientName.isEmpty || newPhoneNumber.isEmpty || newAddressText.isEmpty ? Color.gray : Color.blue)
-                        .cornerRadius(8)
-                }
-                .disabled(newRecipientName.isEmpty || newPhoneNumber.isEmpty || newAddressText.isEmpty)
-                .accessibilityLabel("Add new address")
+                        .background(Color(.systemGray6))
+                         .cornerRadius(8)
+                        .accessibilityLabel("Enter address")
+                    }
+
+                    Button(action: {
+                        if !newAddressText.isEmpty {
+                            userModel.addAddress(addressText: newAddressText)
+                            newAddressText = ""
+                            mapViewModel.resetSelectedLocation()
+                        }
+                        }) {
+                            Text("Add Address")
+                                .font(.body)
+                                .foregroundColor(.white)
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(newAddressText.isEmpty ? Color.gray : Color.blue)
+                                .cornerRadius(8)
+                        }
+                        .disabled(newAddressText.isEmpty)
+                        .accessibilityLabel("Add new address")
+                    }
             }
         }
         .navigationTitle("Addresses")
@@ -300,10 +331,9 @@ struct AddressesView: View {
         offsets.map { userModel.addresses[$0].id }.forEach { userModel.deleteAddress(id: $0) }
     }
 }
-// Subview for Map to reduce compiler complexity
 struct MapSubView: View {
     @ObservedObject var mapViewModel: MapViewModel
-    private let mapSize = CGSize(width: 200, height: 200)
+    private let mapSize = CGSize(width: 250, height: 250)
 
     var body: some View {
         Map(coordinateRegion: $mapViewModel.region,
@@ -321,10 +351,9 @@ struct MapSubView: View {
         )
     }
 }
-
-//struct SettingsView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        SettingsView(viewModel: SettingsViewModel)
-//            .environmentObject(CurrencyService()) // Required for previews
-//    }
-//}
+struct SettingsView_Previews: PreviewProvider {
+    static var previews: some View {
+        SettingsView()
+            .environmentObject(CurrencyService()) // Required for previews
+    }
+}
