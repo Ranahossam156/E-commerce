@@ -38,7 +38,7 @@ struct CategoriesView: View {
                     Picker(selection: $selectedProductType, label: EmptyView()) {
                         Text("All").tag("All")
                         ForEach(availableProductTypes, id: \.self) { type in
-                            Text(type).tag(type)
+                            Text(type.capitalizingFirstLetterOnly).tag(type)
                         }
                     }
                 } label: {
@@ -64,7 +64,7 @@ struct CategoriesView: View {
                                 fetchProductsForCategory(collectionId: id)
                             }
                         }) {
-                            Text(category.title ?? "Untitled")
+                            Text((category.title ?? "Untitled").capitalizingFirstLetterOnly)
                                 .font(.system(size: 16, weight: .medium))
                                 .padding(.vertical, 8)
                                 .padding(.horizontal, 16)
