@@ -1,30 +1,35 @@
+import Foundation
 import SwiftUI
 
-struct FavoriteScreen: View {
-    @StateObject private var viewModel = FavoritesViewModel()
-    @State private var selectedFilter = "All"
-    @State private var searchText: String = ""
+struct SearchScreen: View {
+    @StateObject private var viewModel = SearchViewModel()
+    @State private var searchText = ""
 
-    let filters = ["All", "Latest", "Most Popular", "Cheapest"]
-    let columns = [GridItem(.flexible()), GridItem(.flexible())]
-    var filteredProducts: [FavoritesModel] {
-        viewModel.favorites.filter { product in
-            let matchesSearch = searchText.isEmpty || (product.title?.lowercased().contains(searchText.lowercased()) ?? false)
-            return matchesSearch
+    var filteredProducts: [Product] {
+        let products = viewModel.allProductsResponse?.products ?? []
+        if searchText.isEmpty {
+            return products
+        } else {
+            return products.filter { product in
+                let title = product.title.lowercased()
+                let desc = product.bodyHTML.lowercased()
+                return title.contains(searchText.lowercased()) || desc.contains(searchText.lowercased())
+            }
         }
     }
+
+    let columns = [
+        GridItem(.flexible()),
+        GridItem(.flexible())
+    ]
+
     var body: some View {
         ZStack {
             NavigationStack {
                 VStack(spacing: 16) {
                     ZStack {
-                        Text("My Favorite")
+                        Text("Search")
                             .font(.title3.bold())
-                        HStack {
-                            Spacer()
-                            Image(systemName: "bell.badge.fill")
-                                .foregroundColor(.black)
-                        }
                     }
                     .padding(.horizontal)
 
@@ -36,7 +41,6 @@ struct FavoriteScreen: View {
                             .foregroundColor(.primary)
 
                         Spacer()
-
                     }
                     .padding()
                     .background(
@@ -48,22 +52,23 @@ struct FavoriteScreen: View {
 
                     ScrollView {
                         LazyVGrid(columns: columns, spacing: 20) {
-                            ForEach(filteredProducts, id: \.self) { product in
+                            ForEach(filteredProducts, id: \.id) { product in
                                 NavigationLink {
-                                    ProductInfoView(productID: Int(product.id))
+                                    ProductInfoView(productID: product.id)
                                 } label: {
-                                    FavoriteItemView(product: product)
+                                    SearchItemView(product: product)
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }
                         }
                         .padding()
                     }
+                    Spacer().frame(height: 10)
                 }
                 .background(Color.white)
                 .navigationBarTitleDisplayMode(.inline)
-                .navigationBarBackButtonHidden(true)
             }
+
 
             VStack {
                 Spacer()
@@ -73,7 +78,7 @@ struct FavoriteScreen: View {
             }
         }
         .onAppear {
-            viewModel.fetchFavorites()
+            viewModel.getAllProducts(productID: 0)
             DispatchQueue.main.async {
                 UIView.setAnimationsEnabled(false)
             }
@@ -81,13 +86,12 @@ struct FavoriteScreen: View {
         .onDisappear {
             UIView.setAnimationsEnabled(true)
         }
-        .toolbar(.visible, for: .tabBar)
+        //.toolbar(.visible, for: .tabBar)
     }
 }
 
-
-struct FavoritesScreen_Previews: PreviewProvider {
+struct SearchScreen_Previews: PreviewProvider {
     static var previews: some View {
-        FavoriteScreen()
+        SearchScreen()
     }
 }
