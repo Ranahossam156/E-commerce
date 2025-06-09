@@ -311,7 +311,7 @@ struct AddressesView: View {
 }
 struct MapSubView: View {
     @ObservedObject var mapViewModel: MapViewModel
-    private let mapSize = CGSize(width: 250, height: 250)
+    private let mapSize = CGSize(width: 270, height: 250)
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
@@ -328,7 +328,7 @@ struct MapSubView: View {
                         mapViewModel.handleMapTap(at: tapPoint, in: mapViewModel.region, mapSize: mapSize)
                     }
             )
-            .frame(height: 300)
+            .frame(width:300,height: 300)
             .cornerRadius(8)
 
 //            Button(action: {
