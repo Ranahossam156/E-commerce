@@ -15,13 +15,23 @@ protocol NetworkSProtocol{
 }
 
 class NetworkService : NetworkSProtocol{
+    private static let session: Session = {
+        #if targetEnvironment(simulator)
+                let config = URLSessionConfiguration.ephemeral
+        #else
+                let config = URLSessionConfiguration.default
+        #endif
+        
+        return Session(configuration: config)
+    }()
+    
     static func fetchProductImages(productID: Int, completionHandler: @escaping (ProductImagesResponse?) -> Void) {
         let productURL = "https://ios4-sv.myshopify.com/admin/api/2025-04/products/\(productID)/images.json"
         let headers: HTTPHeaders = [
             "X-Shopify-Access-Token": "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"
         ]
 
-        AF.request(productURL,  method: .get, headers: headers)
+        session.request(productURL,  method: .get, headers: headers)
             .responseDecodable(of: ProductImagesResponse.self) { response in
                 switch response.result {
                 case .success(let productImages):
@@ -44,7 +54,7 @@ class NetworkService : NetworkSProtocol{
             "X-Shopify-Access-Token": "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"
         ]
 
-        AF.request(productURL,  method: .get, headers: headers)
+        session.request(productURL,  method: .get, headers: headers)
             .responseDecodable(of: VariantsResponse.self) { response in
                 switch response.result {
                 case .success(let productVariants):
@@ -66,7 +76,7 @@ class NetworkService : NetworkSProtocol{
             "X-Shopify-Access-Token": "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"
         ]
 
-        AF.request(productURL,  method: .get, headers: headers)
+        session.request(productURL,  method: .get, headers: headers)
             .responseDecodable(of: SingleProductResponse.self) { response in
                 switch response.result {
                 case .success(let productDetails):
