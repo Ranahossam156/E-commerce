@@ -1,5 +1,4 @@
 {
-  "originHash" : "b892505e9fe457ebb7caac9da4195a1d0bfba56bb1eb46ee98f262285a20f0f3",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -15,26 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Alamofire/Alamofire",
       "state" : {
-        "revision" : "513364f870f6bfc468f9d2ff0a95caccc10044c5",
-        "version" : "5.10.2"
-      }
-    },
-    {
-      "identity" : "kingfisher",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/onevcat/Kingfisher.git",
-      "state" : {
-        "revision" : "de7c12c90fadf006cff6e6a47064df06d429d8a9",
-        "version" : "6.0.0"
-      }
-    },
-    {
-      "identity" : "reachability.swift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ashleymills/Reachability.swift",
-      "state" : {
-        "branch" : "master",
-        "revision" : "21d1dc412cfecbe6e34f1f4c4eb88d3f912654a6"
+        "revision" : "f455c2975872ccd2d9c81594c658af65716e9b9a",
+        "version" : "5.9.1"
       }
     },
     {
@@ -146,5 +127,5 @@
       }
     }
   ],
-  "version" : 3
+  "version" : 2
 }

@@ -15,23 +15,13 @@ protocol NetworkSProtocol{
 }
 
 class NetworkService : NetworkSProtocol{
-    private static let session: Session = {
-        #if targetEnvironment(simulator)
-                let config = URLSessionConfiguration.ephemeral
-        #else
-                let config = URLSessionConfiguration.default
-        #endif
-        
-        return Session(configuration: config)
-    }()
-    
     static func fetchProductImages(productID: Int, completionHandler: @escaping (ProductImagesResponse?) -> Void) {
         let productURL = "https://ios4-sv.myshopify.com/admin/api/2025-04/products/\(productID)/images.json"
         let headers: HTTPHeaders = [
             "X-Shopify-Access-Token": "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"
         ]
 
-        session.request(productURL,  method: .get, headers: headers)
+        AF.request(productURL,  method: .get, headers: headers)
             .responseDecodable(of: ProductImagesResponse.self) { response in
                 switch response.result {
                 case .success(let productImages):
@@ -46,7 +36,6 @@ class NetworkService : NetworkSProtocol{
     }
     
 
-
     
     static func fetchProductVariants(productID: Int, completionHandler: @escaping (VariantsResponse?) -> Void) {
         let productURL = "https://ios4-sv.myshopify.com/admin/api/2025-04/products/\(productID)/variants.json"
@@ -54,7 +43,7 @@ class NetworkService : NetworkSProtocol{
             "X-Shopify-Access-Token": "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"
         ]
 
-        session.request(productURL,  method: .get, headers: headers)
+        AF.request(productURL,  method: .get, headers: headers)
             .responseDecodable(of: VariantsResponse.self) { response in
                 switch response.result {
                 case .success(let productVariants):
@@ -76,7 +65,7 @@ class NetworkService : NetworkSProtocol{
             "X-Shopify-Access-Token": "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"
         ]
 
-        session.request(productURL,  method: .get, headers: headers)
+        AF.request(productURL,  method: .get, headers: headers)
             .responseDecodable(of: SingleProductResponse.self) { response in
                 switch response.result {
                 case .success(let productDetails):
@@ -89,5 +78,20 @@ class NetworkService : NetworkSProtocol{
                 }
             }
     }
-
+//    
+//    static func feetchEmployees(completionHandler: @escaping (EmployeeResponse?) -> Void) {
+//        let employeesUrl = "https://dl.dropboxusercontent.com/s/1y7yqdefyayegzo/employeelist.json?dl=0"
+//        AF.request(employeesUrl, method: .get, encoding: URLEncoding.default)
+//            .responseDecodable(of: EmployeeResponse.self) { response in
+//                switch response.result {
+//                case .success(let employees):
+//                    completionHandler(employees)
+//                    print("employees fetched successfully")
+//                case .failure(let error):
+//                    completionHandler(nil)
+//                    print("Error fetching employees: \(error)")
+//                }
+//            }
+//    }
+    
 }
