@@ -10,7 +10,6 @@ import SwiftUI
 import Kingfisher
 import PassKit
 
-
 struct CartView: View {
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject private var viewModel = CartViewModel.shared
@@ -22,7 +21,7 @@ struct CartView: View {
     @State private var paymentStatus: String?
     @State private var paymentSheetPresented = false
     @State private var showPaymentOptions = false
-    @State private var selectedPaymentMethod: String? // Track selected payment method
+    @State private var selectedPaymentMethod: String?
     
     // Properly initialized payment request
     private var paymentRequest: PKPaymentRequest {
@@ -140,23 +139,15 @@ struct CartView: View {
         }, message: {
             Text("Are you sure you want to remove \(itemToDelete?.product.title ?? "this item") from your cart?")
         })
-        .alert("Select Payment Method", isPresented: $showPaymentOptions, actions: {
-            Button("Apple Pay") {
-                selectedPaymentMethod = "Apple Pay"
-                startApplePay()
-            }
-            Button("PayPal (Sandbox)") {
-                selectedPaymentMethod = "PayPal"
-                processPayPalSandboxPayment()
-            }
-            Button("Cash on Delivery") {
-                selectedPaymentMethod = "Cash on Delivery"
-                showCODConfirmation()
-            }
-            Button("Cancel", role: .cancel) {}
-        }, message: {
-            Text("Choose your payment method")
-        })
+        .sheet(isPresented: $showPaymentOptions) {
+            PaymentOptionsView(
+                isPresented: $showPaymentOptions,
+                selectedPaymentMethod: $selectedPaymentMethod,
+                startApplePay: startApplePay,
+                processPayPalSandboxPayment: processPayPalSandboxPayment,
+                showCODConfirmation: showCODConfirmation
+            )
+        }
         .alert("Confirm Cash on Delivery", isPresented: .constant(checkoutViewModel.showPaymentSuccess && selectedPaymentMethod == "Cash on Delivery"), actions: {
             Button("OK") {
                 checkoutViewModel.showPaymentSuccess = false
@@ -173,6 +164,7 @@ struct CartView: View {
     }
     
     private func startApplePay() {
+        showPaymentOptions = false // Dismiss sheet before presenting Apple Pay
         guard PKPaymentAuthorizationViewController.canMakePayments(usingNetworks: paymentRequest.supportedNetworks) else {
             paymentStatus = "Apple Pay not available. Please add a test card in Wallet."
             return
@@ -181,12 +173,15 @@ struct CartView: View {
         let controller = PKPaymentAuthorizationViewController(paymentRequest: paymentRequest)
         controller?.delegate = PaymentHandler(isSimulator: ProcessInfo.processInfo.environment["SIMULATOR_DEVICE_NAME"] != nil, paymentStatus: $paymentStatus, checkoutViewModel: checkoutViewModel)
         
-        if let controller = controller {
-            UIApplication.shared.windows.first?.rootViewController?.present(controller, animated: true)
+        if let controller = controller, let window = UIApplication.shared.windows.first {
+            window.rootViewController?.present(controller, animated: true) {
+                // No need to dismiss sheet here; it's already handled
+            }
         }
     }
     
     private func processPayPalSandboxPayment() {
+        showPaymentOptions = false // Dismiss sheet before processing
         checkoutViewModel.processPayment(for: viewModel.cartItems, total: viewModel.total) {
             paymentStatus = "PayPal Sandbox payment simulated (integrate PayPal SDK with Client ID: [Your_Sandbox_Client_ID])"
             if checkoutViewModel.showPaymentSuccess {
@@ -194,10 +189,10 @@ struct CartView: View {
                 presentationMode.wrappedValue.dismiss()
             }
         }
-        // Replace [Your_Sandbox_Client_ID] with the Client ID from your Sandbox App
     }
     
     private func showCODConfirmation() {
+        showPaymentOptions = false // Dismiss sheet before processing
         checkoutViewModel.processPayment(for: viewModel.cartItems, total: viewModel.total) {
             paymentStatus = "Cash on Delivery initiated"
             if checkoutViewModel.showPaymentSuccess {
@@ -215,3 +210,83 @@ struct CartView_Previews: PreviewProvider {
     }
 }
 
+// Updated PaymentOptionsView
+struct PaymentOptionsView: View {
+    @Binding var isPresented: Bool
+    @Binding var selectedPaymentMethod: String?
+    let startApplePay: () -> Void
+    let processPayPalSandboxPayment: () -> Void
+    let showCODConfirmation: () -> Void
+    
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 20) {
+                Text("Select Payment Method")
+                    .font(.headline)
+                    .padding(.top)
+                
+                Button(action: {
+                    selectedPaymentMethod = "Apple Pay"
+                    startApplePay()
+                }) {
+                    HStack {
+                        Image(systemName: "creditcard") // Replaced invalid 'apple.pay' with 'creditcard'
+                            .foregroundColor(.black)
+                        Text("Apple Pay")
+                            .foregroundColor(.black)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.gray.opacity(0.2))
+                    .cornerRadius(10)
+                }
+                .disabled(!PKPaymentAuthorizationViewController.canMakePayments(usingNetworks: [.visa, .masterCard, .amex, .discover]))
+                
+                Button(action: {
+                    selectedPaymentMethod = "PayPal"
+                    processPayPalSandboxPayment()
+                }) {
+                    HStack {
+                        Image(systemName: "dollarsign.circle")
+                            .foregroundColor(.blue)
+                        Text("PayPal (Sandbox)")
+                            .foregroundColor(.blue)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.blue.opacity(0.2))
+                    .cornerRadius(10)
+                }
+                
+                Button(action: {
+                    selectedPaymentMethod = "Cash on Delivery"
+                    showCODConfirmation()
+                }) {
+                    HStack {
+                        Image(systemName: "creditcard")
+                            .foregroundColor(.green)
+                        Text("Cash on Delivery")
+                            .foregroundColor(.green)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.green.opacity(0.2))
+                    .cornerRadius(10)
+                }
+                
+                Button("Cancel") {
+                    isPresented = false
+                }
+                .foregroundColor(.red)
+                .padding(.bottom)
+            }
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(Color(.systemBackground))
+            .cornerRadius(20)
+            .shadow(radius: 10)
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
+        }
+    }
+}
