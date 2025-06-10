@@ -12,7 +12,7 @@ struct SettingsView: View {
     @StateObject private var viewModel = SettingsViewModel()
     @StateObject private var userModel = UserModel()
     @EnvironmentObject var currencyService: CurrencyService
-
+    
     var body: some View {
         NavigationView {
             List {
@@ -36,7 +36,7 @@ struct SettingsView: View {
 // Subview for User Info Header
 struct UserInfoHeader: View {
     @ObservedObject var userModel: UserModel
-
+    
     var body: some View {
         Section {
             HStack(alignment: .center, spacing: 6) {
@@ -46,37 +46,37 @@ struct UserInfoHeader: View {
                     .foregroundColor(.gray)
                     .accessibilityHidden(true)
                     .padding(6)
-
+                
                 VStack(alignment: .leading, spacing: 6) {
                     Text(userModel.name.isEmpty ? "Guest" : userModel.name)
                         .font(.title3)
                         .fontWeight(.semibold)
                         .foregroundColor(.primary)
                         .accessibilityLabel("Username: \(userModel.name.isEmpty ? "Not set" : userModel.name)")
-
+                    
                     Text(userModel.email.isEmpty ? "Email: email@example.com" : "Email: \(userModel.email)")
                         .lineLimit(2)
                         .font(.subheadline)
                         .foregroundColor(.gray)
                         .accessibilityLabel("Email: \(userModel.email.isEmpty ? "Not set" : userModel.email)")
-
+                    
                     Text("Address: \(userModel.defaultAddress)")
                         .font(.subheadline)
                         .foregroundColor(.gray)
                         .accessibilityLabel("Current address: \(userModel.defaultAddress)")
                         .lineLimit(6) // Allow multiple lines for long addresses
-
+                    
                     Text("Phone: \(userModel.phoneNumber.isEmpty ? "Not Set" : userModel.phoneNumber)")
                         .font(.subheadline)
                         .foregroundColor(.gray)
                         .accessibilityLabel("Phone number: \(userModel.phoneNumber.isEmpty ? "Not set" : userModel.phoneNumber)")
                 }
                 
-
+                
                 Spacer()
-
+                
                 NavigationLink(destination: EditProfileView(userModel: userModel)) {
-            
+                    
                 }.frame(width: 1)
             }
             .padding(.vertical, 12)
@@ -91,15 +91,15 @@ struct EditProfileView: View {
     @State private var editedName: String
     @State private var editedPhoneNumber: String
     @State private var editedEmail: String
-
-
+    
+    
     init(userModel: UserModel) {
         self.userModel = userModel
         _editedName = State(initialValue: userModel.name)
         _editedPhoneNumber = State(initialValue: userModel.phoneNumber)
         _editedEmail = State(initialValue: userModel.email)
     }
-
+    
     var body: some View {
         Form {
             Section(header: Text("Edit Profile").font(.headline)) {
@@ -124,7 +124,7 @@ struct EditProfileView: View {
                         .cornerRadius(8)
                         .accessibilityLabel("Enter Email")
                 }
-
+                
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Phone Number")
                         .font(.caption)
@@ -137,7 +137,7 @@ struct EditProfileView: View {
                         .accessibilityLabel("Enter phone number")
                 }
             }
-
+            
             Button(action: {
                 userModel.name = editedName
                 userModel.phoneNumber = editedPhoneNumber
@@ -165,7 +165,7 @@ struct SettingsSection: View {
     @ObservedObject var viewModel: SettingsViewModel
     @ObservedObject var currencyService: CurrencyService
     @ObservedObject var userModel: UserModel
-
+    
     var body: some View {
         Section(header: Text("Settings").font(.caption).foregroundColor(.gray)) {
             NavigationLink(destination: OrdersView()) {
@@ -174,14 +174,14 @@ struct SettingsSection: View {
                     .foregroundColor(.primary)
             }
             .accessibilityLabel("Go to orders")
-
+            
             NavigationLink(destination: AddressesView(userModel: userModel)) {
                 Text("Addresses")
                     .font(.body)
                     .foregroundColor(.primary)
             }
             .accessibilityLabel("Go to addresses")
-
+            
             Picker("Currency", selection: $currencyService.selectedCurrency) {
                 ForEach(currencyService.supportedCurrencies, id: \.self) { currency in
                     Text(currency)
@@ -218,7 +218,7 @@ struct VersionSection: View {
 // Subview for Logout Section
 struct LogoutSection: View {
     @ObservedObject var viewModel: SettingsViewModel
-
+    
     var body: some View {
         Section(header: Text("ACCOUNT").font(.caption).foregroundColor(.gray)) {
             Button(action: {
@@ -237,6 +237,8 @@ struct LogoutSection: View {
 struct AddressesView: View {
     @ObservedObject var userModel: UserModel
     @StateObject private var mapViewModel = MapViewModel()
+    @State private var showDeleteAlert = false
+    @State private var addressToDelete : IndexSet? // Store the IndexSet for deletion
     
     var body: some View {
         Form {
@@ -259,10 +261,14 @@ struct AddressesView: View {
                             userModel.setDefaultAddress(id: address.id)
                         }
                     }
-                    .onDelete(perform: deleteAddresses)
+                    .onDelete(perform:{ offsets in
+                        showDeleteAlert = true
+                        addressToDelete = offsets
+                    
+                    })
                 }
             }
-
+            
             Section(header: Text("Add New Address").font(.headline)) {
                 MapSubView(mapViewModel: mapViewModel)
                 
@@ -303,16 +309,34 @@ struct AddressesView: View {
         .toolbar {
             EditButton()
         }
+        .alert(isPresented: $showDeleteAlert){
+                  Alert (
+                      title: Text("Delete Address"),
+                      message: Text("Are you sure you want to delete this address?"),
+                      primaryButton: .destructive(Text ("Delete"), action: {
+                          if let offsets = addressToDelete {
+                              deleteAddresses(at: offsets)
+                              addressToDelete = nil 
+                          }
+                      }), secondaryButton: .cancel{
+                          addressToDelete = nil
+                      }
+                      )
+              }
     }
     
-    private func deleteAddresses(at offsets: IndexSet) {
-        offsets.map { userModel.addresses[$0].id }.forEach { userModel.deleteAddress(id: $0) }
+        private func deleteAddresses(at offsets: IndexSet) {
+            offsets.forEach{ index in
+                let addressId = userModel.addresses[index].id
+                userModel.deleteAddress(id: addressId)
+                
+        }
     }
 }
 struct MapSubView: View {
     @ObservedObject var mapViewModel: MapViewModel
     private let mapSize = CGSize(width: 270, height: 250)
-
+    
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             Map(coordinateRegion: $mapViewModel.region,
@@ -321,26 +345,26 @@ struct MapSubView: View {
                 annotationItems: mapViewModel.selectedLocation != nil ? [mapViewModel.selectedLocation!] : []) { location in
                 MapMarker(coordinate: location.coordinate, tint: .red)
             }
-            .gesture(
-                DragGesture(minimumDistance: 0)
-                    .onEnded { value in
-                        let tapPoint = value.location
-                        mapViewModel.handleMapTap(at: tapPoint, in: mapViewModel.region, mapSize: mapSize)
-                    }
-            )
-            .frame(width:300,height: 300)
-            .cornerRadius(8)
-
-//            Button(action: {
-//                mapViewModel.centerOnUserLocation()
-//            }) {
-//                Image(systemName: "location.fill")
-//                    .padding(10)
-//                    .background(Color.white)
-//                    .clipShape(Circle())
-//                    .shadow(radius: 2)
-//            }
-            .padding(16)
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onEnded { value in
+                            let tapPoint = value.location
+                            mapViewModel.handleMapTap(at: tapPoint, in: mapViewModel.region, mapSize: mapSize)
+                        }
+                )
+                .frame(width:300,height: 300)
+                .cornerRadius(8)
+            
+            //            Button(action: {
+            //                mapViewModel.centerOnUserLocation()
+            //            }) {
+            //                Image(systemName: "location.fill")
+            //                    .padding(10)
+            //                    .background(Color.white)
+            //                    .clipShape(Circle())
+            //                    .shadow(radius: 2)
+            //            }
+                .padding(16)
         }
     }
 }
