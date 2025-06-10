@@ -262,9 +262,8 @@ struct AddressesView: View {
                         }
                     }
                     .onDelete(perform:{ offsets in
-                        showDeleteAlert = true
                         addressToDelete = offsets
-                    
+                        showDeleteAlert = true
                     })
                 }
             }
@@ -310,26 +309,26 @@ struct AddressesView: View {
             EditButton()
         }
         .alert(isPresented: $showDeleteAlert){
-                  Alert (
-                      title: Text("Delete Address"),
-                      message: Text("Are you sure you want to delete this address?"),
-                      primaryButton: .destructive(Text ("Delete"), action: {
-                          if let offsets = addressToDelete {
-                              deleteAddresses(at: offsets)
-                              addressToDelete = nil 
-                          }
-                      }), secondaryButton: .cancel{
-                          addressToDelete = nil
-                      }
-                      )
-              }
+            Alert (
+                title: Text("Delete Address"),
+                message: Text("Are you sure you want to delete this address?"),
+                primaryButton: .destructive(Text ("Delete"), action: {
+                    if let offsets = addressToDelete {
+                        deleteAddresses(at: offsets)
+                        addressToDelete = nil
+                    }
+                }), secondaryButton: .cancel{
+                    addressToDelete = nil
+                }
+            )
+        }
     }
     
-        private func deleteAddresses(at offsets: IndexSet) {
-            offsets.forEach{ index in
-                let addressId = userModel.addresses[index].id
-                userModel.deleteAddress(id: addressId)
-                
+    private func deleteAddresses(at offsets: IndexSet) {
+        offsets.forEach{ index in
+            let addressId = userModel.addresses[index].id
+            userModel.deleteAddress(id: addressId)
+            
         }
     }
 }
