@@ -1,5 +1,5 @@
 {
-  "originHash" : "3d28db95d5a81feb0d800109fb3ccc41df6c3780dfd63d3ca60031a638f3d13d",
+  "originHash" : "0165e967c0420c5e26aae107d51e95219ab49849c2210cecef4a1bfc0b167076",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -17,6 +17,24 @@
       "state" : {
         "revision" : "de7c12c90fadf006cff6e6a47064df06d429d8a9",
         "version" : "6.0.0"
+      }
+    },
+    {
+      "identity" : "paypal-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/paypal/paypal-ios.git",
+      "state" : {
+        "revision" : "05582d305d28f97de7f700c4c33113031b43f6c8",
+        "version" : "2.0.0"
+      }
+    },
+    {
+      "identity" : "paypalcheckout-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/paypal/paypalcheckout-ios",
+      "state" : {
+        "revision" : "da1b998dcab91011b05df139a6819cc58dd45ccd",
+        "version" : "1.3.0"
       }
     },
     {
