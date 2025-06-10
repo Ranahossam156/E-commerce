@@ -12,15 +12,21 @@ import SwiftUI
 class PaymentHandler: NSObject, PKPaymentAuthorizationViewControllerDelegate {
     private let isSimulator: Bool
     @Binding var paymentStatus: String?
+    private weak var checkoutViewModel: CheckoutViewModel?
     
-    init(isSimulator: Bool, paymentStatus: Binding<String?>) {
+    init(isSimulator: Bool, paymentStatus: Binding<String?>, checkoutViewModel: CheckoutViewModel) {
         self.isSimulator = isSimulator
         self._paymentStatus = paymentStatus
+        self.checkoutViewModel = checkoutViewModel
     }
     
     func paymentAuthorizationViewControllerDidFinish(_ controller: PKPaymentAuthorizationViewController) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            controller.dismiss(animated: true)
+        DispatchQueue.main.async {
+            controller.dismiss(animated: true) {
+                if self.paymentStatus == nil {
+                    self.paymentStatus = "Payment cancelled or completed"
+                }
+            }
         }
     }
     
@@ -28,10 +34,12 @@ class PaymentHandler: NSObject, PKPaymentAuthorizationViewControllerDelegate {
         if isSimulator {
             print("Simulated payment authorized in Simulator with token: \(payment.token.paymentData.base64EncodedString())")
             self.paymentStatus = "Simulated Payment Success"
+            checkoutViewModel?.showPaymentSuccess = true
             completion(.success)
         } else {
             print("Real payment authorized with token: \(payment.token.paymentData.base64EncodedString())")
             self.paymentStatus = "Real Payment Success"
+            checkoutViewModel?.showPaymentSuccess = true
             completion(.success)
         }
         DispatchQueue.main.async {
@@ -41,12 +49,31 @@ class PaymentHandler: NSObject, PKPaymentAuthorizationViewControllerDelegate {
         }
     }
     
-    // Handle cancellation when the "x" button is tapped
-        func paymentAuthorizationViewControllerWillAuthorizePayment(_ controller: PKPaymentAuthorizationViewController) {
-            // This method is called before authorization; we can use it to prepare, but it’s not for cancellation
+    func paymentAuthorizationViewController(_ controller: PKPaymentAuthorizationViewController, didAuthorizePayment payment: PKPayment, handler completion: @escaping (PKPaymentAuthorizationResult) -> Void) {
+        if isSimulator {
+            print("Simulated payment authorized in Simulator with token: \(payment.token.paymentData.base64EncodedString())")
+            self.paymentStatus = "Simulated Payment Success"
+            checkoutViewModel?.showPaymentSuccess = true
+            completion(PKPaymentAuthorizationResult(status: .success, errors: nil))
+        } else {
+            print("Real payment authorized with token: \(payment.token.paymentData.base64EncodedString())")
+            self.paymentStatus = "Real Payment Success"
+            checkoutViewModel?.showPaymentSuccess = true
+            completion(PKPaymentAuthorizationResult(status: .success, errors: nil))
         }
-        
-        func paymentAuthorizationViewControllerDidAuthorizePayment(_ controller: PKPaymentAuthorizationViewController, completion: @escaping (PKPaymentAuthorizationStatus) -> Void) {
-            // This is a legacy method; use the new didAuthorizePayment with PKPaymentAuthorizationResult
+        DispatchQueue.main.async {
+            controller.dismiss(animated: true) {
+                // Ensure the sheet is dismissed after authorization
+            }
         }
+    }
+    
+    // Remove deprecated or unused methods
+    // func paymentAuthorizationViewControllerWillAuthorizePayment(_ controller: PKPaymentAuthorizationViewController) {
+    //     // No action needed unless specific preparation is required
+    // }
+    //
+    // func paymentAuthorizationViewControllerDidAuthorizePayment(_ controller: PKPaymentAuthorizationViewController, completion: @escaping (PKPaymentAuthorizationStatus) -> Void) {
+    //     // Legacy method; use the above didAuthorizePayment instead
+    // }
 }
