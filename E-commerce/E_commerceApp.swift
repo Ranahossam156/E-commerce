@@ -17,25 +17,25 @@ struct E_commerceApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
-//            TabView {
-//                HomeView()
-//                    .tabItem {
-//                        Label("Home", systemImage: "house.fill")
-//                    }
-//
-//                FavoriteScreen()
-//                    .tabItem {
-//                        Label("Favorites", systemImage: "heart.fill")
-//                    }
-//
-//                SettingsView()
-//                    .tabItem {
-//                        Label("My Profile", systemImage: "person.fill")
-//                    }
-//
-//            }
-//            .environmentObject(currencyService)
+            //ContentView()
+            TabView {
+                HomeView()
+                    .tabItem {
+                        Label("Home", systemImage: "house.fill")
+                    }
+
+                FavoriteScreen()
+                    .tabItem {
+                        Label("Favorites", systemImage: "heart.fill")
+                    }
+
+                SettingsView()
+                    .tabItem {
+                        Label("My Profile", systemImage: "person.fill")
+                    }
+
+            }
+            .environmentObject(currencyService)
         }
         }
     }

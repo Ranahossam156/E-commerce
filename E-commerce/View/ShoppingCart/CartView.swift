@@ -160,7 +160,7 @@ struct CartView: View {
                 }
             }
         }
-        .alert("Confirm Cash on Delivery", isPresented: .constant(checkoutViewModel.showPaymentSuccess && selectedPaymentMethod == "Cash on Delivery"), actions: {
+        .alert("Your Order is Confirmed ", isPresented: .constant(checkoutViewModel.showPaymentSuccess && selectedPaymentMethod == "Cash on Delivery"), actions: {
             Button("OK") {
                 checkoutViewModel.showPaymentSuccess = false
                 paymentStatus = "Cash on Delivery confirmed"
@@ -168,7 +168,7 @@ struct CartView: View {
                 presentationMode.wrappedValue.dismiss()
             }
         }, message: {
-            Text("Your order will be delivered. Payment will be collected on delivery.")
+            Text("Your order will be delivered soon. Check your Orders")
         })
         .onChange(of: viewModel.total) { _ in
             updatePaymentSummaryItems()
@@ -222,7 +222,7 @@ struct CartView: View {
             if checkoutViewModel.showPaymentSuccess {
                 paymentStatus = "Cash on Delivery confirmed"
                 viewModel.clearCart()
-                presentationMode.wrappedValue.dismiss()
+               // presentationMode.wrappedValue.dismiss()
             }
         }
     }
@@ -247,22 +247,22 @@ struct PaymentOptionsView: View {
                     .font(.headline)
                     .padding(.top)
                 
-                Button(action: {
-                    selectedPaymentMethod = "Apple Pay"
-                    onPaymentMethodSelected(.applePay)
-                }) {
-                    HStack {
-                        Image(systemName: "creditcard")
-                            .foregroundColor(.black)
-                        Text("Apple Pay")
-                            .foregroundColor(.black)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.gray.opacity(0.2))
-                    .cornerRadius(10)
-                }
-                .disabled(!PKPaymentAuthorizationViewController.canMakePayments(usingNetworks: [.visa, .masterCard, .amex, .discover]))
+//                Button(action: {
+//                    selectedPaymentMethod = "Apple Pay"
+//                    onPaymentMethodSelected(.applePay)
+//                }) {
+//                    HStack {
+//                        Image(systemName: "creditcard")
+//                            .foregroundColor(.black)
+//                        Text("Apple Pay")
+//                            .foregroundColor(.black)
+//                    }
+//                    .frame(maxWidth: .infinity)
+//                    .padding()
+//                    .background(Color.gray.opacity(0.2))
+//                    .cornerRadius(10)
+//                }
+//                .disabled(!PKPaymentAuthorizationViewController.canMakePayments(usingNetworks: [.visa, .masterCard, .amex, .discover]))
                 
                 Button(action: {
                     selectedPaymentMethod = "PayPal"
