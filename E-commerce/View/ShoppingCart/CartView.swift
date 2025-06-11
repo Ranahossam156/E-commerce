@@ -9,19 +9,28 @@ import Foundation
 import SwiftUI
 import Kingfisher
 import PassKit
+import PayPalCheckout
+
+enum PaymentMethod {
+      case applePay
+      case payPal
+      case cod
+  }
 
 struct CartView: View {
-    @Environment(\.presentationMode) var presentationMode
+    @SwiftUI.Environment(\.presentationMode) var presentationMode
     @ObservedObject private var viewModel = CartViewModel.shared
-    @StateObject private var checkoutViewModel = CheckoutViewModel()
+    @SwiftUI.StateObject private var checkoutViewModel = CheckoutViewModel()
     
-    @State private var showDeleteAlert = false
-    @State private var itemToDelete: CartItem?
+    @SwiftUI.State private var showDeleteAlert = false
+    @SwiftUI.State private var itemToDelete: CartItem?
     
-    @State private var paymentStatus: String?
-    @State private var paymentSheetPresented = false
-    @State private var showPaymentOptions = false
-    @State private var selectedPaymentMethod: String?
+    @SwiftUI.State private var paymentStatus: String? = nil
+    @SwiftUI.State private var paymentSheetPresented = false
+    @SwiftUI.State private var showPaymentOptions = false
+    @SwiftUI.State private var selectedPaymentMethod: String? = nil
+    @SwiftUI.State private var pendingPaymentMethod: PaymentMethod?
+    
     
     // Properly initialized payment request
     private var paymentRequest: PKPaymentRequest {
@@ -140,13 +149,30 @@ struct CartView: View {
             Text("Are you sure you want to remove \(itemToDelete?.product.title ?? "this item") from your cart?")
         })
         .sheet(isPresented: $showPaymentOptions) {
-            PaymentOptionsView(
-                isPresented: $showPaymentOptions,
-                selectedPaymentMethod: $selectedPaymentMethod,
-                startApplePay: startApplePay,
-                processPayPalSandboxPayment: processPayPalSandboxPayment,
-                showCODConfirmation: showCODConfirmation
-            )
+                  PaymentOptionsView(
+                      isPresented: $showPaymentOptions,
+                      selectedPaymentMethod: $selectedPaymentMethod,
+                      onPaymentMethodSelected: { method in
+                          pendingPaymentMethod = method
+                          showPaymentOptions = false
+                      }
+                  )
+              }
+        .onChange(of: showPaymentOptions) { isShowing in
+            if !isShowing, let pending = pendingPaymentMethod {
+                // Execute payment after sheet dismissal
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    switch pending {
+                    case .applePay:
+                        startApplePay()
+                    case .payPal:
+                        processPayPalSandboxPayment()
+                    case .cod:
+                        showCODConfirmation()
+                    }
+                    pendingPaymentMethod = nil
+                }
+            }
         }
         .alert("Confirm Cash on Delivery", isPresented: .constant(checkoutViewModel.showPaymentSuccess && selectedPaymentMethod == "Cash on Delivery"), actions: {
             Button("OK") {
@@ -164,33 +190,116 @@ struct CartView: View {
     }
     
     private func startApplePay() {
-        showPaymentOptions = false // Dismiss sheet before presenting Apple Pay
-        guard PKPaymentAuthorizationViewController.canMakePayments(usingNetworks: paymentRequest.supportedNetworks) else {
-            paymentStatus = "Apple Pay not available. Please add a test card in Wallet."
-            return
-        }
-        
-        let controller = PKPaymentAuthorizationViewController(paymentRequest: paymentRequest)
-        controller?.delegate = PaymentHandler(isSimulator: ProcessInfo.processInfo.environment["SIMULATOR_DEVICE_NAME"] != nil, paymentStatus: $paymentStatus, checkoutViewModel: checkoutViewModel)
-        
-        if let controller = controller, let window = UIApplication.shared.windows.first {
-            window.rootViewController?.present(controller, animated: true) {
-                // No need to dismiss sheet here; it's already handled
+            // Remove the dismissal line - it's already dismissed
+            guard PKPaymentAuthorizationViewController.canMakePayments(usingNetworks: paymentRequest.supportedNetworks) else {
+                paymentStatus = "Apple Pay not available. Please add a test card in Wallet."
+                return
+            }
+            
+            let controller = PKPaymentAuthorizationViewController(paymentRequest: paymentRequest)
+            controller?.delegate = PaymentHandler(
+                isSimulator: ProcessInfo.processInfo.environment["SIMULATOR_DEVICE_NAME"] != nil,
+                paymentStatus: $paymentStatus,
+                checkoutViewModel: checkoutViewModel
+            )
+            
+            if let controller = controller,
+               let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let window = scene.windows.first {
+                window.rootViewController?.present(controller, animated: true)
             }
         }
-    }
     
     private func processPayPalSandboxPayment() {
-        showPaymentOptions = false // Dismiss sheet before processing
-        checkoutViewModel.processPayment(for: viewModel.cartItems, total: viewModel.total) {
-            paymentStatus = "PayPal Sandbox payment simulated (integrate PayPal SDK with Client ID: [Your_Sandbox_Client_ID])"
-            if checkoutViewModel.showPaymentSuccess {
-                viewModel.clearCart()
-                presentationMode.wrappedValue.dismiss()
+        // showPaymentOptions = false
+        
+        let config = CheckoutConfig(
+            clientID: Config.paypalClientId,
+            returnUrl: Config.paypalSandboxUrl,
+            createOrder: { createOrderActions in
+                // Create items array from cart
+                let items = self.viewModel.cartItems.map { cartItem in
+                    PurchaseUnit.Item(
+                        name: cartItem.product.title,
+                        unitAmount: UnitAmount(
+                            currencyCode: .usd,
+                            value: cartItem.selectedVariant.price
+                        ),
+                        quantity: String(cartItem.quantity),
+                        category: .physicalGoods
+                    )
+                }
+                
+                // Calculate item total
+                let itemTotal = UnitAmount(
+                    currencyCode: .usd,
+                    value: String(format: "%.2f", self.viewModel.total)
+                )
+                
+                // Create breakdown
+                let breakdown = PurchaseUnit.Breakdown(
+                    itemTotal: itemTotal
+                )
+                
+                // Create amount with breakdown
+                let amount = PurchaseUnit.Amount(
+                    currencyCode: .usd,
+                    value: String(format: "%.2f", self.viewModel.total),
+                    breakdown: breakdown
+                )
+                
+                // Create purchase unit with items
+                let purchaseUnit = PurchaseUnit(
+                    amount: amount,
+                    items: items
+                )
+                
+                // Create order
+                let order = OrderRequest(
+                    intent: .capture,
+                    purchaseUnits: [purchaseUnit]
+                )
+                
+                createOrderActions.create(order: order)
+            },
+            onApprove: { approval in
+                approval.actions.capture { captureResult, error in
+                    if let error = error {
+                        self.paymentStatus = "PayPal payment failed: \(error.localizedDescription)"
+                    } else {
+                        self.checkoutViewModel.processPayment(for: self.viewModel.cartItems, total: self.viewModel.total) {
+                            self.paymentStatus = "PayPal payment successful"
+                            if self.checkoutViewModel.showPaymentSuccess {
+                                self.viewModel.clearCart()
+                                DispatchQueue.main.async {
+                                    self.presentationMode.wrappedValue.dismiss()
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            onCancel: {
+                self.paymentStatus = "PayPal payment cancelled"
+            },
+            onError: { error in
+                self.paymentStatus = "PayPal payment error: "
             }
+        )
+        
+        Checkout.set(config: config)
+        
+        if let rootViewController = UIApplication.shared.windows.first?.rootViewController {
+            Checkout.start(
+                presentingViewController: rootViewController,
+                createOrder: config.createOrder,
+                onApprove: config.onApprove,
+                onShippingChange: nil,
+                onCancel: config.onCancel,
+                onError: config.onError
+            )
         }
     }
-    
     private func showCODConfirmation() {
         showPaymentOptions = false // Dismiss sheet before processing
         checkoutViewModel.processPayment(for: viewModel.cartItems, total: viewModel.total) {
@@ -210,8 +319,84 @@ struct CartView_Previews: PreviewProvider {
     }
 }
 
-// Updated PaymentOptionsView
+
+
+
 struct PaymentOptionsView: View {
+    @Binding var isPresented: Bool
+    @Binding var selectedPaymentMethod: String?
+    let onPaymentMethodSelected: (PaymentMethod) -> Void
+    
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 20) {
+                Text("Select Payment Method")
+                    .font(.headline)
+                    .padding(.top)
+                
+                Button(action: {
+                    selectedPaymentMethod = "Apple Pay"
+                    onPaymentMethodSelected(.applePay)
+                }) {
+                    HStack {
+                        Image(systemName: "creditcard")
+                            .foregroundColor(.black)
+                        Text("Apple Pay")
+                            .foregroundColor(.black)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.gray.opacity(0.2))
+                    .cornerRadius(10)
+                }
+                .disabled(!PKPaymentAuthorizationViewController.canMakePayments(usingNetworks: [.visa, .masterCard, .amex, .discover]))
+                
+                Button(action: {
+                    selectedPaymentMethod = "PayPal"
+                    onPaymentMethodSelected(.payPal)
+                }) {
+                    HStack {
+                        Image(systemName: "dollarsign.circle")
+                            .foregroundColor(.blue)
+                        Text("PayPal (Sandbox)")
+                            .foregroundColor(.blue)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.blue.opacity(0.2))
+                    .cornerRadius(10)
+                }
+                
+                Button(action: {
+                    selectedPaymentMethod = "Cash on Delivery"
+                    onPaymentMethodSelected(.cod)
+                }) {
+                    HStack {
+                        Image(systemName: "banknote")
+                            .foregroundColor(.green)
+                        Text("Cash on Delivery")
+                            .foregroundColor(.green)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.green.opacity(0.2))
+                    .cornerRadius(10)
+                }
+                
+                Button("Cancel") {
+                    isPresented = false
+                }
+                .foregroundColor(.red)
+                .padding(.bottom)
+            }
+            .padding()
+            .navigationBarHidden(true)
+        }
+    }
+}
+
+// Updated PaymentOptionsView
+/*struct PaymentOptionsView: View {
     @Binding var isPresented: Bool
     @Binding var selectedPaymentMethod: String?
     let startApplePay: () -> Void
@@ -289,4 +474,4 @@ struct PaymentOptionsView: View {
             .presentationDragIndicator(.visible)
         }
     }
-}
+} */
