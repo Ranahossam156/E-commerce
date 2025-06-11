@@ -13,7 +13,7 @@ class PayPalService: ObservableObject {
     
     private let clientId = Config.paypalClientId // Replace with your actual client ID
     private let clientSecret = Config.paypalSecret // Replace with your actual client secret
-    private let baseURL = "https://api-m.sandbox.paypal.com" // Use https://api-m.paypal.com for production
+    private let baseURL = Config.paypalSandboxUrl//"https://api-m.sandbox.paypal.com" // Use https://api-m.paypal.com for production
     
     @Published var isProcessing = false
     @Published var errorMessage: String?
