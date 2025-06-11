@@ -1,12 +1,12 @@
+////
+////  ContentView.swift
+////  E-commerce
+////
+////  Created by Macos on 25/05/2025.
+////
 //
-//  ContentView.swift
-//  E-commerce
+//import SwiftUI
 //
-//  Created by Macos on 25/05/2025.
-//
-
-import SwiftUI
-
 //struct ContentView: View {
 //    var body: some View {
 //       /* TabView {
@@ -16,14 +16,14 @@ import SwiftUI
 //            .tabItem {
 //                Label("Home", systemImage: "house")
 //            }
-//            
+//
 //            NavigationView {
 //                //CategoriesView()
 //            }
 //            .tabItem {
 //                Label("Categories", systemImage: "square.grid.2x2")
 //            }
-//            
+//
 //            NavigationView {
 //               // ProfileView()
 //            }
@@ -32,7 +32,7 @@ import SwiftUI
 //            }
 //        }*/
 //        CartView()
-//        
+//
 //    }
 //}
 //
@@ -40,7 +40,7 @@ import SwiftUI
 //// dummy homeView
 //struct HomeView: View {
 //    @State private var showCart = false
-//    
+//
 //    var body: some View {
 //        VStack {
 //            Text("Home Content")
@@ -59,3 +59,35 @@ import SwiftUI
 //        ContentView()
 //    }
 //}
+//
+//  ContentView.swift
+//  E-commerce
+//
+//  Created by Macos on 25/05/2025.
+//
+
+import SwiftUI
+
+struct ContentView: View {
+    @StateObject private var productDetailsViewModel = ProductDetailsViewModel()
+    var body: some View {
+        NavigationStack {
+            SignupScreen()
+        }
+        VStack {
+ 
+        }.onAppear{
+           // productDetailsViewModel.getDataFromModel(productID: 9712148218153)
+          //  productDetailsViewModel.bindResultToViewController
+           // productDetailsViewModel.getProductByID(productID: 9712148218153)
+            productDetailsViewModel.getProductImages(productID: 9712148218153)
+        }
+        .padding()
+    }
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}

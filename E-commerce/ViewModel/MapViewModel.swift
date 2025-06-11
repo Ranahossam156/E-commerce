@@ -7,7 +7,7 @@
 
 import Foundation
 import MapKit
-import SwiftUICore
+import SwiftUI
 
 
 class MapViewModel: ObservableObject {
