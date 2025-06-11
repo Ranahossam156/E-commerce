@@ -4,13 +4,17 @@
 //
 //  Created by Macos on 25/05/2025.
 //
-
 import SwiftUI
+import Firebase
 
 @main
-struct ECommerceApp: App {
+struct E_commerceApp: App {
     @StateObject private var currencyService = CurrencyService()
-    
+
+    init() {
+        FirebaseApp.configure()
+    }
+
     var body: some Scene {
         WindowGroup {
             TabView {
@@ -32,6 +36,10 @@ struct ECommerceApp: App {
             }
             .environmentObject(currencyService)
         }
+        }
     }
-}
+
+
+
+
 
