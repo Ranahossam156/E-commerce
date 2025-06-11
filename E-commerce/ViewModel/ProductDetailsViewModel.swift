@@ -4,42 +4,47 @@
 //
 //  Created by Macos on 12/05/2025.
 //
-//
-//  ViewModel.swift
-//  MVVM Final
-//
-//  Created by Macos on 12/05/2025.
-//
 
 import Foundation
-import Combine
-
-class ProductDetailsViewModel: ObservableObject {
-    @Published var singleProductResponse: SingleProductResponse?
-    @Published var variantsResponse: VariantsResponse?
-    @Published var productImagesResponse: ProductImagesResponse?
-
-    func getProductByID(productID: Int) {
-        NetworkService.fetchProductDetails(productID: productID) { res in
-            DispatchQueue.main.async {
-                self.singleProductResponse = res
-            }
+class ProductDetailsViewModel: ObservableObject{
+    var bindResultToViewController : (()->()) = {}
+    var singleProductResponse : SingleProductResponse!{
+        didSet{
+            bindResultToViewController()
         }
     }
-
-    func getProductVariants(productID: Int) {
-        NetworkService.fetchProductVariants(productID: productID) { res in
-            DispatchQueue.main.async {
-                self.variantsResponse = res
-            }
+    var variantsResponse : VariantsResponse!{
+        didSet{
+            bindResultToViewController()
         }
     }
-
-    func getProductImages(productID: Int) {
-        NetworkService.fetchProductImages(productID: productID) { res in
-            DispatchQueue.main.async {
-                self.productImagesResponse = res
-            }
+    var productImagesResponse : ProductImagesResponse!{
+        didSet{
+            bindResultToViewController()
+        }
+    }
+    func getProductByID(productID : Int){
+        NetworkService.fetchProductDetails(productID: productID){
+            res in
+            guard let res = res else {return}
+            self.singleProductResponse = res
+            print(res)
+        }
+    }
+    func getProductVariants(productID : Int){
+        NetworkService.fetchProductVariants(productID: productID){
+            res in
+            guard let res = res else {return}
+            self.variantsResponse = res
+            print(res)
+        }
+    }
+    func getProductImages(productID : Int){
+        NetworkService.fetchProductImages(productID: productID){
+            res in
+            guard let res = res else {return}
+            self.productImagesResponse = res
+            print(res)
         }
     }
 }

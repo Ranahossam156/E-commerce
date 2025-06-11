@@ -37,9 +37,6 @@ struct Product: Codable, Identifiable {
         case publishedScope = "published_scope"
         case adminGraphqlAPIID = "admin_graphql_api_id"
     }
-    
-    
-   
 }
 
 // MARK: - Variant
@@ -127,8 +124,4 @@ struct ProductImage: Codable {
         case adminGraphqlAPIID = "admin_graphql_api_id"
         case variantIDs = "variant_ids"
     }
-}
-
-struct ProductImagesResponse: Codable {
-    let images: [ProductImage]
 }
