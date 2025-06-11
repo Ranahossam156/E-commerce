@@ -51,6 +51,11 @@
 		22FC15D12DF0F72F000FD95C /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FC15D02DF0F72F000FD95C /* NetworkMonitor.swift */; };
 		E11F26922DEE39930063716E /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11F26912DEE39930063716E /* SettingsView.swift */; };
 		E11F26942DEE3D060063716E /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11F26932DEE3D060063716E /* SettingsViewModel.swift */; };
+		E13937C32DF968B5004983BB /* PaypalModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13937C22DF968B5004983BB /* PaypalModels.swift */; };
+		E13937C52DF968F5004983BB /* PaypalService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13937C42DF968F5004983BB /* PaypalService.swift */; };
+		E13937C72DF969D1004983BB /* PayPalWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13937C62DF969D1004983BB /* PayPalWebViewController.swift */; };
+		E13937C92DF96BAD004983BB /* PayPalCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13937C82DF96BAD004983BB /* PayPalCoordinator.swift */; };
+		E13937CB2DF96BDD004983BB /* PayPalPaymentResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13937CA2DF96BDD004983BB /* PayPalPaymentResult.swift */; };
 		E15A59262DEF4EC600FB39E5 /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15A59252DEF4EC600FB39E5 /* UserModel.swift */; };
 		E15A59292DEF652A00FB39E5 /* CurrencyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15A59282DEF652A00FB39E5 /* CurrencyService.swift */; };
 		E15A592B2DEF677800FB39E5 /* FreeCurrencyRateResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15A592A2DEF677800FB39E5 /* FreeCurrencyRateResponse.swift */; };
@@ -63,6 +68,10 @@
 		E17102F42DE4EBCB00C511CC /* CartItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17102F32DE4EBCB00C511CC /* CartItemRow.swift */; };
 		E17102F62DE4EBDF00C511CC /* CartFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17102F52DE4EBDF00C511CC /* CartFooterView.swift */; };
 		E17102F82DE4EBF300C511CC /* EmptyCartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17102F72DE4EBF300C511CC /* EmptyCartView.swift */; };
+		E186FC042DF5569100BD6DA4 /* PaymentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E186FC032DF5569100BD6DA4 /* PaymentHandler.swift */; };
+		E191DFAA2DF85D0400ADB394 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = E191DFA92DF85D0400ADB394 /* Config.swift */; };
+		E191DFAD2DF85F3500ADB394 /* PayPalWebPayments in Frameworks */ = {isa = PBXBuildFile; productRef = E191DFAC2DF85F3500ADB394 /* PayPalWebPayments */; };
+		E191DFAF2DF85F3500ADB394 /* PayPalCheckout in Frameworks */ = {isa = PBXBuildFile; productRef = E191DFAE2DF85F3500ADB394 /* PayPalCheckout */; };
 		E19745162DF044E700F0AA4C /* ProductInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19745142DF044E700F0AA4C /* ProductInfoView.swift */; };
 		E198F4272DED8000001656DE /* PriceRuleService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E198F4262DED8000001656DE /* PriceRuleService.swift */; };
 		E198F4292DED806B001656DE /* Coupons.swift in Sources */ = {isa = PBXBuildFile; fileRef = E198F4282DED806B001656DE /* Coupons.swift */; };
@@ -156,6 +165,11 @@
 		22FC15D02DF0F72F000FD95C /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		E11F26912DEE39930063716E /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		E11F26932DEE3D060063716E /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		E13937C22DF968B5004983BB /* PaypalModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaypalModels.swift; sourceTree = "<group>"; };
+		E13937C42DF968F5004983BB /* PaypalService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaypalService.swift; sourceTree = "<group>"; };
+		E13937C62DF969D1004983BB /* PayPalWebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayPalWebViewController.swift; sourceTree = "<group>"; };
+		E13937C82DF96BAD004983BB /* PayPalCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayPalCoordinator.swift; sourceTree = "<group>"; };
+		E13937CA2DF96BDD004983BB /* PayPalPaymentResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayPalPaymentResult.swift; sourceTree = "<group>"; };
 		E15A59252DEF4EC600FB39E5 /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 		E15A59282DEF652A00FB39E5 /* CurrencyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyService.swift; sourceTree = "<group>"; };
 		E15A592A2DEF677800FB39E5 /* FreeCurrencyRateResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeCurrencyRateResponse.swift; sourceTree = "<group>"; };
@@ -168,10 +182,14 @@
 		E17102F32DE4EBCB00C511CC /* CartItemRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartItemRow.swift; sourceTree = "<group>"; };
 		E17102F52DE4EBDF00C511CC /* CartFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartFooterView.swift; sourceTree = "<group>"; };
 		E17102F72DE4EBF300C511CC /* EmptyCartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyCartView.swift; sourceTree = "<group>"; };
+		E17A97652DF76B91004169A8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		E186FC032DF5569100BD6DA4 /* PaymentHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentHandler.swift; sourceTree = "<group>"; };
+		E191DFA92DF85D0400ADB394 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		E19745142DF044E700F0AA4C /* ProductInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductInfoView.swift; sourceTree = "<group>"; };
 		E198F4262DED8000001656DE /* PriceRuleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceRuleService.swift; sourceTree = "<group>"; };
 		E198F4282DED806B001656DE /* Coupons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coupons.swift; sourceTree = "<group>"; };
 		E198F42A2DED80C6001656DE /* CouponViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouponViewModel.swift; sourceTree = "<group>"; };
+		E1B0EFF52DF5C686007D03F0 /* E-commerce.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "E-commerce.entitlements"; sourceTree = "<group>"; };
 		E1BF8A792DF0B3E10021E458 /* FavoritesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesScreen.swift; sourceTree = "<group>"; };
 		FA288BA32DF5D10B00EABD17 /* HelperExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelperExtension.swift; sourceTree = "<group>"; };
 		FA524F362DEB17FB008FEA88 /* CategoryResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryResponse.swift; sourceTree = "<group>"; };
@@ -288,12 +306,15 @@
 				FA859AAE2DE8A9820017C6D5 /* Promotion.swift */,
 				FA524F362DEB17FB008FEA88 /* CategoryResponse.swift */,
 				FA9C0D322DEB86BE00618379 /* ProductsResponse.swift */,
+				E13937CA2DF96BDD004983BB /* PayPalPaymentResult.swift */,
 				E15A59252DEF4EC600FB39E5 /* UserModel.swift */,
 				E15A592A2DEF677800FB39E5 /* FreeCurrencyRateResponse.swift */,
 				FA5D37132DF5A2CE0050CA99 /* CollectsResponse.swift */,
 				228A2CE42DF6216600F138A3 /* AllProductResponse.swift */,
 				FA5CA25A2DF78B5F00468F98 /* Order.swift */,
 				FA9AE0172DF798E80011B599 /* OrderItem.swift */,
+				E191DFA92DF85D0400ADB394 /* Config.swift */,
+				E13937C22DF968B5004983BB /* PaypalModels.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -313,6 +334,7 @@
 				22FC15BC2DF0D094000FD95C /* FavoriteProductModel.swift */,
 				FA5D37112DF5A28F0050CA99 /* CategoryProductService.swift */,
 				228A2CE22DF6201900F138A3 /* GetAllProductsService.swift */,
+				E13937C42DF968F5004983BB /* PaypalService.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -497,12 +519,15 @@
 		E1BF34542DE619CB00F8DCCC /* ShoppingCart */ = {
 			isa = PBXGroup;
 			children = (
+				E13937C82DF96BAD004983BB /* PayPalCoordinator.swift */,
 				E17102E42DE4EA5600C511CC /* CartItem.swift */,
 				E17102EB2DE4EAD900C511CC /* CartView.swift */,
 				E17102F12DE4EBAE00C511CC /* CartHeaderView.swift */,
 				E17102F32DE4EBCB00C511CC /* CartItemRow.swift */,
 				E17102F52DE4EBDF00C511CC /* CartFooterView.swift */,
 				E17102F72DE4EBF300C511CC /* EmptyCartView.swift */,
+				E186FC032DF5569100BD6DA4 /* PaymentHandler.swift */,
+				E13937C62DF969D1004983BB /* PayPalWebViewController.swift */,
 			);
 			path = ShoppingCart;
 			sourceTree = "<group>";
@@ -721,6 +746,8 @@
 				227C3BC52DE5F3AD006B0E52 /* ProductDetailsViewModel.swift in Sources */,
 				E198F4272DED8000001656DE /* PriceRuleService.swift in Sources */,
 				FAC88A272DE8E2880041EF40 /* BrandProductsView.swift in Sources */,
+				E13937CB2DF96BDD004983BB /* PayPalPaymentResult.swift in Sources */,
+				E191DFAA2DF85D0400ADB394 /* Config.swift in Sources */,
 				FA5CA25B2DF78B5F00468F98 /* Order.swift in Sources */,
 				FA524F3B2DEB1920008FEA88 /* CategoryService.swift in Sources */,
 				22FC15B82DF0CFCD000FD95C /* FavoritesModel.xcdatamodeld in Sources */,
@@ -762,15 +789,20 @@
 				E198F4292DED806B001656DE /* Coupons.swift in Sources */,
 				E17102E52DE4EA5600C511CC /* CartItem.swift in Sources */,
 				FA524F372DEB17FB008FEA88 /* CategoryResponse.swift in Sources */,
+				E13937C52DF968F5004983BB /* PaypalService.swift in Sources */,
 				E198F42B2DED80C6001656DE /* CouponViewModel.swift in Sources */,
 				E1BF8A7B2DF0B3E10021E458 /* FavoritesScreen.swift in Sources */,
 				FA859AAF2DE8A9820017C6D5 /* Promotion.swift in Sources */,
 				22FC15BD2DF0D094000FD95C /* FavoriteProductModel.swift in Sources */,
+				E186FC042DF5569100BD6DA4 /* PaymentHandler.swift in Sources */,
 				22FC15BF2DF0D0B4000FD95C /* FavoriteManager.swift in Sources */,
 				FA5CA25E2DF78BAC00468F98 /* OrderCard.swift in Sources */,
 				E17102F42DE4EBCB00C511CC /* CartItemRow.swift in Sources */,
 				22FC15C72DF0D4A1000FD95C /* FavoritesModel+CoreDataProperties.swift in Sources */,
 				FA805B7A2DE898BB00853AA4 /* TabView.swift in Sources */,
+				E13937C92DF96BAD004983BB /* PayPalCoordinator.swift in Sources */,
+				E13937C32DF968B5004983BB /* PaypalModels.swift in Sources */,
+				E13937C72DF969D1004983BB /* PayPalWebViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -928,9 +960,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "E-commerce/E-commerce.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"E-commerce/Preview Content\"";
+				DEVELOPMENT_TEAM = X8DY4326ZW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "E-commerce/Info.plist";
@@ -957,9 +991,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "E-commerce/E-commerce.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"E-commerce/Preview Content\"";
+				DEVELOPMENT_TEAM = X8DY4326ZW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "E-commerce/Info.plist";
@@ -1168,6 +1204,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 22C0EF0A2DF9C065006EAA4B /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignInSwift;
+		};
+		E191DFAC2DF85F3500ADB394 /* PayPalWebPayments */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E191DFA82DF85CCE00ADB394 /* XCRemoteSwiftPackageReference "paypal-ios" */;
+			productName = PayPalWebPayments;
+		};
+		E191DFAE2DF85F3500ADB394 /* PayPalCheckout */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E191DFAB2DF85EFA00ADB394 /* XCRemoteSwiftPackageReference "paypalcheckout-ios" */;
+			productName = PayPalCheckout;
 		};
 /* End XCSwiftPackageProductDependency section */
 

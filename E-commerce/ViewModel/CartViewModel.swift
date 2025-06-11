@@ -13,38 +13,43 @@ class CartViewModel: ObservableObject {
     @Published var cartItems: [CartItem] = []
     @Published var total: Double = 0
     
-    static let shared = CartViewModel()
+    private let currencyService: CurrencyService
+    
+    static let shared = CartViewModel(currencyService: CurrencyService() )
+    var selectedCurrency: String = "USD" // Default, update as needed
 
-    private init() {
+    init(currencyService: CurrencyService) {
+        self.currencyService = currencyService
         print("CartViewModel initialized")
-        }
-
+    }
+    
     
     func addToCart(product: Product, variant: Variant, quantity: Int = 1) {
-          if let index = cartItems.firstIndex(where: { $0.selectedVariant.id == variant.id }) {
-              cartItems[index].quantity += quantity
-          } else {
-              let newItem = CartItem(product: product, selectedVariant: variant, quantity: quantity)
-              cartItems.append(newItem)
-          }
-          calculateTotal()
-      }
+        if let index = cartItems.firstIndex(where: { $0.selectedVariant.id == variant.id }) {
+            cartItems[index].quantity += quantity
+        } else {
+            let newItem = CartItem(product: product, selectedVariant: variant, quantity: quantity)
+            cartItems.append(newItem)
+        }
+        calculateTotal()
+    }
     
     func removeFromCart(variantId: Int) {
-            cartItems.removeAll(where: { $0.selectedVariant.id == variantId })
-            calculateTotal()
-        }
+        cartItems.removeAll(where: { $0.selectedVariant.id == variantId })
+        calculateTotal()
+    }
     
     func updateQuantity(for item: CartItem, quantity: Int) {
-          if let index = cartItems.firstIndex(where: { $0.id == item.id }) {
-              let maxQuantity = item.selectedVariant.inventoryQuantity
-              cartItems[index].quantity = min(maxQuantity, max(1, quantity))
-          }
-          calculateTotal()
-      }
+        if let index = cartItems.firstIndex(where: { $0.id == item.id }) {
+            let maxQuantity = item.selectedVariant.inventoryQuantity
+            cartItems[index].quantity = min(maxQuantity, max(1, quantity))
+        }
+        calculateTotal()
+    }
     
     func calculateTotal() {
         total = cartItems.reduce(0) { $0 + $1.subtotal }
+        total = currencyService.convert(price: total)
     }
     
     func clearCart() {
