@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Bucket
-uuid = "1B9ADA88-C51F-4124-ACE3-7E06F72B7575"
-type = "1"
-version = "2.0">
+   uuid = "1B9ADA88-C51F-4124-ACE3-7E06F72B7575"
+   type = "1"
+   version = "2.0">
    <Breakpoints>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
@@ -37,5 +37,4 @@ version = "2.0">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
-
 </Bucket>
