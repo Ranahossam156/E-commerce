@@ -16,6 +16,7 @@ class CheckoutViewModel: ObservableObject {
     @Published var showPaymentSuccess = false
     @Published var showError = false
     @Published var errorMessage = ""
+    private let orderService = OrderService()
     
     func processPayment(for items: [CartItem], total: Double, completion: @escaping () -> Void) {
         isProcessingPayment = true
@@ -126,4 +127,73 @@ extension CheckoutViewModel {
             self.errorMessage = message
         }
     }
+}
+
+extension CheckoutViewModel {
+    func placeCODOrder(
+        items: [CartItem],
+        total: Double,
+        shippingAddress: ShippingAddress,
+        customer: Customer,
+        completion: @escaping (Bool, Order?) -> Void // <- not String anymore
+    ) {
+        isProcessingPayment = true
+
+        let lineItems = items.map {
+            LineItem(
+                variantId: Int64($0.selectedVariant.id),
+                quantity: $0.quantity,
+                price: String(format: "%.2f", Double($0.selectedVariant.price) ?? 0.0)
+            )
+        }
+
+        let shopifyOrder = ShopifyOrder(
+            orderNumber: "TEMP-\(UUID().uuidString.prefix(6))",
+            lineItems: lineItems,
+            customer: customer,
+            shippingAddress: shippingAddress,
+//            financialStatus: "pending",
+            total: total
+        )
+
+        orderService.createOrder(order: shopifyOrder) { [weak self] result in
+            DispatchQueue.main.async {
+                self?.isProcessingPayment = false
+
+                switch result {
+                case .success(let createdOrder):
+                    self?.showPaymentSuccess = true
+                    self?.sendConfirmationEmail(items: items, total: total)
+
+                    // Create local UI Order
+                    let localOrder = Order(
+                        orderNumber: createdOrder.orderNumber,
+                        itemCount: items.reduce(0) { $0 + $1.quantity },
+                        address: "\(shippingAddress.address1), \(shippingAddress.city), \(shippingAddress.country)",
+                        amountPaid: total,
+                        currency: "USD",
+                        date: Date(),
+                        items: items.map {
+                            OrderItem(
+                                name: $0.product.title,
+                                color: $0.color,
+                                quantity: $0.quantity,
+                                price: Double($0.selectedVariant.price) ?? 0.0,
+                                status: "Processing",
+                                imageName: $0.product.image.src
+                            )
+                        }
+                    )
+
+                    completion(true, localOrder)
+
+                case .failure(let error):
+                    self?.showError = true
+                    self?.errorMessage = error.localizedDescription
+                    completion(false, nil)
+                }
+            }
+        }
+    }
+
 }

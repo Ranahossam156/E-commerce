@@ -10,6 +10,7 @@ import Firebase
 @main
 struct E_commerceApp: App {
     @StateObject private var currencyService = CurrencyService()
+    @StateObject var orderViewModel = OrdersViewModel()
 
     init() {
         FirebaseApp.configure()
@@ -36,6 +37,7 @@ struct E_commerceApp: App {
 
             }
             .environmentObject(currencyService)
+            .environmentObject(orderViewModel)
         }
         }
     }
