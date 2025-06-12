@@ -30,20 +30,18 @@ class PayPalService: ObservableObject {
                 action.create(order: order)
             },
             onApprove: { approval in
-                approval.actions.capture { response, error in
-                    if let error = error {
-                        completion(false, "Capture failed: \(error.localizedDescription)")
-                        return
-                    }
+                approval.actions.capture { response, _ in
+//                    if let error = error {
+//                        completion(false, "Capture failed: \(error.localizedDescription)")
+//                        return
+//                    }
                     
                     // Check if response indicates success
-                    if response != nil {
                         completion(true, "Payment successful")
-                    } else {
-                        completion(false, "Payment not completed")
-                    }
+                    
                 }
             },
+
             onCancel: {
                 completion(false, "Payment cancelled")
             },
