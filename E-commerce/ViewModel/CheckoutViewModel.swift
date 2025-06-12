@@ -156,7 +156,7 @@ extension CheckoutViewModel {
             total: total
         )
 
-        orderService.createOrder(order: shopifyOrder) { [weak self] result in
+        OrderService.createOrder(order: shopifyOrder) { [weak self] result in
             DispatchQueue.main.async {
                 self?.isProcessingPayment = false
 

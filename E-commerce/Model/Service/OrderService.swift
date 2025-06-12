@@ -9,11 +9,20 @@ import Foundation
 import Alamofire
 
 class OrderService {
-    private let baseURL = "https://your-store.myshopify.com/admin/api/2025-04"
-    private let accessToken = "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"
+    private static let baseURL = "https://your-store.myshopify.com/admin/api/2025-04"
+    private static let accessToken = "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"
+    private static let session: Session = {
+        #if targetEnvironment(simulator)
+                let config = URLSessionConfiguration.ephemeral
+        #else
+                let config = URLSessionConfiguration.default
+        #endif
+        
+        return Session(configuration: config)
+    }()
     
-    func createOrder(order: ShopifyOrder, completion: @escaping (Result<ShopifyOrder, Error>) -> Void) {
-        let endpoint = "\(baseURL)/orders.json"
+    static func createOrder(order: ShopifyOrder, completion: @escaping (Result<ShopifyOrder, Error>) -> Void) {
+         let endpoint = "\(baseURL)/orders.json"
         
         let parameters: [String: Any] = [
             "order": [
@@ -44,7 +53,7 @@ class OrderService {
             "Content-Type": "application/json"
         ]
         
-        AF.request(endpoint,
+        session.request(endpoint,
                    method: .post,
                    parameters: parameters,
                    encoding: JSONEncoding.default,
