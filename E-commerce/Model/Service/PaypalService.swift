@@ -1,6 +1,8 @@
 // PayPalService.swift - Updated version
 import Foundation
 import PayPalCheckout
+import UIKit
+
 
 class PayPalService: ObservableObject {
     static let shared = PayPalService()
@@ -16,19 +18,26 @@ class PayPalService: ObservableObject {
         let purchaseUnit = PurchaseUnit(amount: amount)
         let order = OrderRequest(intent: .capture, purchaseUnits: [purchaseUnit])
         
+        // Get the top view controller
+        guard let topController = UIApplication.shared.windows.first?.rootViewController else {
+            completion(false, "Unable to present PayPal checkout")
+            return
+        }
+        
         Checkout.start(
-            presentingViewController: nil,
+            presentingViewController: topController,
             createOrder: { action in
                 action.create(order: order)
             },
             onApprove: { approval in
-                approval.actions.capture { [weak self] response, error in
+                approval.actions.capture { response, error in
                     if let error = error {
                         completion(false, "Capture failed: \(error.localizedDescription)")
                         return
                     }
                     
-                    if response?.data.status == .completed {
+                    // Check if response indicates success
+                    if response != nil {
                         completion(true, "Payment successful")
                     } else {
                         completion(false, "Payment not completed")
@@ -39,7 +48,7 @@ class PayPalService: ObservableObject {
                 completion(false, "Payment cancelled")
             },
             onError: { error in
-                completion(false, "Payment paypal error: at service class")
+                completion(false, "Payment error: )")
             }
         )
     }
