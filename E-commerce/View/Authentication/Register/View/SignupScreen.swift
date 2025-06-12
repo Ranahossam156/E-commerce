@@ -111,11 +111,13 @@ struct SignupScreen: View {
         }
         .frame(maxHeight: .infinity, alignment: .top)
         .onAppear {
-            viewModel.email = ""
-            viewModel.password = ""
-            viewModel.username = ""
-            viewModel.confirmPassword = ""
-            viewModel.errorMessage = nil
+            if !viewModel.showVerificationScreen {
+                viewModel.email = ""
+                viewModel.password = ""
+                viewModel.username = ""
+                viewModel.confirmPassword = ""
+                viewModel.errorMessage = nil
+            }
         }
         .scrollDismissesKeyboard(.interactively)
         }
