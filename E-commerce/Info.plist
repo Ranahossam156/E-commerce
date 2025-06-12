@@ -11,6 +11,9 @@
 			<array>
 				<string>com.googleusercontent.apps.867661230508-tb1hdrmpl84t1fi71s66uas423nu1p73</string>
 			</array>
+            <key>FirebaseAppDelegateProxyEnabled</key>
+            <false/>
+
 		</dict>
 	</array>
 </dict>
