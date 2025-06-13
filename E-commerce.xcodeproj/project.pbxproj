@@ -68,6 +68,8 @@
 		E17102F42DE4EBCB00C511CC /* CartItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17102F32DE4EBCB00C511CC /* CartItemRow.swift */; };
 		E17102F62DE4EBDF00C511CC /* CartFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17102F52DE4EBDF00C511CC /* CartFooterView.swift */; };
 		E17102F82DE4EBF300C511CC /* EmptyCartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17102F72DE4EBF300C511CC /* EmptyCartView.swift */; };
+		E18579E12DFC282D00D230A7 /* FirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18579E02DFC282D00D230A7 /* FirestoreService.swift */; };
+		E18579E32DFC285900D230A7 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = E18579E22DFC285900D230A7 /* FirebaseFirestore */; };
 		E186FC042DF5569100BD6DA4 /* PaymentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E186FC032DF5569100BD6DA4 /* PaymentHandler.swift */; };
 		E191DFAA2DF85D0400ADB394 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = E191DFA92DF85D0400ADB394 /* Config.swift */; };
 		E19745162DF044E700F0AA4C /* ProductInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19745142DF044E700F0AA4C /* ProductInfoView.swift */; };
@@ -180,6 +182,7 @@
 		E17102F32DE4EBCB00C511CC /* CartItemRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartItemRow.swift; sourceTree = "<group>"; };
 		E17102F52DE4EBDF00C511CC /* CartFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartFooterView.swift; sourceTree = "<group>"; };
 		E17102F72DE4EBF300C511CC /* EmptyCartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyCartView.swift; sourceTree = "<group>"; };
+		E18579E02DFC282D00D230A7 /* FirestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreService.swift; sourceTree = "<group>"; };
 		E186FC032DF5569100BD6DA4 /* PaymentHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentHandler.swift; sourceTree = "<group>"; };
 		E191DFA92DF85D0400ADB394 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		E19745142DF044E700F0AA4C /* ProductInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductInfoView.swift; sourceTree = "<group>"; };
@@ -226,6 +229,7 @@
 				E159DF1B2DF9E6E30048DDEB /* FirebaseCore in Frameworks */,
 				E159DF212DF9E6F80048DDEB /* PayPalWebPayments in Frameworks */,
 				E159DF232DF9E7360048DDEB /* Alamofire in Frameworks */,
+				E18579E32DFC285900D230A7 /* FirebaseFirestore in Frameworks */,
 				E159DF192DF9E6DE0048DDEB /* FirebaseAuth in Frameworks */,
 				E159DF1F2DF9E6F30048DDEB /* PayPalCheckout in Frameworks */,
 			);
@@ -331,6 +335,7 @@
 				FA5D37112DF5A28F0050CA99 /* CategoryProductService.swift */,
 				228A2CE22DF6201900F138A3 /* GetAllProductsService.swift */,
 				E13937C42DF968F5004983BB /* PaypalService.swift */,
+				E18579E02DFC282D00D230A7 /* FirestoreService.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -594,6 +599,7 @@
 				E159DF202DF9E6F80048DDEB /* PayPalWebPayments */,
 				E159DF222DF9E7360048DDEB /* Alamofire */,
 				E159DF242DF9E73E0048DDEB /* Reachability */,
+				E18579E22DFC285900D230A7 /* FirebaseFirestore */,
 			);
 			productName = "E-commerce";
 			productReference = 229EFA6A2DE35A0C006F0D77 /* E-commerce.app */;
@@ -723,6 +729,7 @@
 				22FB96592DE7264800BF0DA6 /* GoogleButton.swift in Sources */,
 				E17102F82DE4EBF300C511CC /* EmptyCartView.swift in Sources */,
 				FA9C0D2F2DEB852B00618379 /* BrandProductService.swift in Sources */,
+				E18579E12DFC282D00D230A7 /* FirestoreService.swift in Sources */,
 				22FC15CB2DF0F632000FD95C /* FavoriteItemView.swift in Sources */,
 				E17102EA2DE4EAC800C511CC /* CheckoutViewModel.swift in Sources */,
 				FAC889602DE8BCD00041EF40 /* BrandViewModel.swift in Sources */,
@@ -1218,6 +1225,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E159DF172DF9E6770048DDEB /* XCRemoteSwiftPackageReference "Reachability" */;
 			productName = Reachability;
+		};
+		E18579E22DFC285900D230A7 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E159DF112DF9E6040048DDEB /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
 		};
 /* End XCSwiftPackageProductDependency section */
 
