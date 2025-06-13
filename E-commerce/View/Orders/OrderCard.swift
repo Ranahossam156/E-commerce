@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct OrderCard: View {
-    var order: Order
+    var order: OrderModel
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -16,7 +16,7 @@ struct OrderCard: View {
             HStack(alignment: .top) {
                 Text("Order No:")
                     .foregroundColor(.secondary)
-                Text(order.orderNumber)
+                Text("\(order.orderNumber)")
                     .bold()
             }
             .font(.subheadline)
@@ -25,7 +25,7 @@ struct OrderCard: View {
             HStack(alignment: .top) {
                 Text("No of items:")
                     .foregroundColor(.secondary)
-                Text("\(order.itemCount)")
+                Text("\(order.lineItems?.count)")
                     .bold()
             }
             .font(.subheadline)
@@ -34,7 +34,7 @@ struct OrderCard: View {
             HStack(alignment: .top) {
                 Text("Address:")
                     .foregroundColor(.secondary)
-                Text(order.address)
+                Text("\(order.shippingAddress?.address1)")
             }
             .font(.subheadline)
             
@@ -42,7 +42,7 @@ struct OrderCard: View {
             HStack(alignment: .top) {
                 Text("Date:")
                     .foregroundColor(.secondary)
-                Text(order.formattedDate)
+                Text("\(order.createdAt)")
                     .foregroundColor(.primary)
             }
             .font(.subheadline)
@@ -51,7 +51,7 @@ struct OrderCard: View {
             HStack(alignment: .top) {
                 Text("Money Paid:")
                     .foregroundColor(.secondary)
-                Text(order.formattedAmount)
+                Text(order.totalPrice ?? "")
                     .bold()
                     .foregroundColor(.green)
             }

@@ -8,18 +8,20 @@
 import SwiftUI
 
 struct OrdersView: View {
-    @EnvironmentObject var ordersViewModel: OrdersViewModel
-
+    @EnvironmentObject var ordersViewModel: OrderViewModel
+    
     var body: some View {
-        NavigationView {
-            List(ordersViewModel.orders) { order in
-                NavigationLink(destination: OrderDetailView(order: order)){
-                    OrderCard(order: order)
-                }
-            }
-            .navigationTitle("Orders")
-            .listStyle(.plain)
-        }
+        //        NavigationView {
+        //            List(ordersViewModel.orders) { order in
+        //                NavigationLink(destination: OrderDetailView(order: order)){
+        //                    OrderCard(order: order)
+        //                }
+        //            }
+        //            .navigationTitle("Orders")
+        //            .listStyle(.plain)
+        //        }
+        //    }
+        Text("Orders View")
     }
 }
 

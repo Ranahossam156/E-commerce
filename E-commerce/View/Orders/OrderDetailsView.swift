@@ -9,7 +9,7 @@ import SwiftUI
 
 // MARK: - Order Detail View
 struct OrderDetailView: View {
-    let order: Order
+    let order: OrderModel
     
     var body: some View {
         ScrollView {
@@ -19,17 +19,17 @@ struct OrderDetailView: View {
                         .font(.title2)
                         .bold()
                     
-                    Text(order.address)
+                    Text("\(order.shippingAddress?.address1)")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                     
-                    Text(order.formattedDate)
+                    Text("\(order.createdAt)")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
                 .padding(.bottom, 8)
                 
-                ForEach(order.items) { item in
+                ForEach(order.lineItems!) { item in
                     OrderItemView(item: item)
                 }
                 
@@ -37,7 +37,7 @@ struct OrderDetailView: View {
                     Text("Total:")
                         .font(.headline)
                     Spacer()
-                    Text(order.formattedAmount)
+                    Text(order.totalPrice ?? "")
                         .font(.title2)
                         .bold()
                         .foregroundColor(.green)
@@ -53,30 +53,30 @@ struct OrderDetailView: View {
 }
 
 struct OrderItemView: View {
-    let item: OrderItem
+    let item: LineItem
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             
             HStack(alignment: .top, spacing: 16) {
                 // Product image
-                Image(item.imageName)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 80, height: 80)
-                    .background(Color(.systemGray6))
-                    .cornerRadius(8)
-                
+//                Image(item.imageName)
+//                    .resizable()
+//                    .scaledToFit()
+//                    .frame(width: 80, height: 80)
+//                    .background(Color(.systemGray6))
+//                    .cornerRadius(8)
+//                
                 // Product details
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(item.name)
+                    Text(item.name ?? "")
                         .font(.headline)
                         .lineLimit(2)
                         .minimumScaleFactor(0.8)
                     
-                    Text("Color: \(item.color)")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+//                    Text("Color: \(item.color)")
+//                        .font(.subheadline)
+//                        .foregroundColor(.secondary)
                     
                     Text("Qty: \(item.quantity)")
                         .font(.subheadline)
@@ -88,14 +88,14 @@ struct OrderItemView: View {
             
             Divider()
             
-            HStack {
-                StatusBadge(status: item.status)
-                Spacer()
-                Text(item.formattedPrice)
-                    .font(.title3)
-                    .bold()
-            }
-            .padding(.vertical, 8)
+//            HStack {
+//                StatusBadge(status: item.status)
+//                Spacer()
+//                Text(item.formattedPrice)
+//                    .font(.title3)
+//                    .bold()
+//            }
+//            .padding(.vertical, 8)
             
         }
         .padding(16)
@@ -172,47 +172,47 @@ struct LabelValueView: View {
 }
 
 
-struct OrderDetailView_Previews: PreviewProvider {
-    static let sampleOrder = Order(
-        orderNumber: "#1097",
-        itemCount: 1,
-        address: "Ring Road, Ismaila",
-        amountPaid: 24.00,
-        currency: "USD",
-        date: Date(),
-        items: [
-            OrderItem(
-                name: "Bix Bag Limited Edition 229",
-                color: "Brown",
-                quantity: 1,
-                price: 24.00,
-                status: "On Progress",
-                imageName: "bag1"
-            ),
-            
-            OrderItem(
-                name: "Bix Bag Limited Edition 229",
-                color: "Brown",
-                quantity: 1,
-                price: 24.00,
-                status: "Shipped",
-                imageName: "bag1"
-            ),
-            
-            OrderItem(
-                name: "Bix Bag Limited Edition 229",
-                color: "Brown",
-                quantity: 1,
-                price: 24.00,
-                status: "Delivered",
-                imageName: "bag1"
-            )
-        ]
-    )
-    
-    static var previews: some View {
-        NavigationStack {
-            OrderDetailView(order: sampleOrder)
-        }
-    }
-}
+//struct OrderDetailView_Previews: PreviewProvider {
+//    static let sampleOrder = OrderModel(
+//        orderNumber: "#1097",
+//        itemCount: 1,
+//        address: "Ring Road, Ismaila",
+//        amountPaid: 24.00,
+//        currency: "USD",
+//        date: Date(),
+//        items: [
+//            OrderItem(
+//                name: "Bix Bag Limited Edition 229",
+//                color: "Brown",
+//                quantity: 1,
+//                price: 24.00,
+//                status: "On Progress",
+//                imageName: "bag1"
+//            ),
+//            
+//            OrderItem(
+//                name: "Bix Bag Limited Edition 229",
+//                color: "Brown",
+//                quantity: 1,
+//                price: 24.00,
+//                status: "Shipped",
+//                imageName: "bag1"
+//            ),
+//            
+//            OrderItem(
+//                name: "Bix Bag Limited Edition 229",
+//                color: "Brown",
+//                quantity: 1,
+//                price: 24.00,
+//                status: "Delivered",
+//                imageName: "bag1"
+//            )
+//        ]
+//    )
+//    
+//    static var previews: some View {
+//        NavigationStack {
+//            OrderDetailView(order: sampleOrder)
+//        }
+//    }
+//}

@@ -10,7 +10,7 @@ import Firebase
 @main
 struct E_commerceApp: App {
     @StateObject private var currencyService = CurrencyService()
-    @StateObject var orderViewModel = OrdersViewModel()
+    @StateObject var orderViewModel = OrderViewModel()
 
     init() {
         FirebaseApp.configure()
