@@ -19,9 +19,18 @@
 		227C3BC22DE5E9A1006B0E52 /* SingleProductResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227C3BC12DE5E9A1006B0E52 /* SingleProductResponse.swift */; };
 		227C3BC52DE5F3AD006B0E52 /* ProductDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227C3BC42DE5F3AD006B0E52 /* ProductDetailsViewModel.swift */; };
 		227C3BC72DE60518006B0E52 /* VariantsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227C3BC62DE60518006B0E52 /* VariantsResponse.swift */; };
-		228A2CE32DF6201900F138A3 /* GetAllProductsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228A2CE22DF6201900F138A3 /* GetAllProductsService.swift */; };
 		228A2CE52DF6216600F138A3 /* AllProductResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228A2CE42DF6216600F138A3 /* AllProductResponse.swift */; };
 		228B09B62DFB74D900EB73CC /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228B09B52DFB74D900EB73CC /* MainTabView.swift */; };
+		228CAD442DFC4D20006E5FF9 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 228CAD432DFC4D20006E5FF9 /* FirebaseAuth */; };
+		228CAD462DFC4D20006E5FF9 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 228CAD452DFC4D20006E5FF9 /* FirebaseFirestore */; };
+		228CAD492DFC4D39006E5FF9 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 228CAD482DFC4D39006E5FF9 /* Kingfisher */; };
+		228CAD4C2DFC4D52006E5FF9 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 228CAD4B2DFC4D52006E5FF9 /* Alamofire */; };
+		228CAD4F2DFC4D71006E5FF9 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 228CAD4E2DFC4D71006E5FF9 /* GoogleSignIn */; };
+		228CAD512DFC4D71006E5FF9 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 228CAD502DFC4D71006E5FF9 /* GoogleSignInSwift */; };
+		228CAD542DFC4D82006E5FF9 /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = 228CAD532DFC4D82006E5FF9 /* Reachability */; };
+		228CAD572DFC53A7006E5FF9 /* PayPalCheckout in Frameworks */ = {isa = PBXBuildFile; productRef = 228CAD562DFC53A7006E5FF9 /* PayPalCheckout */; };
+		228CAD5A2DFC54B3006E5FF9 /* CategoryProductService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228CAD582DFC54B3006E5FF9 /* CategoryProductService.swift */; };
+		228CAD5B2DFC54B3006E5FF9 /* GetAllProductsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228CAD592DFC54B3006E5FF9 /* GetAllProductsService.swift */; };
 		229EFA6E2DE35A0C006F0D77 /* E_commerceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229EFA6D2DE35A0C006F0D77 /* E_commerceApp.swift */; };
 		229EFA702DE35A0C006F0D77 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229EFA6F2DE35A0C006F0D77 /* ContentView.swift */; };
 		229EFA722DE35A0F006F0D77 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 229EFA712DE35A0F006F0D77 /* Assets.xcassets */; };
@@ -29,14 +38,6 @@
 		229EFA7F2DE35A0F006F0D77 /* E_commerceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229EFA7E2DE35A0F006F0D77 /* E_commerceTests.swift */; };
 		229EFA892DE35A10006F0D77 /* E_commerceUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229EFA882DE35A10006F0D77 /* E_commerceUITests.swift */; };
 		229EFA8B2DE35A10006F0D77 /* E_commerceUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229EFA8A2DE35A10006F0D77 /* E_commerceUITestsLaunchTests.swift */; };
-
-		22C0EEFE2DF9BECC006EAA4B /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = 22C0EEFD2DF9BECC006EAA4B /* Reachability */; };
-		22C0EF012DF9BEE4006EAA4B /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 22C0EF002DF9BEE4006EAA4B /* Alamofire */; };
-		22C0EF042DF9BEFC006EAA4B /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 22C0EF032DF9BEFC006EAA4B /* Kingfisher */; };
-		22C0EF072DF9C017006EAA4B /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 22C0EF062DF9C017006EAA4B /* FirebaseAuth */; };
-		22C0EF092DF9C017006EAA4B /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 22C0EF082DF9C017006EAA4B /* FirebaseFirestore */; };
-		22C0EF0C2DF9C065006EAA4B /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 22C0EF0B2DF9C065006EAA4B /* GoogleSignIn */; };
-		22C0EF0E2DF9C065006EAA4B /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 22C0EF0D2DF9C065006EAA4B /* GoogleSignInSwift */; };
 		22C0EF102DF9D11A006EAA4B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 22C0EF0F2DF9D11A006EAA4B /* GoogleService-Info.plist */; };
 		22C0EF132DF9D1B4006EAA4B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22C0EF122DF9D1B4006EAA4B /* AppDelegate.swift */; };
 		22E81D292DE6523600CE941C /* LoginScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22E81D282DE6523600CE941C /* LoginScreen.swift */; };
@@ -58,13 +59,6 @@
 		E13937C72DF969D1004983BB /* PayPalWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13937C62DF969D1004983BB /* PayPalWebViewController.swift */; };
 		E13937C92DF96BAD004983BB /* PayPalCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13937C82DF96BAD004983BB /* PayPalCoordinator.swift */; };
 		E13937CB2DF96BDD004983BB /* PayPalPaymentResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13937CA2DF96BDD004983BB /* PayPalPaymentResult.swift */; };
-		E159DF192DF9E6DE0048DDEB /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = E159DF182DF9E6DE0048DDEB /* FirebaseAuth */; };
-		E159DF1B2DF9E6E30048DDEB /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = E159DF1A2DF9E6E30048DDEB /* FirebaseCore */; };
-		E159DF1D2DF9E6EC0048DDEB /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = E159DF1C2DF9E6EC0048DDEB /* Kingfisher */; };
-		E159DF1F2DF9E6F30048DDEB /* PayPalCheckout in Frameworks */ = {isa = PBXBuildFile; productRef = E159DF1E2DF9E6F30048DDEB /* PayPalCheckout */; };
-		E159DF212DF9E6F80048DDEB /* PayPalWebPayments in Frameworks */ = {isa = PBXBuildFile; productRef = E159DF202DF9E6F80048DDEB /* PayPalWebPayments */; };
-		E159DF232DF9E7360048DDEB /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = E159DF222DF9E7360048DDEB /* Alamofire */; };
-		E159DF252DF9E73E0048DDEB /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = E159DF242DF9E73E0048DDEB /* Reachability */; };
 		E15A59262DEF4EC600FB39E5 /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15A59252DEF4EC600FB39E5 /* UserModel.swift */; };
 		E15A59292DEF652A00FB39E5 /* CurrencyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15A59282DEF652A00FB39E5 /* CurrencyService.swift */; };
 		E15A592B2DEF677800FB39E5 /* FreeCurrencyRateResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15A592A2DEF677800FB39E5 /* FreeCurrencyRateResponse.swift */; };
@@ -90,7 +84,6 @@
 		FA524F3D2DEB1982008FEA88 /* CategoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA524F3C2DEB1982008FEA88 /* CategoryViewModel.swift */; };
 		FA5CA25B2DF78B5F00468F98 /* Order.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5CA25A2DF78B5F00468F98 /* Order.swift */; };
 		FA5CA25E2DF78BAC00468F98 /* OrderCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5CA25D2DF78BAC00468F98 /* OrderCard.swift */; };
-		FA5D37122DF5A28F0050CA99 /* CategoryProductService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5D37112DF5A28F0050CA99 /* CategoryProductService.swift */; };
 		FA5D37142DF5A2CE0050CA99 /* CollectsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5D37132DF5A2CE0050CA99 /* CollectsResponse.swift */; };
 		FA805B662DE88BDB00853AA4 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA805B652DE88BDB00853AA4 /* HomeView.swift */; };
 		FA805B742DE8925500853AA4 /* CustomHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA805B732DE8925500853AA4 /* CustomHeaderView.swift */; };
@@ -144,9 +137,10 @@
 		227C3BC12DE5E9A1006B0E52 /* SingleProductResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleProductResponse.swift; sourceTree = "<group>"; };
 		227C3BC42DE5F3AD006B0E52 /* ProductDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductDetailsViewModel.swift; sourceTree = "<group>"; };
 		227C3BC62DE60518006B0E52 /* VariantsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariantsResponse.swift; sourceTree = "<group>"; };
-		228A2CE22DF6201900F138A3 /* GetAllProductsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetAllProductsService.swift; sourceTree = "<group>"; };
 		228A2CE42DF6216600F138A3 /* AllProductResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllProductResponse.swift; sourceTree = "<group>"; };
 		228B09B52DFB74D900EB73CC /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		228CAD582DFC54B3006E5FF9 /* CategoryProductService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategoryProductService.swift; sourceTree = "<group>"; };
+		228CAD592DFC54B3006E5FF9 /* GetAllProductsService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetAllProductsService.swift; sourceTree = "<group>"; };
 		229EFA6A2DE35A0C006F0D77 /* E-commerce.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "E-commerce.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		229EFA6D2DE35A0C006F0D77 /* E_commerceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E_commerceApp.swift; sourceTree = "<group>"; };
 		229EFA6F2DE35A0C006F0D77 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -203,7 +197,6 @@
 		FA524F3C2DEB1982008FEA88 /* CategoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewModel.swift; sourceTree = "<group>"; };
 		FA5CA25A2DF78B5F00468F98 /* Order.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Order.swift; sourceTree = "<group>"; };
 		FA5CA25D2DF78BAC00468F98 /* OrderCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderCard.swift; sourceTree = "<group>"; };
-		FA5D37112DF5A28F0050CA99 /* CategoryProductService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryProductService.swift; sourceTree = "<group>"; };
 		FA5D37132DF5A2CE0050CA99 /* CollectsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectsResponse.swift; sourceTree = "<group>"; };
 		FA805B652DE88BDB00853AA4 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		FA805B732DE8925500853AA4 /* CustomHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomHeaderView.swift; sourceTree = "<group>"; };
@@ -231,13 +224,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E159DF1D2DF9E6EC0048DDEB /* Kingfisher in Frameworks */,
-				E159DF252DF9E73E0048DDEB /* Reachability in Frameworks */,
-				E159DF1B2DF9E6E30048DDEB /* FirebaseCore in Frameworks */,
-				E159DF212DF9E6F80048DDEB /* PayPalWebPayments in Frameworks */,
-				E159DF232DF9E7360048DDEB /* Alamofire in Frameworks */,
-				E159DF192DF9E6DE0048DDEB /* FirebaseAuth in Frameworks */,
-				E159DF1F2DF9E6F30048DDEB /* PayPalCheckout in Frameworks */,
+				228CAD4F2DFC4D71006E5FF9 /* GoogleSignIn in Frameworks */,
+				228CAD542DFC4D82006E5FF9 /* Reachability in Frameworks */,
+				228CAD492DFC4D39006E5FF9 /* Kingfisher in Frameworks */,
+				228CAD572DFC53A7006E5FF9 /* PayPalCheckout in Frameworks */,
+				228CAD4C2DFC4D52006E5FF9 /* Alamofire in Frameworks */,
+				228CAD512DFC4D71006E5FF9 /* GoogleSignInSwift in Frameworks */,
+				228CAD442DFC4D20006E5FF9 /* FirebaseAuth in Frameworks */,
+				228CAD462DFC4D20006E5FF9 /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -285,14 +279,14 @@
 		224075B32DFB911B0042ED04 /* NetworkService */ = {
 			isa = PBXGroup;
 			children = (
+				228CAD582DFC54B3006E5FF9 /* CategoryProductService.swift */,
+				228CAD592DFC54B3006E5FF9 /* GetAllProductsService.swift */,
 				FAC8895D2DE8BC780041EF40 /* BrandService.swift */,
 				227C3BB02DE5E6D3006B0E52 /* NetworkService.swift */,
 				FA524F3A2DEB1920008FEA88 /* CategoryService.swift */,
 				FA9C0D2E2DEB852B00618379 /* BrandProductService.swift */,
 				E198F4262DED8000001656DE /* PriceRuleService.swift */,
 				E15A59282DEF652A00FB39E5 /* CurrencyService.swift */,
-				FA5D37112DF5A28F0050CA99 /* CategoryProductService.swift */,
-				228A2CE22DF6201900F138A3 /* GetAllProductsService.swift */,
 			);
 			path = NetworkService;
 			sourceTree = "<group>";
@@ -356,10 +350,7 @@
 				224075B22DFB90CB0042ED04 /* FirebaseService */,
 				22FC15B62DF0CFCD000FD95C /* FavoritesModel.xcdatamodeld */,
 				22FC15BC2DF0D094000FD95C /* FavoriteProductModel.swift */,
-				FA5D37112DF5A28F0050CA99 /* CategoryProductService.swift */,
-				228A2CE22DF6201900F138A3 /* GetAllProductsService.swift */,
 				E13937C42DF968F5004983BB /* PaypalService.swift */,
-
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -625,13 +616,14 @@
 			);
 			name = "E-commerce";
 			packageProductDependencies = (
-				E159DF182DF9E6DE0048DDEB /* FirebaseAuth */,
-				E159DF1A2DF9E6E30048DDEB /* FirebaseCore */,
-				E159DF1C2DF9E6EC0048DDEB /* Kingfisher */,
-				E159DF1E2DF9E6F30048DDEB /* PayPalCheckout */,
-				E159DF202DF9E6F80048DDEB /* PayPalWebPayments */,
-				E159DF222DF9E7360048DDEB /* Alamofire */,
-				E159DF242DF9E73E0048DDEB /* Reachability */,
+				228CAD432DFC4D20006E5FF9 /* FirebaseAuth */,
+				228CAD452DFC4D20006E5FF9 /* FirebaseFirestore */,
+				228CAD482DFC4D39006E5FF9 /* Kingfisher */,
+				228CAD4B2DFC4D52006E5FF9 /* Alamofire */,
+				228CAD4E2DFC4D71006E5FF9 /* GoogleSignIn */,
+				228CAD502DFC4D71006E5FF9 /* GoogleSignInSwift */,
+				228CAD532DFC4D82006E5FF9 /* Reachability */,
+				228CAD562DFC53A7006E5FF9 /* PayPalCheckout */,
 			);
 			productName = "E-commerce";
 			productReference = 229EFA6A2DE35A0C006F0D77 /* E-commerce.app */;
@@ -706,13 +698,12 @@
 			);
 			mainGroup = 229EFA612DE35A0C006F0D77;
 			packageReferences = (
-				E159DF112DF9E6040048DDEB /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
-				E159DF122DF9E6330048DDEB /* XCRemoteSwiftPackageReference "paypalcheckout-ios" */,
-				E159DF132DF9E6400048DDEB /* XCRemoteSwiftPackageReference "paypal-ios" */,
-				E159DF142DF9E64E0048DDEB /* XCRemoteSwiftPackageReference "WalletPassGenerator" */,
-				E159DF152DF9E65C0048DDEB /* XCRemoteSwiftPackageReference "Alamofire" */,
-				E159DF162DF9E66B0048DDEB /* XCRemoteSwiftPackageReference "Kingfisher" */,
-				E159DF172DF9E6770048DDEB /* XCRemoteSwiftPackageReference "Reachability" */,
+				228CAD422DFC4D20006E5FF9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				228CAD472DFC4D39006E5FF9 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				228CAD4A2DFC4D52006E5FF9 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				228CAD4D2DFC4D70006E5FF9 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				228CAD522DFC4D82006E5FF9 /* XCRemoteSwiftPackageReference "Reachability" */,
+				228CAD552DFC53A7006E5FF9 /* XCRemoteSwiftPackageReference "paypalcheckout-ios" */,
 			);
 			productRefGroup = 229EFA6B2DE35A0C006F0D77 /* Products */;
 			projectDirPath = "";
@@ -771,7 +762,6 @@
 				FA524F3D2DEB1982008FEA88 /* CategoryViewModel.swift in Sources */,
 				E11F26922DEE39930063716E /* SettingsView.swift in Sources */,
 				22FC15D12DF0F72F000FD95C /* NetworkMonitor.swift in Sources */,
-				FA5D37122DF5A28F0050CA99 /* CategoryProductService.swift in Sources */,
 				FA805B662DE88BDB00853AA4 /* HomeView.swift in Sources */,
 				22FC15C62DF0D4A1000FD95C /* FavoritesModel+CoreDataClass.swift in Sources */,
 				227C3BC22DE5E9A1006B0E52 /* SingleProductResponse.swift in Sources */,
@@ -783,6 +773,7 @@
 				FAC88A272DE8E2880041EF40 /* BrandProductsView.swift in Sources */,
 				E13937CB2DF96BDD004983BB /* PayPalPaymentResult.swift in Sources */,
 				E191DFAA2DF85D0400ADB394 /* Config.swift in Sources */,
+				228CAD5A2DFC54B3006E5FF9 /* CategoryProductService.swift in Sources */,
 				FA5CA25B2DF78B5F00468F98 /* Order.swift in Sources */,
 				FA524F3B2DEB1920008FEA88 /* CategoryService.swift in Sources */,
 				22FC15B82DF0CFCD000FD95C /* FavoritesModel.xcdatamodeld in Sources */,
@@ -795,6 +786,7 @@
 				E17102E82DE4EA7E00C511CC /* CartViewModel.swift in Sources */,
 				FAC8895C2DE8BC570041EF40 /* Brand.swift in Sources */,
 				E15A59292DEF652A00FB39E5 /* CurrencyService.swift in Sources */,
+				228CAD5B2DFC54B3006E5FF9 /* GetAllProductsService.swift in Sources */,
 				FAC889642DE8C1950041EF40 /* BrandsSectionView.swift in Sources */,
 				FA805B762DE892E500853AA4 /* SearchView.swift in Sources */,
 				FA805B742DE8925500853AA4 /* CustomHeaderView.swift in Sources */,
@@ -817,7 +809,6 @@
 				226D01F72DE6F53300D8DF0F /* PasswordTextField.swift in Sources */,
 				22FC15BB2DF0D063000FD95C /* CoreDataManager.swift in Sources */,
 				FA5D37142DF5A2CE0050CA99 /* CollectsResponse.swift in Sources */,
-				228A2CE32DF6201900F138A3 /* GetAllProductsService.swift in Sources */,
 				223E6A232DF6FF7400354ED4 /* SearchViewModel.swift in Sources */,
 				E15A592B2DEF677800FB39E5 /* FreeCurrencyRateResponse.swift in Sources */,
 				E17102F62DE4EBDF00C511CC /* CartFooterView.swift in Sources */,
@@ -1164,55 +1155,39 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		E159DF112DF9E6040048DDEB /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+		228CAD422DFC4D20006E5FF9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 11.14.0;
+				minimumVersion = 10.24.0;
 			};
 		};
-		E159DF122DF9E6330048DDEB /* XCRemoteSwiftPackageReference "paypalcheckout-ios" */ = {
+		228CAD472DFC4D39006E5FF9 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/paypal/paypalcheckout-ios";
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.3.0;
+				kind = exactVersion;
+				version = 6.0.0;
 			};
 		};
-		E159DF132DF9E6400048DDEB /* XCRemoteSwiftPackageReference "paypal-ios" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/paypal/paypal-ios.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.0;
-			};
-		};
-		E159DF142DF9E64E0048DDEB /* XCRemoteSwiftPackageReference "WalletPassGenerator" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/ljw980105/WalletPassGenerator.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
-			};
-		};
-		E159DF152DF9E65C0048DDEB /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+		228CAD4A2DFC4D52006E5FF9 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 5.10.2;
+				minimumVersion = 5.8.0;
 			};
 		};
-		E159DF162DF9E66B0048DDEB /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+		228CAD4D2DFC4D70006E5FF9 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 8.3.2;
+				minimumVersion = 6.2.4;
 			};
 		};
-		E159DF172DF9E6770048DDEB /* XCRemoteSwiftPackageReference "Reachability" */ = {
+		228CAD522DFC4D82006E5FF9 /* XCRemoteSwiftPackageReference "Reachability" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ashleymills/Reachability.swift";
 			requirement = {
@@ -1220,43 +1195,56 @@
 				kind = branch;
 			};
 		};
+		228CAD552DFC53A7006E5FF9 /* XCRemoteSwiftPackageReference "paypalcheckout-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/paypal/paypalcheckout-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		E159DF182DF9E6DE0048DDEB /* FirebaseAuth */ = {
+		228CAD432DFC4D20006E5FF9 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E159DF112DF9E6040048DDEB /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = 228CAD422DFC4D20006E5FF9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAuth;
 		};
-		E159DF1A2DF9E6E30048DDEB /* FirebaseCore */ = {
+		228CAD452DFC4D20006E5FF9 /* FirebaseFirestore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E159DF112DF9E6040048DDEB /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseCore;
+			package = 228CAD422DFC4D20006E5FF9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
 		};
-		E159DF1C2DF9E6EC0048DDEB /* Kingfisher */ = {
+		228CAD482DFC4D39006E5FF9 /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E159DF162DF9E66B0048DDEB /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			package = 228CAD472DFC4D39006E5FF9 /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
 		};
-		E159DF1E2DF9E6F30048DDEB /* PayPalCheckout */ = {
+		228CAD4B2DFC4D52006E5FF9 /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E159DF122DF9E6330048DDEB /* XCRemoteSwiftPackageReference "paypalcheckout-ios" */;
-			productName = PayPalCheckout;
-		};
-		E159DF202DF9E6F80048DDEB /* PayPalWebPayments */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E159DF132DF9E6400048DDEB /* XCRemoteSwiftPackageReference "paypal-ios" */;
-			productName = PayPalWebPayments;
-		};
-		E159DF222DF9E7360048DDEB /* Alamofire */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E159DF152DF9E65C0048DDEB /* XCRemoteSwiftPackageReference "Alamofire" */;
+			package = 228CAD4A2DFC4D52006E5FF9 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
 		};
-		E159DF242DF9E73E0048DDEB /* Reachability */ = {
+		228CAD4E2DFC4D71006E5FF9 /* GoogleSignIn */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E159DF172DF9E6770048DDEB /* XCRemoteSwiftPackageReference "Reachability" */;
+			package = 228CAD4D2DFC4D70006E5FF9 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		228CAD502DFC4D71006E5FF9 /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 228CAD4D2DFC4D70006E5FF9 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
+		228CAD532DFC4D82006E5FF9 /* Reachability */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 228CAD522DFC4D82006E5FF9 /* XCRemoteSwiftPackageReference "Reachability" */;
 			productName = Reachability;
+		};
+		228CAD562DFC53A7006E5FF9 /* PayPalCheckout */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 228CAD552DFC53A7006E5FF9 /* XCRemoteSwiftPackageReference "paypalcheckout-ios" */;
+			productName = PayPalCheckout;
 		};
 /* End XCSwiftPackageProductDependency section */
 

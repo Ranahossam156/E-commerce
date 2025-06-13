@@ -78,20 +78,24 @@ extension CheckoutViewModel {
         let webViewController = PayPalWebViewController(url: approvalURL)
         
         webViewController.onSuccess = { [weak self] _ in
-            Task {
+            guard let self = self else { return }
+
+            Task { [weak self] in
+                guard let self = self else { return }
+
                 do {
                     let success = try await PayPalService.shared.captureOrder(orderId: orderId)
                     if success {
                         DispatchQueue.main.async {
-                            self?.isProcessingPayment = false
-                            self?.showPaymentSuccess = true
-                            self?.sendConfirmationEmail(items: items, total: total)
+                            self.isProcessingPayment = false
+                            self.showPaymentSuccess = true
+                            self.sendConfirmationEmail(items: items, total: total)
                             completion(true, "PayPal payment successful")
                         }
                     }
                 } catch {
                     DispatchQueue.main.async {
-                        self?.isProcessingPayment = false
+                        self.isProcessingPayment = false
                         completion(false, "Payment capture failed: \(error.localizedDescription)")
                     }
                 }

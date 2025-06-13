@@ -8,7 +8,6 @@ struct ContentView: View {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
 
     var body: some View {
-        NavigationStack {
             if authViewModel.isAuthenticated {
                 MainTabView()
 
@@ -16,7 +15,7 @@ struct ContentView: View {
                 SignupScreen().environmentObject(authViewModel)
 
             }
-        }
+        
     }
 }
 ////
