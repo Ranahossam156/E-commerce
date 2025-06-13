@@ -8,9 +8,9 @@
 import Foundation
 import FirebaseAuth
 import FirebaseCore
-import GoogleSignIn
 import GoogleSignInSwift
 import UIKit
+import GoogleSignIn
 
 
 class FirebaseAuthService {
