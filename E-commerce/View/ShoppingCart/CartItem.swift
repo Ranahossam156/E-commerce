@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CartItem: Identifiable {
+struct CartItem: Identifiable,Codable {
     let id = UUID()
     let product: Product
     let selectedVariant: Variant

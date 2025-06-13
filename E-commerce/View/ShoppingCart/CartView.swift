@@ -114,13 +114,13 @@ struct CartView: View {
             
             if let status = paymentStatus {
                 Text(status)
-                    .foregroundColor(status.contains("Success") ? .green : .red)
-                    .padding()
+                    .foregroundColor(status.contains("success") ? .green : .red)
+                    .padding(16)
                     .background(Color(.systemBackground).opacity(0.9))
                     .cornerRadius(8)
                     .transition(.opacity)
                     .animation(.easeInOut, value: paymentStatus)
-                    .position(x: UIScreen.main.bounds.width / 2, y: 50)
+                    .position(x: UIScreen.main.bounds.width / 2, y: 70)
             }
         }
         .navigationBarHidden(true)
@@ -160,7 +160,7 @@ struct CartView: View {
                 }
             }
         }
-        .alert("Your Order is Confirmed ", isPresented: .constant(checkoutViewModel.showPaymentSuccess && selectedPaymentMethod == "Cash on Delivery"), actions: {
+        .alert("Your Order is Confirmed ", isPresented: .constant(checkoutViewModel.showPaymentSuccess ), actions: {
             Button("OK") {
                 checkoutViewModel.showPaymentSuccess = false
                 paymentStatus = "Cash on Delivery confirmed"
@@ -202,7 +202,7 @@ struct CartView: View {
         ) { success, message in
             DispatchQueue.main.async {
                 if success {
-                    paymentStatus = "PayPal payment successful!"
+                    paymentStatus = "PayPal payment successful"
                     viewModel.clearCart()
                     presentationMode.wrappedValue.dismiss()
                 } else {
@@ -220,7 +220,7 @@ struct CartView: View {
         checkoutViewModel.processPayment(for: viewModel.cartItems, total: viewModel.total) {
             paymentStatus = "Cash on Delivery initiated"
             if checkoutViewModel.showPaymentSuccess {
-                paymentStatus = "Cash on Delivery confirmed"
+                paymentStatus = "Cash on Delivery confirmed successfuly"
                 viewModel.clearCart()
                // presentationMode.wrappedValue.dismiss()
             }
