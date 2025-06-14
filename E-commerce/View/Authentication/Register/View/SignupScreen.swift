@@ -29,12 +29,21 @@ struct SignupScreen: View {
 
         ScrollView {
             LazyVStack(alignment: .leading) {
-                Text("Create Account")
-                    .font(.title)
-                    .fontWeight(.semibold)
-                    .foregroundColor(Color("myBlack"))
-                    .padding(.top, 14)
-
+                HStack{
+                    Text("Create Account")
+                        .font(.title)
+                        .fontWeight(.semibold)
+                        .foregroundColor(Color("myBlack"))
+                        .padding(.top, 14)
+                    Spacer()
+                    NavigationLink {
+                        MainTabView().navigationBarBackButtonHidden()
+                    } label: {
+                        Text("Skip")
+                            .foregroundColor(Color.black)
+                            .fontWeight(.medium)
+                    }
+                }
                 Spacer().frame(height: 12)
 
                 Text("Start shopping with create your account")
@@ -97,7 +106,10 @@ struct SignupScreen: View {
                         Text("Already have an account?")
                             .foregroundColor(Color("myBlack"))
 
-                        NavigationLink(destination: LoginScreen().environmentObject(viewModel)) {
+                        NavigationLink {
+                            LoginScreen()
+                                .environmentObject(viewModel)
+                        } label: {
                             Text("Sign in")
                                 .foregroundColor(Color("primary"))
                                 .fontWeight(.medium)

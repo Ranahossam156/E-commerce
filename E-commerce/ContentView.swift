@@ -1,6 +1,7 @@
 import SwiftUI
 
 import SwiftUI
+import Firebase
 
 struct ContentView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
@@ -9,10 +10,20 @@ struct ContentView: View {
 
     var body: some View {
             if authViewModel.isAuthenticated {
-                MainTabView()
+                MainTabView() .task { // <-- Use .task to run an async operation
+                    // Ensure we have a user ID before syncing
+                    guard let userId = Auth.auth().currentUser?.uid else {
+                        print("User logged in but no UID found.")
+                        return
+                    }
+                    // Sync data from Firestore to Core Data
+                    await FavoriteManager.shared.syncFavoritesFromFirestore(for: userId)
+                }
 
             } else {
-                SignupScreen().environmentObject(authViewModel)
+                NavigationStack{
+                    SignupScreen().environmentObject(authViewModel)
+                }
 
             }
         

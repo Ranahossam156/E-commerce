@@ -20,12 +20,21 @@ struct LoginScreen: View {
 
     var loginForm: some View {
         VStack(alignment: .leading) {
-            Text("Login Account")
-                .font(.title)
-                .fontWeight(.semibold)
-                .foregroundColor(Color("myBlack"))
-                .padding(.top, 14)
-
+            HStack{
+                Text("Login Account")
+                    .font(.title)
+                    .fontWeight(.semibold)
+                    .foregroundColor(Color("myBlack"))
+                    .padding(.top, 14)
+                Spacer()
+                NavigationLink {
+                    MainTabView().navigationBarBackButtonHidden()
+                } label: {
+                    Text("Skip")
+                        .foregroundColor(Color.black)
+                        .fontWeight(.medium)
+                }
+            }
             Spacer().frame(height: 12)
 
             Text("Please login with registered account")

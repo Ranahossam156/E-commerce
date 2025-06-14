@@ -215,7 +215,7 @@ struct VersionSection: View {
     }
 }
 
-// Subview for Logout Section
+
 struct LogoutSection: View {
     @ObservedObject var viewModel: SettingsViewModel
     @EnvironmentObject var authViewModel: AuthViewModel
@@ -223,13 +223,19 @@ struct LogoutSection: View {
     var body: some View {
         Section(header: Text("ACCOUNT").font(.caption).foregroundColor(.gray)) {
             Button(action: {
-                do {
-                  try Auth.auth().signOut()
-                  authViewModel.isAuthenticated = false
-                } catch {
-                  print("🚨 Could not sign out:", error.localizedDescription)
+                Task {
+                    guard let userId = Auth.auth().currentUser?.uid else {
+                        return
+                    }
+                    
+                    await FavoriteManager.shared.syncFavoritesToFirestore(for: userId)
+                    
+                    do {
+                        try Auth.auth().signOut()
+                        authViewModel.isAuthenticated = false
+                    } catch {
+                    }
                 }
-                
             }) {
                 Text("Log Out")
                     .font(.body)

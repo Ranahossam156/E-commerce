@@ -6,7 +6,7 @@
 //
 
 import Foundation
-struct FavoriteProductModel {
+struct FavoriteProductModel : Codable, Identifiable{
     let id: Int64
     let title: String
     let bodyHTML: String
@@ -15,6 +15,9 @@ struct FavoriteProductModel {
     let sizes: [String]
     let imageURLs: [String]
     var imagesData: [Data]?
+    enum CodingKeys: String, CodingKey {
+        case id, title, bodyHTML, price, colors, sizes, imageURLs
+    }
     
     func toProduct() -> Product {
         let productID = Int(id)
