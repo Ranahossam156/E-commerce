@@ -21,12 +21,13 @@ struct BrandProduct: Decodable, Identifiable {
     let tags: String?
     let status: String?
     let variants: [BrandProductVariant]?
+    let bodyHTML: String?
 //    let options: [ProductOption]
-//    let images: [ProductImage]
+    let images: [ProductImage]?
     let imageReponse: BrandProductImageResponse?
 
     enum CodingKeys: String, CodingKey {
-        case id, title, vendor, tags, status, variants
+        case id, title, vendor, tags, status, variants,bodyHTML, images
         case imageReponse = "image"
         case productType = "product_type"
        

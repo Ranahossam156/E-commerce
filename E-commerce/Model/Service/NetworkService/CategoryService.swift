@@ -1,5 +1,5 @@
 //
-//  ProductService.swift
+//  CategoryService.swift
 //  E-commerce
 //
 //  Created by MacBook on 31/05/2025.
@@ -8,11 +8,11 @@
 import Foundation
 import Alamofire
 
-protocol BrandProductNetworkServiceProtocol {
-    static func fetchDataFromAPI(vendor : String, completion: @escaping (ProductsResponse?, Error?) -> Void)
+protocol CategoryNetworkServiceProtocol {
+    static func fetchDataFromAPI(completion: @escaping (CategoryResponse?, Error?) -> Void)
 }
 
-class BrandProductNetworkService: BrandProductNetworkServiceProtocol {
+class CategoryNetworkService: CategoryNetworkServiceProtocol {
     
     private static let session: Session = {
         #if targetEnvironment(simulator)
@@ -24,8 +24,8 @@ class BrandProductNetworkService: BrandProductNetworkServiceProtocol {
         return Session(configuration: config)
     }()
     
-    static func fetchDataFromAPI(vendor : String, completion: @escaping (ProductsResponse?, Error?) -> Void) {
-        guard let url = URL(string: "https://ios4-sv.myshopify.com/admin/api/2025-04/products.json") else {
+    static func fetchDataFromAPI(completion: @escaping (CategoryResponse?, Error?) -> Void) {
+        guard let url = URL(string: "https://ios4-sv.myshopify.com/admin/api/2025-04/custom_collections.json") else {
             print("Invalid URL")
             return
         }
@@ -34,19 +34,15 @@ class BrandProductNetworkService: BrandProductNetworkServiceProtocol {
             "X-Shopify-Access-Token": "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"
         ]
         
-        let parameters = [
-            "vendor" : vendor
-        ]
         
-        
-        session.request(url, parameters: parameters, headers: headers)
+        session.request(url, headers: headers)
             .validate()
-            .responseDecodable(of: ProductsResponse.self) { response in
-                debugPrint(response)
+            .responseDecodable(of: CategoryResponse.self) { response in
+                //debugPrint(response)
                 switch response.result {
                 case .success(let result):
                     completion(result, nil)
-                    print(result.products?.count ?? 0)
+                    print(result.customCollections?.count ?? 0)
                 case .failure(let error):
                     completion(nil, error)
                     print("Error: \(error)")
@@ -54,3 +50,4 @@ class BrandProductNetworkService: BrandProductNetworkServiceProtocol {
             }
     }
 }
+

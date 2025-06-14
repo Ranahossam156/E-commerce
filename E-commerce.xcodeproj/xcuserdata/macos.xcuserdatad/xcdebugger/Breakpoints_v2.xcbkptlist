@@ -1,25 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Bucket
-uuid = "1B9ADA88-C51F-4124-ACE3-7E06F72B7575"
-type = "1"
-version = "2.0">
+   uuid = "1B9ADA88-C51F-4124-ACE3-7E06F72B7575"
+   type = "1"
+   version = "2.0">
    <Breakpoints>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "DEA6B62D-4FFF-4ECB-B3E1-3830B7BA46C3"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "E-commerce/View/BrandProducts/BrandProductsView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "17"
-            endingLineNumber = "17"
-            landmarkName = "filteredProducts"
-            landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
@@ -30,12 +14,11 @@ version = "2.0">
             filePath = "E-commerce/View/Search/SearchScreen.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "30"
-            endingLineNumber = "30"
+            startingLineNumber = "31"
+            endingLineNumber = "31"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
-
 </Bucket>

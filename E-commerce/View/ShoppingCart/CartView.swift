@@ -126,6 +126,14 @@ struct CartView: View {
     private var paymentStatusOverlay: some View {
         Group {
             if let status = paymentStatus {
+                Text(status)
+                    .foregroundColor(status.contains("success") ? .green : .red)
+                    .padding()
+                    .background(Color(.systemBackground).opacity(0.9))
+                    .cornerRadius(8)
+                    .transition(.opacity)
+                    .animation(.easeInOut, value: paymentStatus)
+                    .position(x: UIScreen.main.bounds.width / 2, y: 80)
                 paymentStatusView(status)
             }
         }
@@ -191,10 +199,11 @@ struct CartView: View {
             )
         }
         .onChange(of: orderViewModel.order?.order) { newOrder in
-            if newOrder != nil {
+            if let order = newOrder {
                 showOrderSuccessAlert = true
             }
         }
+        
         .onChange(of: showPaymentOptions) { isShowing in
             handlePaymentOptionChange(isShowing: isShowing)
         }
@@ -254,34 +263,33 @@ struct CartView: View {
         }
     }
 
+    // Updated createOrder function in CartView.swift
     private func createOrder() {
         guard let firebaseUser = Auth.auth().currentUser else {
-            paymentStatus = "User not logged in."
             return
         }
-
-        let displayName = firebaseUser.displayName ?? authViewModel.username
-    
-        let firstName = displayName
-        let lastName = ""
-
+        
+        // Extract first/last name from displayName
+        let nameComponents = firebaseUser.displayName?.components(separatedBy: " ") ?? []
+        let firstName = nameComponents.first ?? "Customer"
+        let lastName = nameComponents.dropFirst().joined(separator: " ")
+        
         let customer = Customer(
             id: firebaseUser.uid.hashValue,
-            email: firebaseUser.email ?? "example@example.com",
+            email: firebaseUser.email ?? "",
             firstName: firstName,
             lastName: lastName,
             phone: "+1234567890", 
             defaultAddress: ShoppingAddress(
-                address1: "123 Test Street",
-                city: "Berlin",
-                zip: "10115",
+                address1: "User Address",
+                city: "Cairo",
+                zip: "11511",
                 countryCode: .cd
             )
         )
 
         orderViewModel.checkout(cartItems: viewModel.cartItems, customer: customer)
     }
-
 
     private func startApplePay() {
         guard PKPaymentAuthorizationViewController.canMakePayments(usingNetworks: paymentRequest.supportedNetworks) else {
