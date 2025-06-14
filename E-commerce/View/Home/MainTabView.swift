@@ -8,27 +8,31 @@
 import SwiftUI
 
 struct MainTabView: View {
-    @EnvironmentObject var currencyService: CurrencyService
+  @EnvironmentObject var currencyService: CurrencyService
 
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    var body: some View {
-        TabView {
-            HomeView()
-                .tabItem {
-                    Label("Home", systemImage: "house.fill")
-                }
+  var body: some View {
+    TabView {
+      NavigationStack {
+        HomeView()
+      }
+      .tabItem {
+        Label("Home", systemImage: "house.fill")
+      }
 
-            FavoriteScreen()
-                .tabItem {
-                    Label("Favorites", systemImage: "heart.fill")
-                }
+      NavigationStack {
+        FavoriteScreen()
+      }
+      .tabItem {
+        Label("Favorites", systemImage: "heart.fill")
+      }
 
-            SettingsView()
-                .tabItem {
-                    Label("My Profile", systemImage: "person.fill")
-                }
-        }.navigationBarBackButtonHidden(true)
-
+      NavigationStack {
+        SettingsView()
+      }
+      .tabItem {
+        Label("My Profile", systemImage: "person.fill")
+      }
     }
+  }
 }
 
