@@ -12,7 +12,6 @@ class FavoriteManager {
     static let shared = FavoriteManager()
 
     private let context = CoreDataManager.shared.context
-
     func addToFavorites(product: FavoriteProductModel) async {
         
         var downloadedImagesData: [Data] = []
@@ -34,7 +33,7 @@ class FavoriteManager {
         favorite.desc = product.bodyHTML
         favorite.price = product.price
         
-        favorite.images = downloadedImagesData as NSObject
+        favorite.images = downloadedImagesData
         
         favorite.colors = product.colors as NSObject
         favorite.sizes = product.sizes as NSObject
@@ -114,6 +113,72 @@ class FavoriteManager {
             }
         } catch {
             print("Failed to fetch favorites: \(error.localizedDescription)")
+        }
+    }
+    func getAllFavorites() -> [FavoriteProductModel] {
+        let request: NSFetchRequest<FavoritesModel> = FavoritesModel.fetchRequest()
+        var favorites: [FavoriteProductModel] = []
+
+        do {
+            let results = try context.fetch(request)
+            favorites = results.map { coreDataFavorite in
+                FavoriteProductModel(
+                    id: coreDataFavorite.id,
+                    title: coreDataFavorite.title ?? "",
+                    bodyHTML: coreDataFavorite.desc ?? "",
+                    price: coreDataFavorite.price ?? "0.00",
+                    colors: coreDataFavorite.colors as? [String] ?? [],
+                    sizes: coreDataFavorite.sizes as? [String] ?? [],
+                    imageURLs: [],
+                    imagesData: coreDataFavorite.images as? [Data]
+                )
+            }
+            print("Retrieved \(favorites.count) favorites from Core Data.")
+        } catch {
+        }
+        return favorites
+    }
+
+    func deleteAllFavorites() {
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = FavoritesModel.fetchRequest()
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+
+        do {
+            try context.execute(deleteRequest)
+            CoreDataManager.shared.save()
+            print("🗑️ All favorites deleted from Core Data.")
+        } catch {
+        }
+    }
+
+
+    func syncFavoritesToFirestore(for userId: String) async {
+        let localFavorites = getAllFavorites()
+        
+        
+        guard !localFavorites.isEmpty else {
+            print("No local favorites to sync.")
+            return
+        }
+
+        do {
+            try await FirestoreService.shared.uploadFavorites(localFavorites, for: userId)
+            deleteAllFavorites()
+        } catch {
+        }
+    }
+
+    func syncFavoritesFromFirestore(for userId: String) async {
+        do {
+            let firestoreFavorites = try await FirestoreService.shared.fetchFavorites(for: userId)
+            
+            deleteAllFavorites()
+
+            for favorite in firestoreFavorites {
+                await addToFavorites(product: favorite)
+            }
+            
+        } catch {
         }
     }
 

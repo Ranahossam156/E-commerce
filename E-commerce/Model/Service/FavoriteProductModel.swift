@@ -1,3 +1,4 @@
+//
 //  FavoriteProductModel.swift
 //  E-commerce
 //
@@ -5,10 +6,7 @@
 //
 
 import Foundation
-import FirebaseFirestoreSwift
-
-struct FavoriteProductModel: Codable, Identifiable {
-    @DocumentID var documentId: String?
+struct FavoriteProductModel : Codable, Identifiable{
     let id: Int64
     let title: String
     let bodyHTML: String
@@ -17,39 +15,34 @@ struct FavoriteProductModel: Codable, Identifiable {
     let sizes: [String]
     let imageURLs: [String]
     var imagesData: [Data]?
-    var userId: String? // Add userId for Firestore
-    
     enum CodingKeys: String, CodingKey {
-        case documentId
-        case id
-        case title
-        case bodyHTML
-        case price
-        case colors
-        case sizes
-        case imageURLs
-        case imagesData
-        case userId
+        case id, title, bodyHTML, price, colors, sizes, imageURLs
     }
     
     func toProduct() -> Product {
         let productID = Int(id)
         
-        let productImages = imageURLs.enumerated().map { index, url in
-            ProductImage()
+        var productImages: [ProductImage] = []
+        
+        if let imagesData = imagesData {
+            productImages = imagesData.enumerated().map { index, _ in
+                ProductImage()
+            }
+        } else {
+            productImages = imageURLs.enumerated().map { index, url in
+                ProductImage()
+            }
         }
         
         let productVariants = [
             Variant()
         ]
-        
+
         let productOptions = [
             ProductOption(),
             ProductOption()
         ]
-        
-        let defaultImage = productImages.first ?? ProductImage()
-        
+
         return Product()
     }
 }

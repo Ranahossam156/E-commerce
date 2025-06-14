@@ -14,14 +14,14 @@ class CartViewModel: ObservableObject {
     @Published var total: Double = 0
     
     private let currencyService: CurrencyService
-    private let firestoreService: FirestoreService
+    private let firestoreService: CartFireStoreService
     private var authHandle: AuthStateDidChangeListenerHandle?
     
-    static let shared = CartViewModel(currencyService: CurrencyService(), firestoreService: FirestoreService())
+    static let shared = CartViewModel(currencyService: CurrencyService(), firestoreService: CartFireStoreService())
     
     var selectedCurrency: String = "USD" // Default, update as needed
     
-    init(currencyService: CurrencyService, firestoreService: FirestoreService) {
+    init(currencyService: CurrencyService, firestoreService: CartFireStoreService) {
         self.currencyService = currencyService
         self.firestoreService = firestoreService
         print("CartViewModel initialized")
