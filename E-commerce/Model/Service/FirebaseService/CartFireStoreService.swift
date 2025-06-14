@@ -9,7 +9,7 @@ import FirebaseFirestore
 import FirebaseFirestoreSwift
 import FirebaseAuth
 
-class FirestoreService {
+class CartFireStoreService {
     private let db = Firestore.firestore()
     
     // MARK: - Cart Operations
@@ -83,7 +83,7 @@ class FirestoreService {
     }
 }
 
-extension FirestoreService {
+extension CartFireStoreService {
     // Future: Add methods for other collections (e.g., favorites, orders)
     func saveFavorite(_ favorite: FavoriteProductModel, completion: @escaping (Result<Void, Error>) -> Void) {
         // Implementation for favorites
