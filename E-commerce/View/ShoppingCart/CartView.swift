@@ -3,6 +3,7 @@ import Kingfisher
 import PassKit
 import PayPalCheckout
 import SwiftUI
+import FirebaseAuth
 
 enum PaymentMethod {
     case applePay
@@ -15,6 +16,8 @@ struct CartView: View {
     @ObservedObject private var viewModel = CartViewModel.shared
     @StateObject private var checkoutViewModel = CheckoutViewModel()
     @StateObject private var orderViewModel = OrderViewModel()
+    @StateObject private var authViewModel = AuthViewModel()
+    @StateObject private var settingsViewModel = SettingsViewModel()
 
     @SwiftUI.State private var showDeleteAlert = false
     @SwiftUI.State private var itemToDelete: CartItem?
@@ -252,12 +255,22 @@ struct CartView: View {
     }
 
     private func createOrder() {
+        guard let firebaseUser = Auth.auth().currentUser else {
+            paymentStatus = "User not logged in."
+            return
+        }
+
+        let displayName = firebaseUser.displayName ?? authViewModel.username
+    
+        let firstName = displayName
+        let lastName = ""
+
         let customer = Customer(
-            id: 1,
-            email: .example,
-            firstName: .ira,
-            lastName: .orr,
-            phone: "+1234567890",
+            id: firebaseUser.uid.hashValue,
+            email: firebaseUser.email ?? "example@example.com",
+            firstName: firstName,
+            lastName: lastName,
+            phone: "+1234567890", // Replace or fetch this if stored
             defaultAddress: ShoppingAddress(
                 address1: "123 Test Street",
                 city: "Berlin",
@@ -268,6 +281,7 @@ struct CartView: View {
 
         orderViewModel.checkout(cartItems: viewModel.cartItems, customer: customer)
     }
+
 
     private func startApplePay() {
         guard PKPaymentAuthorizationViewController.canMakePayments(usingNetworks: paymentRequest.supportedNetworks) else {

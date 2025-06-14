@@ -105,17 +105,22 @@ enum Currency: String, Codable {
     case egp = "EGP"
 }
 
-enum Email: String, Codable {
-    case example = "example@example.com"
-}
+//enum Email: String, Codable {
+//    case example = "example@example.com"
+//}
+//
+//enum FirstName: String, Codable {
+//    case ira = "Ira"
+//}
+//
+//enum LastName: String, Codable {
+//    case orr = "Orr"
+//}
 
-enum FirstName: String, Codable {
-    case ira = "Ira"
-}
+typealias Email = String
+typealias FirstName = String
+typealias LastName = String
 
-enum LastName: String, Codable {
-    case orr = "Orr"
-}
 
 enum CountryCode: String, Codable {
     case cd = "CD"

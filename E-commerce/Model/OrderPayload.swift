@@ -16,8 +16,8 @@ struct OrderPayload: Encodable {
         }
 
         let shipping = ShippingAddressPayload(
-            firstName: customer.firstName?.rawValue ?? "",
-            lastName: customer.lastName?.rawValue ?? "",
+            firstName: customer.firstName ?? "",
+            lastName: customer.lastName ?? "",
             address1: customer.defaultAddress?.address1 ?? "",
             city: customer.defaultAddress?.city ?? "",
 //            country: customer.defaultAddress.country.
@@ -25,7 +25,7 @@ struct OrderPayload: Encodable {
         )
 
         self.order = OrderData(
-            email: customer.email?.rawValue ?? "",
+            email: customer.email ?? "",
             financialStatus: "pending",
             lineItems: lineItems,
             shippingAddress: shipping
