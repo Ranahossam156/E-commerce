@@ -182,3 +182,9 @@ class JSONAny: Codable {
         }
     }
 }
+
+extension OrderModel: Equatable {
+    static func == (lhs: OrderModel, rhs: OrderModel) -> Bool {
+        return lhs.id == rhs.id
+    }
+}
