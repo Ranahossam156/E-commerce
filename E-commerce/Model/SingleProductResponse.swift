@@ -1,6 +1,12 @@
+//  SingleProductResponse.swift
+//  E-commerce
+//
+//  Created by Macos on 27/05/2025.
+//
+
 import Foundation
 
-// MARK: - Root Response
+// MARK: - Single Product Response
 struct SingleProductResponse: Codable {
     let product: Product
 }
@@ -38,8 +44,26 @@ struct Product: Codable, Identifiable {
         case adminGraphqlAPIID = "admin_graphql_api_id"
     }
     
-    
-   
+    init() {
+        id = 0
+        title = ""
+        bodyHTML = ""
+        vendor = ""
+        productType = ""
+        createdAt = ""
+        handle = ""
+        updatedAt = ""
+        publishedAt = ""
+        templateSuffix = nil
+        publishedScope = ""
+        tags = ""
+        status = ""
+        adminGraphqlAPIID = ""
+        variants = []
+        options = []
+        images = []
+        image = ProductImage()
+    }
 }
 
 // MARK: - Variant
@@ -89,6 +113,35 @@ struct Variant: Codable {
         case adminGraphqlAPIID = "admin_graphql_api_id"
         case imageID = "image_id"
     }
+    
+    init() {
+        id = 0
+        productID = 0
+        title = ""
+        price = "0.0"
+        position = 0
+        inventoryPolicy = ""
+        compareAtPrice = nil
+        option1 = nil
+        option2 = nil
+        option3 = nil
+        createdAt = ""
+        updatedAt = ""
+        taxable = false
+        barcode = nil
+        fulfillmentService = ""
+        grams = 0
+        inventoryManagement = nil
+        requiresShipping = false
+        sku = ""
+        weight = 0.0
+        weightUnit = ""
+        inventoryItemID = 0
+        inventoryQuantity = 0
+        oldInventoryQuantity = 0
+        adminGraphqlAPIID = ""
+        imageID = nil
+    }
 }
 
 // MARK: - Product Option
@@ -102,6 +155,14 @@ struct ProductOption: Codable {
     enum CodingKeys: String, CodingKey {
         case id, name, position, values
         case productID = "product_id"
+    }
+    
+    init() {
+        id = 0
+        productID = 0
+        name = ""
+        position = 0
+        values = []
     }
 }
 
@@ -127,8 +188,21 @@ struct ProductImage: Codable {
         case adminGraphqlAPIID = "admin_graphql_api_id"
         case variantIDs = "variant_ids"
     }
+    
+    init() {
+        id = 0
+        alt = ""
+        position = 0
+        productID = 0
+        createdAt = ""
+        updatedAt = ""
+        adminGraphqlAPIID = ""
+        width = 0
+        height = 0
+        src = ""
+        variantIDs = []
+    }
 }
-
 struct ProductImagesResponse: Codable {
     let images: [ProductImage]
 }

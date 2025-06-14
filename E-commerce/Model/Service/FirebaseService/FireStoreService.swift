@@ -1,5 +1,4 @@
-//
-//  FireStoreService.swift
+//  FirestoreService.swift
 //  E-commerce
 //
 //  Created by Kerolos on 13/06/2025.
@@ -15,14 +14,9 @@ class FirestoreService {
     
     // MARK: - Cart Operations
     
-    /// Loads cart items for the authenticated user from Firestore
-    func loadCartItems(completion: @escaping (Result<[CartItem], Error>) -> Void) {
-        guard let userId = Auth.auth().currentUser?.uid else {
-            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "User not authenticated"])))
-            return
-        }
-        
-        db.collection("users").document(userId).collection("cart").getDocuments { snapshot, error in
+    /// Loads cart items for the specified user from Firestore
+    func loadCartItems(for userId: String, completion: @escaping (Result<[CartItem], Error>) -> Void) { // Changed: Added userId parameter
+        db.collection("carts").document(userId).collection("items").getDocuments { snapshot, error in // Changed: Updated path to "carts/{userId}/items"
             if let error = error {
                 completion(.failure(error))
                 return
@@ -36,14 +30,9 @@ class FirestoreService {
     }
     
     /// Saves a cart item to Firestore
-    func saveCartItem(_ cartItem: CartItem, completion: @escaping (Result<Void, Error>) -> Void) {
-        guard let userId = Auth.auth().currentUser?.uid else {
-            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "User not authenticated"])))
-            return
-        }
-        
+    func saveCartItem(_ cartItem: CartItem, for userId: String, completion: @escaping (Result<Void, Error>) -> Void) { // Changed: Added userId parameter
         do {
-            try db.collection("users").document(userId).collection("cart").document(cartItem.id.uuidString).setData(from: cartItem) { error in
+            try db.collection("carts").document(userId).collection("items").document(cartItem.id.uuidString).setData(from: cartItem) { error in // Changed: Updated path to "carts/{userId}/items"
                 if let error = error {
                     completion(.failure(error))
                 } else {
@@ -56,18 +45,13 @@ class FirestoreService {
     }
     
     /// Updates a cart item in Firestore
-    func updateCartItem(_ cartItem: CartItem, completion: @escaping (Result<Void, Error>) -> Void) {
-        saveCartItem(cartItem, completion: completion) // Same as saving, as setData overwrites
+    func updateCartItem(_ cartItem: CartItem, for userId: String, completion: @escaping (Result<Void, Error>) -> Void) { // Changed: Added userId parameter
+        saveCartItem(cartItem, for: userId, completion: completion) // Same as saving, as setData overwrites
     }
     
     /// Deletes a cart item from Firestore
-    func deleteCartItem(_ cartItem: CartItem, completion: @escaping (Result<Void, Error>) -> Void) {
-        guard let userId = Auth.auth().currentUser?.uid else {
-            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "User not authenticated"])))
-            return
-        }
-        
-        db.collection("users").document(userId).collection("cart").document(cartItem.id.uuidString).delete { error in
+    func deleteCartItem(_ cartItem: CartItem, for userId: String, completion: @escaping (Result<Void, Error>) -> Void) { // Changed: Added userId parameter
+        db.collection("carts").document(userId).collection("items").document(cartItem.id.uuidString).delete { error in // Changed: Updated path to "carts/{userId}/items"
             if let error = error {
                 completion(.failure(error))
             } else {
@@ -76,14 +60,9 @@ class FirestoreService {
         }
     }
     
-    /// Clears all cart items for the authenticated user
-    func clearCart(completion: @escaping (Result<Void, Error>) -> Void) {
-        guard let userId = Auth.auth().currentUser?.uid else {
-            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "User not authenticated"])))
-            return
-        }
-        
-        db.collection("users").document(userId).collection("cart").getDocuments { snapshot, error in
+    /// Clears all cart items for the specified user
+    func clearCart(for userId: String, completion: @escaping (Result<Void, Error>) -> Void) { // Changed: Added userId parameter
+        db.collection("carts").document(userId).collection("items").getDocuments { snapshot, error in // Changed: Updated path to "carts/{userId}/items"
             if let error = error {
                 completion(.failure(error))
                 return
