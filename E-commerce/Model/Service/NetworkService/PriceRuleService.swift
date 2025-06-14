@@ -38,7 +38,7 @@ class PriceRuleNetworkService: PriceRuleNetworkServiceProtocol {
         session.request(url, headers: headers)
             .validate()
             .responseDecodable(of: PriceRulesResponse.self) { response in
-                debugPrint(response)
+               // debugPrint(response)
                 switch response.result {
                 case .success(let result):
                     completion(result, nil)
