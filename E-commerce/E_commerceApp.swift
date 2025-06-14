@@ -13,6 +13,7 @@ struct E_commerceApp: App {
     @StateObject private var currencyService = CurrencyService()
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @StateObject var authViewModel = AuthViewModel()
+    @StateObject var orderViewModel = OrderViewModel()
 
     init() {
         FirebaseApp.configure()
