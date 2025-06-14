@@ -5,14 +5,13 @@ import SwiftUI
 struct ContentView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var currencyService: CurrencyService
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
 
     var body: some View {
             if authViewModel.isAuthenticated {
                 MainTabView()
 
             } else {
-                SignupScreen().environmentObject(authViewModel)
+                LoginScreen().environmentObject(authViewModel)
 
             }
         
