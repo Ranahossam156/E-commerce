@@ -12,6 +12,7 @@ class FavoriteManager {
     static let shared = FavoriteManager()
 
     private let context = CoreDataManager.shared.context
+
     func addToFavorites(product: FavoriteProductModel) async {
         
         var downloadedImagesData: [Data] = []

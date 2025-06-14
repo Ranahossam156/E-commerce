@@ -117,7 +117,6 @@ struct ProductInfoView: View {
                                                         Circle()
                                                             .stroke(selectedColorName == color ? Color("primaryColor") : .clear, lineWidth: 3)
                                                     )
-                                                    .shadow(color: .black.opacity(0.6), radius: 2, x: 0, y: 1)
                                                     .onTapGesture {
                                                         selectedColorName = color
                                                     }
@@ -135,33 +134,24 @@ struct ProductInfoView: View {
                             }
 
                             if !sizeOptions.isEmpty {
-                                VStack(alignment: .leading, spacing: 8) {
-                                    Text("Available Sizes")
-                                        .font(.headline)
-                                        .padding(.horizontal)
-                                    ScrollView(.horizontal, showsIndicators: false) {
-                                        HStack(spacing: 12) {
-                                            ForEach(sizeOptions, id: \.self) { size in
-                                                Text(size)
-                                                    .font(.system(size: 16, weight: .medium))
-                                                    .padding(.vertical, 8)
-                                                    .padding(.horizontal, 16)
-                                                    .background(
-                                                        RoundedRectangle(cornerRadius: 10)
-                                                            .fill(selectedSize == size
-                                                                  ? Color("primaryColor")
-                                                                  : Color.gray.opacity(0.2))
-                                                    )
-                                                    .foregroundColor(selectedSize == size ? .white : .black)
-                                                    .onTapGesture { selectedSize = size }
-                                            }
+                                VStack(alignment: .leading) {
+                                    Text("Available Sizes").font(.headline)
+                                    HStack {
+                                        ForEach(sizeOptions, id: \.self) { size in
+                                            Text(size)
+                                                .font(.system(size: 16, weight: .medium))
+                                                .padding(.horizontal, 10)
+                                                .frame(height: 40)
+                                                .background(selectedSize == size ? Color("primaryColor") : Color.gray.opacity(0.2))
+                                                .foregroundColor(selectedSize == size ? .white : .black)
+                                                .cornerRadius(10)
+                                                .onTapGesture {
+                                                    selectedSize = size
+                                                }
                                         }
-                                        .padding(.horizontal)
                                     }
                                 }
-                                .padding(.bottom, 16)
                             }
-
                         }
                         .padding()
                         .background(
@@ -250,9 +240,7 @@ struct ProductInfoView: View {
             setupPageControlAppearance()
 
         }
-        .safeAreaInset(edge: .top) {
-          Color.clear.frame(height: 0)
-        }        .background(Color.white)
+        .background(Color.white)
         .navigationTitle("Product Details")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)

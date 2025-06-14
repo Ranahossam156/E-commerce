@@ -40,20 +40,77 @@ class CheckoutViewModel: ObservableObject {
     }
 }
 
-// In CheckoutViewModel.swift
 extension CheckoutViewModel {
     func processPayPalPayment(for items: [CartItem], total: Double, completion: @escaping (Bool, String?) -> Void) {
         isProcessingPayment = true
         
-        PayPalService.shared.startCheckout(for: items, total: total) { [weak self] success, message in
+        Task {
+            do {
+                let orderId = try await PayPalService.shared.createOrder(for: items, total: total)
+                let approvalURL = try await PayPalService.shared.getApprovalURL(orderId: orderId)
+                
+                DispatchQueue.main.async {
+                    // Present PayPal web view
+                    self.presentPayPalWebView(
+                        approvalURL: approvalURL,
+                        orderId: orderId,
+                        items: items,
+                        total: total,
+                        completion: completion
+                    )
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    self.isProcessingPayment = false
+                    completion(false, error.localizedDescription)
+                }
+            }
+        }
+    }
+    
+    private func presentPayPalWebView(
+        approvalURL: URL,
+        orderId: String,
+        items: [CartItem],
+        total: Double,
+        completion: @escaping (Bool, String?) -> Void
+    ) {
+        let webViewController = PayPalWebViewController(url: approvalURL)
+        
+        webViewController.onSuccess = { [weak self] _ in
+            Task {
+                do {
+                    let success = try await PayPalService.shared.captureOrder(orderId: orderId)
+                    if success {
+                        DispatchQueue.main.async {
+                            self?.isProcessingPayment = false
+                            self?.showPaymentSuccess = true
+                            self?.sendConfirmationEmail(items: items, total: total)
+                            completion(true, "PayPal payment successful")
+                        }
+                    }
+                } catch {
+                    DispatchQueue.main.async {
+                        self?.isProcessingPayment = false
+                        completion(false, "Payment capture failed: \(error.localizedDescription)")
+                    }
+                }
+            }
+            webViewController.dismiss(animated: true)
+        }
+        
+        webViewController.onCancel = { [weak self] in
             DispatchQueue.main.async {
                 self?.isProcessingPayment = false
-                if success {
-                    self?.showPaymentSuccess = true
-                    self?.sendConfirmationEmail(items: items, total: total)
-                }
-                completion(success, message)
+                completion(false, "Payment cancelled by user")
             }
+            webViewController.dismiss(animated: true)
+        }
+        
+        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = scene.windows.first,
+           let rootViewController = window.rootViewController {
+            rootViewController.present(webViewController, animated: true)
         }
     }
 }

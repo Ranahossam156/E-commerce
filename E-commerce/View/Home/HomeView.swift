@@ -15,7 +15,6 @@ struct HomeView: View {
                 TabSelectorView()
                 Spacer()
             }
-            .navigationBarBackButtonHidden(true)
         }
     }
 }

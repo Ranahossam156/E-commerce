@@ -2,9 +2,7 @@ import Foundation
 import SwiftUI
 
 struct SearchScreen: View {
-
     @StateObject private var viewModel = SearchViewModel()
-    @EnvironmentObject var favoritesViewModel: FavoritesViewModel
     @State private var searchText = ""
 
     var filteredProducts: [Product] {
@@ -27,13 +25,13 @@ struct SearchScreen: View {
 
     var body: some View {
         ZStack {
+            NavigationStack {
                 VStack(spacing: 16) {
                     ZStack {
                         Text("Search")
                             .font(.title3.bold())
                     }
                     .padding(.horizontal)
-
 
                     HStack {
                         Image(systemName: "magnifyingglass")
@@ -58,17 +56,18 @@ struct SearchScreen: View {
                                 NavigationLink {
                                     ProductInfoView(productID: product.id)
                                 } label: {
-                                    SearchItemView(product: product, favoritesViewModel: favoritesViewModel)
+                                    SearchItemView(product: product)
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }
                         }
                         .padding()
                     }
-
                     Spacer().frame(height: 10)
                 }
                 .background(Color.white)
+                .navigationBarTitleDisplayMode(.inline)
+            }
 
 
             VStack {

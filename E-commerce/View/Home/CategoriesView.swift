@@ -5,13 +5,11 @@ struct CategoriesView: View {
     @State private var categories: [Category] = []
     @State private var selectedCategory: Category?
     @State private var products: [BrandProduct] = []
-    @StateObject private var favoritesViewModel = FavoritesViewModel()
+    @State private var favoritedProductIDs: Set<Int> = []
 
     @State private var searchText: String = ""
     @State private var selectedProductType: String = "All"
     @State private var availableProductTypes: [String] = []
-
-    @State private var viewUpdater = false
 
     let viewModel = CategoryViewModel()
     let currencyService = CurrencyService()
@@ -88,13 +86,14 @@ struct CategoriesView: View {
                 .padding(.top, 8)
             }
 
+        
             ScrollView {
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                     ForEach(filteredProducts, id: \.id) { product in
                         NavigationLink(destination: ProductInfoView(productID: product.id ?? 0)) {
                             ProductCardView(
                                 product: product,
-                                isFavorited: favoritesViewModel.favorites.contains(where: { $0.id == product.id ?? -1 }),
+                                isFavorited: favoritedProductIDs.contains(product.id ?? -1),
                                 onHeartTap: {
                                     toggleFavorite(for: product)
                                 },
@@ -104,7 +103,6 @@ struct CategoriesView: View {
                     }
                 }
                 .padding()
-                .id(viewUpdater)
             }
         }
         .onAppear {
@@ -166,31 +164,16 @@ struct CategoriesView: View {
 
     func toggleFavorite(for product: BrandProduct) {
         guard let id = product.id else { return }
-
-        if favoritesViewModel.favorites.contains(where: { $0.id == id }) {
-            if let favorite = favoritesViewModel.favorites.first(where: { $0.id == id }) {
-                favoritesViewModel.removeFavorite(product: favorite)
-                viewUpdater.toggle()
-            }
+        if favoritedProductIDs.contains(id) {
+            favoritedProductIDs.remove(id)
         } else {
-            Task {
-                let favoriteProduct = FavoriteProductModel(
-                    id: Int64(id),
-                    title: product.title ?? "No Title",
-                    bodyHTML: product.bodyHTML ?? "",
-                    price: product.variants?.first?.price ?? "0.00",
-                    colors: [],
-                    sizes: [],
-                    imageURLs: product.images?.compactMap { $0.src } ?? []
-                )
-
-                await FavoriteManager.shared.addToFavorites(product: favoriteProduct)
-                
-                await MainActor.run {
-                    favoritesViewModel.fetchFavorites()
-                    viewUpdater.toggle()
-                }
-            }
+            favoritedProductIDs.insert(id)
         }
+    }
+}
+
+struct CategoriesView_Previews: PreviewProvider {
+    static var previews: some View {
+        CategoriesView()
     }
 }

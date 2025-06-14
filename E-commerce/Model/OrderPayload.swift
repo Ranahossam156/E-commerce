@@ -1,3 +1,12 @@
+//
+//  OrderPayload.swift
+//  E-commerce
+//
+//  Created by MacBook on 13/06/2025.
+//
+
+import Foundation
+
 struct OrderPayload: Encodable {
     let order: OrderData
 
@@ -11,22 +20,15 @@ struct OrderPayload: Encodable {
             lastName: customer.lastName ?? "",
             address1: customer.defaultAddress?.address1 ?? "",
             city: customer.defaultAddress?.city ?? "",
+//            country: customer.defaultAddress.country.
             zip: customer.defaultAddress?.zip ?? ""
-        )
-
-        let customerData = CustomerPayload(
-            firstName: customer.firstName ?? "",
-            lastName: customer.lastName ?? "",
-            email: customer.email ?? "",
-            phone: customer.phone ?? ""
         )
 
         self.order = OrderData(
             email: customer.email ?? "",
             financialStatus: "pending",
             lineItems: lineItems,
-            shippingAddress: shipping,
-            customer: customerData
+            shippingAddress: shipping
         )
     }
 }
@@ -36,28 +38,12 @@ struct OrderData: Encodable {
     let financialStatus: String
     let lineItems: [LineItemPayload]
     let shippingAddress: ShippingAddressPayload
-    let customer: CustomerPayload
 
     enum CodingKeys: String, CodingKey {
         case email
         case financialStatus = "financial_status"
         case lineItems = "line_items"
         case shippingAddress = "shipping_address"
-        case customer
-    }
-}
-
-struct CustomerPayload: Encodable {
-    let firstName: String
-    let lastName: String
-    let email: String
-    let phone: String
-
-    enum CodingKeys: String, CodingKey {
-        case firstName = "first_name"
-        case lastName = "last_name"
-        case email
-        case phone
     }
 }
 
@@ -76,6 +62,7 @@ struct ShippingAddressPayload: Encodable {
     let lastName: String
     let address1: String
     let city: String
+//    let country: String
     let zip: String
 
     enum CodingKeys: String, CodingKey {

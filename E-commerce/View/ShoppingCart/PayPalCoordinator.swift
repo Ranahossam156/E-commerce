@@ -7,7 +7,6 @@
 
 import Foundation
 import UIKit
-import PayPalCheckout
 
 
 // MARK: - PayPal Coordinator (Handles UIKit bridge for SwiftUI)
@@ -19,72 +18,59 @@ class PayPalCoordinator: ObservableObject {
         isProcessing = true
         paymentResult = nil
         
-        // Create amount using correct type
-        let amount = PurchaseUnit.Amount(currencyCode: .usd, value: String(format: "%.2f", total))
-
-        // Create purchase unit
-        let purchaseUnit = PurchaseUnit(amount: amount)
-        
-        // Create order
-        let order = OrderRequest(intent: .capture, purchaseUnits: [purchaseUnit])
-        
-        // Get the top view controller
-        guard let topController = self.getTopViewController() else {
-            self.isProcessing = false
-            self.paymentResult = .failure("Unable to present PayPal checkout")
-            return
-        }
-        
-        Checkout.start(
-            presentingViewController: topController,
-            createOrder: { action in
-                action.create(order: order)
-            },
-            onApprove: { [weak self] approval in
-                approval.actions.capture { response, error in
-                    DispatchQueue.main.async {
-                        self?.isProcessing = false
-                        
-                        if let error = error {
-                            self?.paymentResult = .failure("Capture failed: \(error.localizedDescription)")
-                            return
-                        }
-                        
-                        if response != nil {
-                            self?.paymentResult = .success("PayPal payment successful")
-                        } else {
-                            self?.paymentResult = .failure("Payment not completed")
-                        }
-                    }
-                }
-            },
-            onCancel: { [weak self] in
+        Task {
+            do {
+                let orderId = try await PayPalService.shared.createOrder(for: items, total: total)
+                let approvalURL = try await PayPalService.shared.getApprovalURL(orderId: orderId)
+                
                 DispatchQueue.main.async {
-                    self?.isProcessing = false
-                    self?.paymentResult = .failure("Payment cancelled by user")
+                    self.presentPayPalWebView(approvalURL: approvalURL, orderId: orderId)
                 }
-            },
-            onError: { [weak self] error in
+            } catch {
                 DispatchQueue.main.async {
-                    self?.isProcessing = false
-                    self?.paymentResult = .failure("Payment error: ")
+                    self.isProcessing = false
+                    self.paymentResult = .failure(error.localizedDescription)
                 }
             }
-        )
+        }
     }
-    
-    private func getTopViewController() -> UIViewController? {
-        guard let windowScene = UIApplication.shared.connectedScenes
-            .filter({ $0.activationState == .foregroundActive })
-            .first as? UIWindowScene,
-              let window = windowScene.windows.first(where: { $0.isKeyWindow }) else {
-            return nil
+    private func presentPayPalWebView(approvalURL: URL, orderId: String) {
+        let webViewController = PayPalWebViewController(url: approvalURL)
+        
+        webViewController.onSuccess = { _ in
+            Task {
+                do {
+                    let success = try await PayPalService.shared.captureOrder(orderId: orderId)
+                    DispatchQueue.main.async {
+                        self.isProcessing = false
+                        if success {
+                            self.paymentResult = .success("PayPal payment successful")
+                        } else {
+                            self.paymentResult = .failure("Payment capture failed")
+                        }
+                    }
+                } catch {
+                    DispatchQueue.main.async {
+                        self.isProcessing = false
+                        self.paymentResult = .failure("Payment capture failed: \(error.localizedDescription)")
+                    }
+                }
+            }
+            webViewController.dismiss(animated: true)
         }
         
-        var topController = window.rootViewController
-        while let presented = topController?.presentedViewController {
-            topController = presented
+        webViewController.onCancel = {
+            DispatchQueue.main.async {
+                self.isProcessing = false
+                self.paymentResult = .failure("Payment cancelled by user")
+            }
+            webViewController.dismiss(animated: true)
         }
-        return topController
+        
+        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = scene.windows.first,
+           let rootViewController = window.rootViewController {
+            rootViewController.present(webViewController, animated: true)
+        }
     }
 }

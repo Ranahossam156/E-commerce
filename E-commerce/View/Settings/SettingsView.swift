@@ -7,19 +7,19 @@ import SwiftUI
 import MapKit
 import Combine
 import CoreLocation
-import FirebaseAuth
+
 struct SettingsView: View {
     @StateObject private var viewModel = SettingsViewModel()
     @StateObject private var userModel = UserModel()
     @EnvironmentObject var currencyService: CurrencyService
-    @EnvironmentObject var authViewModel: AuthViewModel
+    
     var body: some View {
         NavigationView {
             List {
                 UserInfoHeader(userModel: userModel)
                 SettingsSection(viewModel: viewModel, currencyService: currencyService, userModel: userModel)
                 VersionSection()
-                LogoutSection(viewModel: viewModel).environmentObject(authViewModel)
+                LogoutSection(viewModel: viewModel)
             }
             .navigationTitle("Settings")
             .navigationBarHidden(true)
@@ -218,18 +218,11 @@ struct VersionSection: View {
 // Subview for Logout Section
 struct LogoutSection: View {
     @ObservedObject var viewModel: SettingsViewModel
-    @EnvironmentObject var authViewModel: AuthViewModel
-
+    
     var body: some View {
         Section(header: Text("ACCOUNT").font(.caption).foregroundColor(.gray)) {
             Button(action: {
-                do {
-                  try Auth.auth().signOut()
-                  authViewModel.isAuthenticated = false
-                } catch {
-                  print("🚨 Could not sign out:", error.localizedDescription)
-                }
-                
+                viewModel.logout()
             }) {
                 Text("Log Out")
                     .font(.body)

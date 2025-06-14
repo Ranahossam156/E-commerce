@@ -30,9 +30,6 @@ struct CustomTextField: View {
                 
                 TextField(placeholder, text: $text)
                     .foregroundColor(Color("myGray"))
-                  //  .autocapitalization(.none)
-                    .disableAutocorrection(true)
-                    .textInputAutocapitalization(.never)
             }
             .frame(height: 50)
             .background(

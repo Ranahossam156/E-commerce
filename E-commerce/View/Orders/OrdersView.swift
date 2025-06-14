@@ -21,7 +21,7 @@ struct OrdersView: View {
         //            .listStyle(.plain)
         //        }
         //    }
-//        Text("Orders View")
+        Text("Orders View")
     }
 }
 
