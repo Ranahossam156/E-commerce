@@ -133,10 +133,7 @@ class CartViewModel: ObservableObject {
             switch result {
             case .success(let items):
                 if items.isEmpty { // Changed: Handle empty cart by initializing
-                    // Use the correct initializer for CartItem
-                    let newItem = CartItem(id: UUID(), product: Product(), selectedVariant: Variant(), quantity: 0) // Changed: Corrected initializer
-                    self?.cartItems = [newItem]
-                    self?.firestoreService.saveCartItem(newItem, for: userId) { _ in }
+                    print ("FireStone Cart is Empty ")
                 } else {
                     self?.cartItems = items
                 }

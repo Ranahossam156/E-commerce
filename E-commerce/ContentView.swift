@@ -9,7 +9,7 @@ struct ContentView: View {
 
     var body: some View {
         NavigationStack {
-            if authViewModel.isAuthenticated {
+            if true{ //authViewModel.isAuthenticated {
                 MainTabView()
 
             } else {
