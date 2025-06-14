@@ -270,7 +270,7 @@ struct CartView: View {
             email: firebaseUser.email ?? "example@example.com",
             firstName: firstName,
             lastName: lastName,
-            phone: "+1234567890", // Replace or fetch this if stored
+            phone: "+1234567890", 
             defaultAddress: ShoppingAddress(
                 address1: "123 Test Street",
                 city: "Berlin",
