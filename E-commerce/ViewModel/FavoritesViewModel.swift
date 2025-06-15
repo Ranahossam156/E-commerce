@@ -96,16 +96,32 @@ class FavoritesViewModel: ObservableObject {
         }
     }
 
-    func removeFavorite(product: FavoritesModel) {
+    @MainActor
+    func removeFavorite(product: FavoritesModel) async {
         do {
+            // Remove from Core Data
             context.delete(product)
             try context.save()
-            fetchFavorites() // Refresh the list
+            fetchFavorites()
+            print("✅ Removed from Core Data.")
+
+            // Remove from Firestore
+            guard let userId = Auth.auth().currentUser?.uid else {
+                throw NSError(domain: "Auth", code: 0, userInfo: [NSLocalizedDescriptionKey: "User not authenticated"])
+            }
+            
+            try await FirestoreService.shared.deleteFavorite(for: userId, productId: product.id)
+            print("✅ Removed from Firestore.")
+            
         } catch {
             errorMessage = error.localizedDescription
-            print("Error removing favorite: \(error)")
+            print("❌ Error removing favorite: \(error)")
+            // Consider rolling back the Core Data deletion if Firestore fails
+            context.rollback()
+            fetchFavorites()
         }
     }
+
 }
 
 extension Notification.Name {

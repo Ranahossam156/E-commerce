@@ -169,8 +169,11 @@ struct CategoriesView: View {
 
         if favoritesViewModel.favorites.contains(where: { $0.id == id }) {
             if let favorite = favoritesViewModel.favorites.first(where: { $0.id == id }) {
-                favoritesViewModel.removeFavorite(product: favorite)
-                viewUpdater.toggle()
+                Task{
+                   await favoritesViewModel.removeFavorite(product: favorite)
+                }
+                    viewUpdater.toggle()
+                
             }
         } else {
             Task {

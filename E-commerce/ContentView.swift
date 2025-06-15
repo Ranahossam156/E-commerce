@@ -10,13 +10,11 @@ struct ContentView: View {
 
     var body: some View {
             if authViewModel.isAuthenticated {
-                MainTabView() .task { // <-- Use .task to run an async operation
-                    // Ensure we have a user ID before syncing
+                MainTabView() .task {
                     guard let userId = Auth.auth().currentUser?.uid else {
                         print("User logged in but no UID found.")
                         return
                     }
-                    // Sync data from Firestore to Core Data
                     await FavoriteManager.shared.syncFavoritesFromFirestore(for: userId)
                 }
 

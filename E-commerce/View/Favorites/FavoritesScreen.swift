@@ -53,8 +53,9 @@ struct FavoriteScreen: View {
                                     ProductInfoView(productID: Int(product.id))
                                 } label: {
                                     FavoriteItemView(product: product) {
-                                        viewModel.removeFavorite(product: product)
-                                    }
+                                        Task {
+                                            await viewModel.removeFavorite(product: product)
+                                        }                                    }
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }

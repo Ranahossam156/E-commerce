@@ -16,13 +16,30 @@ class FirestoreService {
         return db.collection("users").document(userId).collection("favorites")
     }
 
-    func uploadFavorites(_ favorites: [FavoriteProductModel], for userId: String) async throws {
-        let batch = db.batch()
+    func uploadFavorites(_ favorites: [FavoriteProductModel], for userId: String) {
+        let collection = favoritesCollection(for: userId)
+
         for favorite in favorites {
-            let docRef = favoritesCollection(for: userId).document("\(favorite.id)")
-            try batch.setData(from: favorite, forDocument: docRef)
+            let encodedImages = favorite.imagesData?.map { $0.base64EncodedString() } ?? []
+
+            let data: [String: Any] = [
+                "id": favorite.id,
+                "title": favorite.title,
+                "bodyHTML": favorite.bodyHTML,
+                "price": favorite.price,
+                "colors": favorite.colors,
+                "sizes": favorite.sizes,
+                "imageURLs": favorite.imageURLs,
+                "imagesData": encodedImages
+            ]
+
+            collection.document("\(favorite.id)").setData(data)
         }
-        try await batch.commit()
+    }
+
+    func deleteFavorite(for userId: String, productId: Int64) async throws {
+        let docRef = favoritesCollection(for: userId).document("\(productId)")
+        try await docRef.delete()
     }
 
     func fetchFavorites(for userId: String) async throws -> [FavoriteProductModel] {
