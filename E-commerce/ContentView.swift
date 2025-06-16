@@ -4,18 +4,25 @@ import SwiftUI
 struct ContentView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var currencyService: CurrencyService
-    //@UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @EnvironmentObject var orderViewModel: OrderViewModel
 
     var body: some View {
         NavigationStack {
-            if  authViewModel.isAuthenticated {
+            if authViewModel.isAuthenticated {
                 MainTabView()
-
             } else {
-                LoginScreen().environmentObject(authViewModel)
-
+                LoginScreen()
             }
         }
+    }
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+            .environmentObject(AuthViewModel())
+            .environmentObject(CurrencyService())
+            .environmentObject(OrderViewModel())
     }
 }
 ////
@@ -86,28 +93,22 @@ struct ContentView: View {
 //  Created by Macos on 25/05/2025.
 //
 
-import SwiftUI
 
-struct ContentView: View {
-    @StateObject private var productDetailsViewModel = ProductDetailsViewModel()
-    var body: some View {
-        NavigationStack {
-            SignupScreen()
-        }
-        VStack {
- 
-        }.onAppear{
-           // productDetailsViewModel.getDataFromModel(productID: 9712148218153)
-          //  productDetailsViewModel.bindResultToViewController
-           // productDetailsViewModel.getProductByID(productID: 9712148218153)
-            productDetailsViewModel.getProductImages(productID: 9712148218153)
-        }
-        .padding()
-    }
-}
+//struct ContentView: View {
+//    @StateObject private var productDetailsViewModel = ProductDetailsViewModel()
+//    var body: some View {
+//        NavigationStack {
+//            SignupScreen()
+//        }
+//        VStack {
+// 
+//        }.onAppear{
+//           // productDetailsViewModel.getDataFromModel(productID: 9712148218153)
+//          //  productDetailsViewModel.bindResultToViewController
+//           // productDetailsViewModel.getProductByID(productID: 9712148218153)
+//            productDetailsViewModel.getProductImages(productID: 9712148218153)
+//        }
+//        .padding()
+//    }
+//}
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
