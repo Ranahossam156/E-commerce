@@ -112,6 +112,9 @@
 		FAC88A232DE8DD350041EF40 /* PromoCarousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC88A222DE8DD350041EF40 /* PromoCarousel.swift */; };
 		FAC88A272DE8E2880041EF40 /* BrandProductsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC88A262DE8E2880041EF40 /* BrandProductsView.swift */; };
 		FAE411262E0099E200EDB731 /* CheckoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE411252E0099E200EDB731 /* CheckoutView.swift */; };
+		FAE4112A2E00B5CD00EDB731 /* order-success.json in Resources */ = {isa = PBXBuildFile; fileRef = FAE411292E00B5CD00EDB731 /* order-success.json */; };
+		FAE4112D2E00B6C100EDB731 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = FAE4112C2E00B6C100EDB731 /* Lottie */; };
+		FAE4112F2E00B86C00EDB731 /* LottieView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE4112E2E00B86C00EDB731 /* LottieView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -230,6 +233,8 @@
 		FAC88A222DE8DD350041EF40 /* PromoCarousel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromoCarousel.swift; sourceTree = "<group>"; };
 		FAC88A262DE8E2880041EF40 /* BrandProductsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrandProductsView.swift; sourceTree = "<group>"; };
 		FAE411252E0099E200EDB731 /* CheckoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckoutView.swift; sourceTree = "<group>"; };
+		FAE411292E00B5CD00EDB731 /* order-success.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "order-success.json"; sourceTree = "<group>"; };
+		FAE4112E2E00B86C00EDB731 /* LottieView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -248,6 +253,7 @@
 				E1FFCD6A2E00004B007B3641 /* FirebaseFirestoreCombine-Community in Frameworks */,
 				E1FFCD682DFFFFE1007B3641 /* FirebaseFirestore in Frameworks */,
 				E159DF1F2DF9E6F30048DDEB /* PayPalCheckout in Frameworks */,
+				FAE4112D2E00B6C100EDB731 /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -430,6 +436,7 @@
 		229EFA6C2DE35A0C006F0D77 /* E-commerce */ = {
 			isa = PBXGroup;
 			children = (
+				FAE411292E00B5CD00EDB731 /* order-success.json */,
 				2230CF1F2DED9891004B3423 /* Info.plist */,
 				2230CF1D2DED974D004B3423 /* GoogleService-Info.plist */,
 				22E81D252DE651BC00CE941C /* Authentication */,
@@ -616,6 +623,7 @@
 			isa = PBXGroup;
 			children = (
 				FAE411252E0099E200EDB731 /* CheckoutView.swift */,
+				FAE4112E2E00B86C00EDB731 /* LottieView.swift */,
 			);
 			path = Checkout;
 			sourceTree = "<group>";
@@ -648,6 +656,7 @@
 				E1E6A90A2DFC3B4100026EE1 /* GoogleSignInSwift */,
 				E1FFCD672DFFFFE1007B3641 /* FirebaseFirestore */,
 				E1FFCD692E00004B007B3641 /* FirebaseFirestoreCombine-Community */,
+				FAE4112C2E00B6C100EDB731 /* Lottie */,
 			);
 			productName = "E-commerce";
 			productReference = 229EFA6A2DE35A0C006F0D77 /* E-commerce.app */;
@@ -730,6 +739,7 @@
 				E159DF162DF9E66B0048DDEB /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				E159DF172DF9E6770048DDEB /* XCRemoteSwiftPackageReference "Reachability" */,
 				E1FFCD662DFFFFA0007B3641 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				FAE4112B2E00B6C100EDB731 /* XCRemoteSwiftPackageReference "lottie-spm" */,
 			);
 			productRefGroup = 229EFA6B2DE35A0C006F0D77 /* Products */;
 			projectDirPath = "";
@@ -747,6 +757,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FAE4112A2E00B5CD00EDB731 /* order-success.json in Resources */,
 				229EFA752DE35A0F006F0D77 /* Preview Assets.xcassets in Resources */,
 				229EFA722DE35A0F006F0D77 /* Assets.xcassets in Resources */,
 				2230CF1E2DED974D004B3423 /* GoogleService-Info.plist in Resources */,
@@ -855,6 +866,7 @@
 				FAE411262E0099E200EDB731 /* CheckoutView.swift in Sources */,
 				E186FC042DF5569100BD6DA4 /* PaymentHandler.swift in Sources */,
 				22FC15BF2DF0D0B4000FD95C /* FavoriteManager.swift in Sources */,
+				FAE4112F2E00B86C00EDB731 /* LottieView.swift in Sources */,
 				FA5CA25E2DF78BAC00468F98 /* OrderCard.swift in Sources */,
 				E17102F42DE4EBCB00C511CC /* CartItemRow.swift in Sources */,
 				22FC15C72DF0D4A1000FD95C /* FavoritesModel+CoreDataProperties.swift in Sources */,
@@ -1250,6 +1262,14 @@
 				minimumVersion = 8.0.0;
 			};
 		};
+		FAE4112B2E00B6C100EDB731 /* XCRemoteSwiftPackageReference "lottie-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-spm.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.5.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1305,6 +1325,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E159DF112DF9E6040048DDEB /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = "FirebaseFirestoreCombine-Community";
+		};
+		FAE4112C2E00B6C100EDB731 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FAE4112B2E00B6C100EDB731 /* XCRemoteSwiftPackageReference "lottie-spm" */;
+			productName = Lottie;
 		};
 /* End XCSwiftPackageProductDependency section */
 
