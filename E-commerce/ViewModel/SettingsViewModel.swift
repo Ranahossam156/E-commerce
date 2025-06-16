@@ -4,29 +4,58 @@
 
 import Foundation
 import Combine
-
+import FirebaseFirestore
+import FirebaseAuth
 
 class SettingsViewModel: ObservableObject {
     @Published var countries: [String] = []
+    @Published var selectedCurrency: String = "USD" // Track currency locally
     
     weak var currencyService: CurrencyService?
     private var cancellables = Set<AnyCancellable>()
     
+    private let db = Firestore.firestore()
+    
     init() {
         loadSettings()
+        fetchCountries()
     }
     
     func loadSettings() {
-    }
-    
-    // Save settings to UserDefaults
-    func saveSettings() {
-        // Safely unwrap currencyService
-        guard let currencyService = currencyService else {
-            print("CurrencyService not set in SettingsViewModel")
-            return
+            if let userId = Auth.auth().currentUser?.uid {
+                db.collection("users").document(userId).collection("settings").document("preferences").getDocument { [weak self] (document, error) in
+                    guard let self = self else { return }
+                    if let document = document, document.exists {
+                        if let data = document.data(), let currency = data["selectedCurrency"] as? String {
+                            self.selectedCurrency = currency
+                            self.currencyService?.selectedCurrency = currency // Sync with CurrencyService
+                            print("Settings loaded: Currency = \(currency)")
+                        }
+                    } else {
+                        print("No settings found, using default currency: USD")
+                    }
+                }
+            } else {
+                print("No authenticated user, settings not loaded")
+            }
         }
-        currencyService.saveSelectedCurrency()
+    
+    func saveSettings() {
+        if let userId = Auth.auth().currentUser?.uid {
+            print("Attempting to save settings for user: \(userId)")
+            let settingsData: [String: Any] = ["selectedCurrency": selectedCurrency]
+            db.collection("users").document(userId).collection("settings").document("preferences").setData(settingsData) { [weak self] error in
+                guard let self = self else { return }
+                if let error = error {
+                    print("Error saving settings: \(error.localizedDescription)")
+                } else {
+                    print("Settings saved successfully: Currency = \(self.selectedCurrency)")
+                    self.currencyService?.selectedCurrency = self.selectedCurrency
+                }
+            }
+        } else {
+            print("No authenticated user, settings not saved")
+        }
     }
     
     func fetchCountries() {
@@ -48,12 +77,16 @@ class SettingsViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-    // Logout user
     func logout() {
-        print("Logging out ...")
-        // Placeholder for Firebase logout
-        // try Auth.auth().signOut()
-    }
+            print("Logging out ...")
+            do {
+                try Auth.auth().signOut()
+                // Notify authViewModel or reset state as needed
+                print("Logged out successfully")
+            } catch {
+                print("Error logging out: \(error.localizedDescription)")
+            }
+        }
 }
 
 // Models for API responses

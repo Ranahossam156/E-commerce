@@ -1,6 +1,6 @@
 // CurrencyService.swift
 // E-commerce
-// Created by Kerolos on 02/06/2025. (Last updated: 09:50 PM EEST, June 03, 2025)
+// Created by Kerolos on 02/06/2025. (Last updated: 10:15 PM EEST, June 16, 2025)
 
 import Foundation
 import Combine
@@ -8,8 +8,8 @@ import Combine
 class CurrencyService: ObservableObject {
     @Published var selectedCurrency: String {
         didSet {
-            saveSelectedCurrency()
             fetchExchangeRates() // Fetch new rates when currency changes
+            saveSettingsIfPossible() // Notify SettingsViewModel to save to Firestore
         }
     }
     @Published var exchangeRates: [String: Double] = [:]
@@ -17,7 +17,7 @@ class CurrencyService: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private let baseCurrency = "USD"
     
-    let supportedCurrencies: [String] = ["USD", "EUR","EGP", "GBP", "JPY", "CAD", "AUD", "CHF", "CNY", "INR", "BRL"]
+    let supportedCurrencies: [String] = ["USD", "EUR", "EGP", "GBP", "JPY", "CAD", "AUD", "CHF", "CNY", "INR", "BRL"]
     
     private let currencySymbols: [String: String] = [
         "USD": "$",
@@ -30,12 +30,17 @@ class CurrencyService: ObservableObject {
         "CNY": "CN¥",
         "INR": "Rs",
         "BRL": "R$",
-        "EGP":"EGP"
+        "EGP": "EGP"
     ]
     
+    weak var settingsViewModel: SettingsViewModel? // Reference to SettingsViewModel for sync
+    
     init() {
-        if let savedCurrency = UserDefaults.standard.string(forKey: "selectedCurrency"),
-           supportedCurrencies.contains(savedCurrency) {
+        // Initialize with default or load from SettingsViewModel
+        if let settingsViewModel = settingsViewModel, !settingsViewModel.selectedCurrency.isEmpty {
+            self.selectedCurrency = settingsViewModel.selectedCurrency
+        } else if let savedCurrency = UserDefaults.standard.string(forKey: "selectedCurrency"),
+                  supportedCurrencies.contains(savedCurrency) {
             self.selectedCurrency = savedCurrency
         } else {
             self.selectedCurrency = "USD"
@@ -59,7 +64,6 @@ class CurrencyService: ObservableObject {
                 }
             } receiveValue: { [weak self] response in
                 self?.exchangeRates = response.rates
-                
             }
             .store(in: &cancellables)
     }
@@ -77,8 +81,13 @@ class CurrencyService: ObservableObject {
         return currencySymbols[code] ?? code
     }
     
-    func saveSelectedCurrency() {
-        UserDefaults.standard.set(selectedCurrency, forKey: "selectedCurrency")
+    private func saveSettingsIfPossible() {
+        if let settingsViewModel = settingsViewModel {
+            settingsViewModel.selectedCurrency = selectedCurrency
+            settingsViewModel.saveSettings() // Trigger Firestore save
+        } else {
+            print("SettingsViewModel not set, currency change not saved to Firestore")
+        }
     }
 }
 
