@@ -16,6 +16,7 @@ class AuthViewModel: ObservableObject {
     @Published var isAuthenticated = false
     @Published var showVerificationScreen = false
     @Published var countdownSeconds = 30
+    @Published var isLoading = false // Add isLoading property
     private var verificationTimer: Timer?
     
     func startCountdown() {
