@@ -267,7 +267,7 @@ struct CartView: View {
 
         let customer = Customer(
             id: firebaseUser.uid.hashValue,
-            email: firebaseUser.email ?? "example@example.com",
+            email: firebaseUser.email ?? "habibmai09@gmail.com",
             firstName: firstName,
             lastName: lastName,
             phone: "+1234567890", 

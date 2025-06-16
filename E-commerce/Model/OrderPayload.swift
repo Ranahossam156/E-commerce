@@ -28,7 +28,8 @@ struct OrderPayload: Encodable {
             email: customer.email ?? "",
             financialStatus: "pending",
             lineItems: lineItems,
-            shippingAddress: shipping
+            shippingAddress: shipping,
+            sendReceipt: true
         )
     }
 }
@@ -38,12 +39,15 @@ struct OrderData: Encodable {
     let financialStatus: String
     let lineItems: [LineItemPayload]
     let shippingAddress: ShippingAddressPayload
+    let sendReceipt: Bool
+
 
     enum CodingKeys: String, CodingKey {
         case email
         case financialStatus = "financial_status"
         case lineItems = "line_items"
         case shippingAddress = "shipping_address"
+        case sendReceipt = "send_receipt"
     }
 }
 
