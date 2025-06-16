@@ -33,7 +33,7 @@ struct CustomHeaderView: View {
             
             // MARK: - Action Icons
             HStack(spacing: 8) {
-                NavigationLink(destination: SearchScreen()) {
+                NavigationLink(destination: SearchScreen().environmentObject(FavoritesViewModel())) {
                     Image(systemName: "magnifyingglass")
                         .font(.system(size: 20))
                         .foregroundColor(.black)

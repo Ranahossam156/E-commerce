@@ -7,11 +7,18 @@
 
 import Foundation
 
-struct CartItem: Identifiable {
-    let id = UUID()
+struct CartItem: Identifiable,Codable {
+    let id : UUID
     let product: Product
     let selectedVariant: Variant
     var quantity: Int
+    
+    init(id: UUID, product: Product, selectedVariant: Variant, quantity: Int) {
+            self.id = id
+            self.product = product
+            self.selectedVariant = selectedVariant
+            self.quantity = quantity
+        }
     
     var subtotal: Double {
         return Double(selectedVariant.price)! * Double(quantity)

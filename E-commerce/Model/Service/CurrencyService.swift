@@ -29,7 +29,8 @@ class CurrencyService: ObservableObject {
         "CHF": "CHF",
         "CNY": "CN¥",
         "INR": "Rs",
-        "BRL": "R$"
+        "BRL": "R$",
+        "EGP":"EGP"
     ]
     
     init() {

@@ -10,6 +10,7 @@ import SwiftUI
 
 struct FavoriteItemView: View {
     let product: FavoritesModel
+    let onRemove: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -29,12 +30,14 @@ struct FavoriteItemView: View {
                         .frame(height: 120)
                 }
 
-                Image(systemName: "heart.fill")
-                    .padding(8)
-                    .background(Color.white.opacity(0.6))
-                    .clipShape(Circle())
-                    .foregroundColor(.red)
-                    .padding(6)
+                Button(action: onRemove) { 
+                    Image(systemName: "heart.fill")
+                        .padding(8)
+                        .background(Color.white.opacity(0.6))
+                        .clipShape(Circle())
+                        .foregroundColor(.red)
+                }
+                .padding(6)
             }
 
             Text(product.title ?? "")

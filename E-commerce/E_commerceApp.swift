@@ -7,10 +7,14 @@
 import SwiftUI
 import Firebase
 
+import SwiftUI
+import Firebase
+
 @main
 struct E_commerceApp: App {
     @StateObject private var currencyService = CurrencyService()
-    @StateObject var orderViewModel = OrderViewModel()
+    @StateObject private var orderViewModel = OrderViewModel()
+    @StateObject private var authViewModel = AuthViewModel()
 
     init() {
         FirebaseApp.configure()
@@ -18,31 +22,11 @@ struct E_commerceApp: App {
 
     var body: some Scene {
         WindowGroup {
-            //ContentView()
-            TabView {
-                HomeView()
-                    .tabItem {
-                        Label("Home", systemImage: "house.fill")
-                    }
-
-                FavoriteScreen()
-                    .tabItem {
-                        Label("Favorites", systemImage: "heart.fill")
-                    }
-
-                SettingsView()
-                    .tabItem {
-                        Label("My Profile", systemImage: "person.fill")
-                    }
-
-            }
-            .environmentObject(currencyService)
-            .environmentObject(orderViewModel)
-        }
+            ContentView()
+                .environmentObject(currencyService)
+                .environmentObject(orderViewModel)
+                .environmentObject(authViewModel)
         }
     }
-
-
-
-
+}
 

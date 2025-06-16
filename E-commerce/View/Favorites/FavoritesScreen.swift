@@ -52,7 +52,9 @@ struct FavoriteScreen: View {
                                 NavigationLink {
                                     ProductInfoView(productID: Int(product.id))
                                 } label: {
-                                    FavoriteItemView(product: product)
+                                    FavoriteItemView(product: product) {
+                                        viewModel.removeFavorite(product: product)
+                                    }
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }

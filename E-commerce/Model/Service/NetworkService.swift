@@ -59,7 +59,7 @@ class NetworkService : NetworkSProtocol{
                 switch response.result {
                 case .success(let productVariants):
                     completionHandler(productVariants)
-                    print("employees fetched successfully")
+                   // print("employees fetched successfully")
                     
                 case .failure(let error):
                     completionHandler(nil)
