@@ -54,4 +54,28 @@ class OrderService {
                 }
             }
     }
+    
+    func getOrders(forEmail email: String, completion: @escaping (Result<[OrderModel], Error>) -> Void) {
+        let headers: HTTPHeaders = [
+            "X-Shopify-Access-Token": accessToken,
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        ]
+
+        let params: Parameters = ["email": email]
+
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+
+        session.request(baseURL, method: .get, parameters: params, headers: headers)
+            .validate()
+            .responseDecodable(of: OrdersListResponse.self, decoder: decoder) { response in
+                switch response.result {
+                case .success(let result):
+                    completion(.success(result.orders))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
+    }
 }

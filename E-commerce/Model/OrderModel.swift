@@ -4,7 +4,11 @@ struct OrderResponse: Codable {
     let order: OrderModel
 }
 
-struct OrderModel: Codable {
+struct OrdersListResponse: Decodable {
+    let orders: [OrderModel]
+}
+
+struct OrderModel: Codable, Identifiable {
     let id: Int
     let adminGraphqlAPIID: String?
     let orderNumber: Int

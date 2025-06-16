@@ -25,7 +25,7 @@ struct OrderCard: View {
             HStack(alignment: .top) {
                 Text("No of items:")
                     .foregroundColor(.secondary)
-                Text("\(order.lineItems?.count)")
+                Text("\(order.lineItems?.count ?? 0)")
                     .bold()
             }
             .font(.subheadline)
@@ -34,7 +34,7 @@ struct OrderCard: View {
             HStack(alignment: .top) {
                 Text("Address:")
                     .foregroundColor(.secondary)
-                Text("\(order.shippingAddress?.address1)")
+                Text("\(order.shippingAddress?.address1 ?? "N/A")")
             }
             .font(.subheadline)
             
@@ -42,7 +42,7 @@ struct OrderCard: View {
             HStack(alignment: .top) {
                 Text("Date:")
                     .foregroundColor(.secondary)
-                Text("\(order.createdAt)")
+                Text("\(formattedDate(from: order.createdAt))")
                     .foregroundColor(.primary)
             }
             .font(.subheadline)
@@ -61,4 +61,22 @@ struct OrderCard: View {
         }
         .padding(.vertical, 12)
     }
+}
+
+extension DateFormatter {
+    static let iso8601: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        return formatter
+    }()
+}
+
+private func formattedDate(from date: Date?) -> String {
+    guard let date = date else { return "N/A" }
+    let formatter = DateFormatter()
+    formatter.dateStyle = .medium
+    formatter.timeStyle = .short
+    return formatter.string(from: date)
 }

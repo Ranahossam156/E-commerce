@@ -6,34 +6,37 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct OrdersView: View {
     @EnvironmentObject var ordersViewModel: OrderViewModel
-    
+
     var body: some View {
-        //        NavigationView {
-        //            List(ordersViewModel.orders) { order in
-        //                NavigationLink(destination: OrderDetailView(order: order)){
-        //                    OrderCard(order: order)
-        //                }
-        //            }
-        //            .navigationTitle("Orders")
-        //            .listStyle(.plain)
-        //        }
-        //    }
-        Text("Orders View")
+        NavigationView {
+            Group {
+                if ordersViewModel.isLoading {
+                    ProgressView("Loading Orders...")
+                } else if ordersViewModel.userOrders.isEmpty {
+                    Text("No orders found.")
+                } else {
+                    List(ordersViewModel.userOrders) { order in
+                        NavigationLink(destination: OrderDetailView(order: order)) {
+                            OrderCard(order: order)
+                        }
+                    }
+                    .listStyle(.plain)
+                }
+            }
+            .navigationTitle("Orders")
+        }
+        .onAppear {
+            if let email = Auth.auth().currentUser?.email {
+                ordersViewModel.fetchOrders(forEmail: email)
+            }
+        }
     }
 }
 
-extension DateFormatter {
-    static let iso8601: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
-        formatter.timeZone = TimeZone(secondsFromGMT: 0)
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        return formatter
-    }()
-}
 
 struct OrdersView_Previews: PreviewProvider {
     static var previews: some View {

@@ -4,6 +4,7 @@ final class OrderViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var order: OrderResponse? = nil
     @Published var errorMessage: String? = nil
+    @Published var userOrders: [OrderModel] = []
 
     private let orderService = OrderService()
 
@@ -25,6 +26,21 @@ final class OrderViewModel: ObservableObject {
             }
         }
     }
+    
+    func fetchOrders(forEmail email: String) {
+            isLoading = true
+            orderService.getOrders(forEmail: email) { [weak self] result in
+                DispatchQueue.main.async {
+                    self?.isLoading = false
+                    switch result {
+                    case .success(let orders):
+                        self?.userOrders = orders
+                    case .failure(let error):
+                        self?.errorMessage = error.localizedDescription
+                    }
+                }
+            }
+        }
 
     // MARK: - Helpers for UI Binding
 
