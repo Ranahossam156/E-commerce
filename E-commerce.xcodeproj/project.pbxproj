@@ -7,11 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2230CF1E2DED974D004B3423 /* GoogleService-Info-2.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2230CF1D2DED974D004B3423 /* GoogleService-Info-2.plist */; };
+		2230CF1E2DED974D004B3423 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2230CF1D2DED974D004B3423 /* GoogleService-Info.plist */; };
 		223E6A232DF6FF7400354ED4 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 223E6A222DF6FF7400354ED4 /* SearchViewModel.swift */; };
 		223E6A262DF7008000354ED4 /* SearchScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 223E6A252DF7008000354ED4 /* SearchScreen.swift */; };
 		223E6A282DF703B900354ED4 /* SearchItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 223E6A272DF703B900354ED4 /* SearchItemView.swift */; };
-		224A2E3A2DECC6DD00233331 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 224A2E392DECC6DD00233331 /* GoogleService-Info.plist */; };
 		224A2E422DECD2AD00233331 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224A2E412DECD2AD00233331 /* AuthViewModel.swift */; };
 		224A2E442DECD77200233331 /* FirebaseAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224A2E432DECD77200233331 /* FirebaseAuthService.swift */; };
 		226D01F72DE6F53300D8DF0F /* PasswordTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226D01F62DE6F53300D8DF0F /* PasswordTextField.swift */; };
@@ -132,12 +131,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		2230CF1D2DED974D004B3423 /* GoogleService-Info-2.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-2.plist"; sourceTree = "<group>"; };
+		2230CF1D2DED974D004B3423 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		2230CF1F2DED9891004B3423 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		223E6A222DF6FF7400354ED4 /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 		223E6A252DF7008000354ED4 /* SearchScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchScreen.swift; sourceTree = "<group>"; };
 		223E6A272DF703B900354ED4 /* SearchItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchItemView.swift; sourceTree = "<group>"; };
-		224A2E392DECC6DD00233331 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		224A2E412DECD2AD00233331 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		224A2E432DECD77200233331 /* FirebaseAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthService.swift; sourceTree = "<group>"; };
 		226D01F62DE6F53300D8DF0F /* PasswordTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordTextField.swift; sourceTree = "<group>"; };
@@ -430,8 +428,7 @@
 			isa = PBXGroup;
 			children = (
 				2230CF1F2DED9891004B3423 /* Info.plist */,
-				2230CF1D2DED974D004B3423 /* GoogleService-Info-2.plist */,
-				224A2E392DECC6DD00233331 /* GoogleService-Info.plist */,
+				2230CF1D2DED974D004B3423 /* GoogleService-Info.plist */,
 				22E81D252DE651BC00CE941C /* Authentication */,
 				22FC15CF2DF0F716000FD95C /* Utils */,
 				227C3BCC2DE6195A006B0E52 /* View */,
@@ -741,8 +738,7 @@
 			files = (
 				229EFA752DE35A0F006F0D77 /* Preview Assets.xcassets in Resources */,
 				229EFA722DE35A0F006F0D77 /* Assets.xcassets in Resources */,
-				2230CF1E2DED974D004B3423 /* GoogleService-Info-2.plist in Resources */,
-				224A2E3A2DECC6DD00233331 /* GoogleService-Info.plist in Resources */,
+				2230CF1E2DED974D004B3423 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
