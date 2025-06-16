@@ -22,7 +22,8 @@ extension FavoritesModel {
     @NSManaged public var price: String?
     @NSManaged public var colors: NSObject?
     @NSManaged public var sizes: NSObject?
-    @NSManaged public var images: NSObject?
+  //  @NSManaged public var images: NSObject?
+    @NSManaged public var images: [Data]?
 
 }
 

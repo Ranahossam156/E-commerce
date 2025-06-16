@@ -1,3 +1,23 @@
+
+import SwiftUI
+
+struct ContentView: View {
+    @EnvironmentObject var authViewModel: AuthViewModel
+    @EnvironmentObject var currencyService: CurrencyService
+    //@UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+
+    var body: some View {
+        NavigationStack {
+            if  authViewModel.isAuthenticated {
+                MainTabView()
+
+            } else {
+                LoginScreen().environmentObject(authViewModel)
+
+            }
+        }
+    }
+}
 ////
 ////  ContentView.swift
 ////  E-commerce

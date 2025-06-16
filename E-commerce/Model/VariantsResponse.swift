@@ -1,4 +1,3 @@
-//
 //  VariantsResponse.swift
 //  E-commerce
 //
@@ -7,10 +6,12 @@
 
 import Foundation
 
+// MARK: - Variants Response
 struct VariantsResponse: Codable {
     let variants: [ProductVariant]
 }
 
+// MARK: - Product Variant
 struct ProductVariant: Codable {
     let id: Int64
     let productID: Int64

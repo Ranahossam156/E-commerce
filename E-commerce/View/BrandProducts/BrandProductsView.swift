@@ -1,45 +1,37 @@
-//
-//  BrandProducts.swift
-//  E-commerce
-//
-//  Created by MacBook on 31/05/2025.
-//
-
-
 import SwiftUI
 import Kingfisher
 
 struct BrandProductsView: View {
     @State private var products: [BrandProduct] = []
-    @State private var favoriteProductIDs: Set<Int> = []
     @State private var searchText: String = ""
+    @State private var viewUpdater = false
+    
     @EnvironmentObject var currencyService: CurrencyService
+
     var filteredProducts: [BrandProduct] {
         products.filter { product in
             let matchesSearch = searchText.isEmpty || (product.title?.lowercased().contains(searchText.lowercased()) ?? false)
             return matchesSearch
         }
     }
+
     let viewModel = ProductsViewModel()
     let vendor: String
+
     let columns = [
         GridItem(.flexible(), spacing: 20),
         GridItem(.flexible())
     ]
 
     var body: some View {
-        
         NavigationView {
             ScrollView {
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.gray)
-
                     TextField("Search something...", text: $searchText)
                         .foregroundColor(.primary)
-
                     Spacer()
-
                 }
                 .padding()
                 .background(
@@ -48,33 +40,27 @@ struct BrandProductsView: View {
                 )
                 .padding(.horizontal)
                 .padding(.top, 16)
+
                 LazyVGrid(columns: columns, spacing: 20) {
                     ForEach(filteredProducts) { product in
                         NavigationLink(destination: ProductInfoView(productID: product.id ?? 0)) {
                             ProductCardView(
                                 product: product,
-                                isFavorited: favoriteProductIDs.contains(product.id ?? -1),
+                                isFavorited: FavoriteManager.shared.isFavorited(id: Int64(product.id ?? 0)),
                                 onHeartTap: {
-                                    let id = product.id ?? -1
-                                    if favoriteProductIDs.contains(id) {
-                                        favoriteProductIDs.remove(id)
-                                        print("\(product.title ?? "") removed from favorites")
-                                    } else {
-                                        favoriteProductIDs.insert(id)
-                                        print("\(product.title ?? "") added to favorites")
-                                    }
+                                    toggleFavorite(for: product)
                                 },
-                                
-                                currencyService:currencyService
+                                currencyService: currencyService
                             )
                         }
                         .buttonStyle(PlainButtonStyle())
                     }
                 }
                 .padding()
+                .id(viewUpdater)
             }
             .navigationTitle(vendor)
-            .onAppear() {
+            .onAppear {
                 self.getBrandProducts()
             }
         }
@@ -93,14 +79,41 @@ struct BrandProductsView: View {
             }
         }
     }
+
+    private func toggleFavorite(for product: BrandProduct) {
+        let productId = Int64(product.id ?? 0)
+        
+        let productModel = FavoriteProductModel(
+            id: productId,
+            title: product.title ?? "",
+            bodyHTML: product.bodyHTML ?? "",
+            price: product.variants?.first?.price ?? "0.00",
+            colors: [],
+            sizes: [],
+            imageURLs: [product.imageReponse?.src ?? ""]
+        )
+
+        Task {
+            if FavoriteManager.shared.isFavorited(id: productId) {
+                FavoriteManager.shared.removeFromFavorites(id: productId)
+            } else {
+                await FavoriteManager.shared.addToFavorites(product: productModel)
+            }
+            
+            await MainActor.run {
+                viewUpdater.toggle()
+                NotificationCenter.default.post(name: .favoritesChanged, object: nil)
+            }
+        }
+    }
 }
+
 
 struct ProductCardView: View {
     let product: BrandProduct
-    let isFavorited: Bool
+    @State var isFavorited: Bool
     let onHeartTap: () -> Void
     let currencyService: CurrencyService
-    
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -115,6 +128,7 @@ struct ProductCardView: View {
                 }
                 
                 Button(action: {
+                    isFavorited.toggle()
                     onHeartTap()
                 }) {
                     Image(systemName: isFavorited ? "heart.fill" : "heart")
@@ -128,7 +142,6 @@ struct ProductCardView: View {
                         .foregroundColor(isFavorited ? .red : .gray)
                 }
                 .padding([.top, .trailing], 8)
-                
             }
             
             Text(product.title?.uppercased() ?? "")
@@ -143,8 +156,9 @@ struct ProductCardView: View {
             
             if let priceString = product.variants?.first?.price,
                let price = Double(priceString) {
-                Text(String(format: "\(currencyService.getCurrencySymbol(for: currencyService.selectedCurrency)) %.2f ",
-                            currencyService.convert(price: price)))                        .font(.system(size: 14, weight: .medium))
+                Text(String(format: "\(currencyService.getCurrencySymbol(for: currencyService.selectedCurrency)) %.2f",
+                            currencyService.convert(price: price)))
+                    .font(.system(size: 14, weight: .medium))
                     .foregroundColor(.black)
             } else {
                 Text("$-")
@@ -156,11 +170,5 @@ struct ProductCardView: View {
         .background(Color.white)
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
-    }
-}
-
-struct ProductGridView_Previews: PreviewProvider {
-    static var previews: some View {
-        BrandProductsView(vendor: "Nike")
     }
 }

@@ -7,19 +7,19 @@ import SwiftUI
 import MapKit
 import Combine
 import CoreLocation
-
+import FirebaseAuth
 struct SettingsView: View {
     @StateObject private var viewModel = SettingsViewModel()
     @StateObject private var userModel = UserModel()
     @EnvironmentObject var currencyService: CurrencyService
-    
+    @EnvironmentObject var authViewModel: AuthViewModel
     var body: some View {
         NavigationView {
             List {
                 UserInfoHeader(userModel: userModel)
                 SettingsSection(viewModel: viewModel, currencyService: currencyService, userModel: userModel)
                 VersionSection()
-                LogoutSection(viewModel: viewModel)
+                LogoutSection(viewModel: viewModel).environmentObject(authViewModel)
             }
             .navigationTitle("Settings")
             .navigationBarHidden(true)
@@ -215,14 +215,27 @@ struct VersionSection: View {
     }
 }
 
-// Subview for Logout Section
+
 struct LogoutSection: View {
     @ObservedObject var viewModel: SettingsViewModel
-    
+    @EnvironmentObject var authViewModel: AuthViewModel
+
     var body: some View {
         Section(header: Text("ACCOUNT").font(.caption).foregroundColor(.gray)) {
             Button(action: {
-                viewModel.logout()
+                Task {
+                    guard let userId = Auth.auth().currentUser?.uid else {
+                        return
+                    }
+                    
+                    await FavoriteManager.shared.syncFavoritesToFirestore(for: userId)
+                    
+                    do {
+                        try Auth.auth().signOut()
+                        authViewModel.isAuthenticated = false
+                    } catch {
+                    }
+                }
             }) {
                 Text("Log Out")
                     .font(.body)
