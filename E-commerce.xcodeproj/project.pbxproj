@@ -111,6 +111,7 @@
 		FAC889642DE8C1950041EF40 /* BrandsSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC889632DE8C1950041EF40 /* BrandsSectionView.swift */; };
 		FAC88A232DE8DD350041EF40 /* PromoCarousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC88A222DE8DD350041EF40 /* PromoCarousel.swift */; };
 		FAC88A272DE8E2880041EF40 /* BrandProductsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC88A262DE8E2880041EF40 /* BrandProductsView.swift */; };
+		FAE411262E0099E200EDB731 /* CheckoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE411252E0099E200EDB731 /* CheckoutView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -228,6 +229,7 @@
 		FAC889632DE8C1950041EF40 /* BrandsSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrandsSectionView.swift; sourceTree = "<group>"; };
 		FAC88A222DE8DD350041EF40 /* PromoCarousel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromoCarousel.swift; sourceTree = "<group>"; };
 		FAC88A262DE8E2880041EF40 /* BrandProductsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrandProductsView.swift; sourceTree = "<group>"; };
+		FAE411252E0099E200EDB731 /* CheckoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckoutView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -379,6 +381,7 @@
 		227C3BCC2DE6195A006B0E52 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				FAE411242E0099C000EDB731 /* Checkout */,
 				FA5CA25C2DF78B8700468F98 /* Orders */,
 				223E6A242DF7006A00354ED4 /* Search */,
 				E1BF8A7A2DF0B3E10021E458 /* Favorites */,
@@ -607,6 +610,14 @@
 				FAC88A262DE8E2880041EF40 /* BrandProductsView.swift */,
 			);
 			path = BrandProducts;
+			sourceTree = "<group>";
+		};
+		FAE411242E0099C000EDB731 /* Checkout */ = {
+			isa = PBXGroup;
+			children = (
+				FAE411252E0099E200EDB731 /* CheckoutView.swift */,
+			);
+			path = Checkout;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -841,6 +852,7 @@
 				E1BF8A7B2DF0B3E10021E458 /* FavoritesScreen.swift in Sources */,
 				FA859AAF2DE8A9820017C6D5 /* Promotion.swift in Sources */,
 				22FC15BD2DF0D094000FD95C /* FavoriteProductModel.swift in Sources */,
+				FAE411262E0099E200EDB731 /* CheckoutView.swift in Sources */,
 				E186FC042DF5569100BD6DA4 /* PaymentHandler.swift in Sources */,
 				22FC15BF2DF0D0B4000FD95C /* FavoriteManager.swift in Sources */,
 				FA5CA25E2DF78BAC00468F98 /* OrderCard.swift in Sources */,

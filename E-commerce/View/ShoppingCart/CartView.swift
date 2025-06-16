@@ -6,7 +6,7 @@ import SwiftUI
 import FirebaseAuth
 
 enum PaymentMethod {
-    case applePay
+//    case applePay
     case payPal
     case cod
 }
@@ -29,6 +29,8 @@ struct CartView: View {
     @SwiftUI.State private var pendingPaymentMethod: PaymentMethod?
     @SwiftUI.State private var isLoadingOrder = false
     @SwiftUI.State private var showOrderSuccessAlert = false
+    @SwiftUI.State private var navigateToCheckout = false
+
 
     private var paymentRequest: PKPaymentRequest {
         let request = PKPaymentRequest()
@@ -114,10 +116,14 @@ struct CartView: View {
     private var footerContent: some View {
         VStack(spacing: 0) {
             Divider()
+            NavigationLink(destination: CheckoutView(), isActive: $navigateToCheckout) {
+                        EmptyView()
+                    }
             CartFooterView(
                 total: viewModel.total,
                 checkoutAction: {
-                    showPaymentOptions = true
+//                    showPaymentOptions = true
+                    navigateToCheckout = true
                 }
             )
         }
@@ -196,9 +202,9 @@ struct CartView: View {
                 showOrderSuccessAlert = true
             }
         }
-        .onChange(of: showPaymentOptions) { isShowing in
-            handlePaymentOptionChange(isShowing: isShowing)
-        }
+//        .onChange(of: showPaymentOptions) { isShowing in
+//            handlePaymentOptionChange(isShowing: isShowing)
+//        }
         .alert("Order Confirmed", isPresented: $showOrderSuccessAlert) {
             Button("OK") {
                 handleOrderConfirmation()
@@ -216,21 +222,21 @@ struct CartView: View {
     }
     
     // MARK: - Helper Methods
-    private func handlePaymentOptionChange(isShowing: Bool) {
-        if !isShowing, let pending = pendingPaymentMethod {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                switch pending {
-                case .applePay:
-                    startApplePay()
-                case .payPal:
-                    processPayPalSandboxPayment()
-                case .cod:
-                    showCODConfirmation()
-                }
-                pendingPaymentMethod = nil
-            }
-        }
-    }
+//    private func handlePaymentOptionChange(isShowing: Bool) {
+//        if !isShowing, let pending = pendingPaymentMethod {
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+//                switch pending {
+////                case .applePay:
+////                    startApplePay()
+//                case .payPal:
+////                    processPayPalSandboxPayment()
+//                case .cod:
+////                    showCODConfirmation()
+//                }
+//                pendingPaymentMethod = nil
+//            }
+//        }
+//    }
     
     private func handleOrderConfirmation() {
         if let order = orderViewModel.order {
@@ -241,46 +247,46 @@ struct CartView: View {
         presentationMode.wrappedValue.dismiss()
     }
 
-    private func showCODConfirmation() {
-        showPaymentOptions = false
-        isLoadingOrder = true
-
-        checkoutViewModel.processPayment(for: viewModel.cartItems, total: viewModel.total) {
-            paymentStatus = "Cash on Delivery initiated"
-            if checkoutViewModel.showPaymentSuccess {
-                paymentStatus = "Cash on Delivery confirmed"
-                createOrder()
-            }
-            isLoadingOrder = false
-        }
-    }
-
-    private func createOrder() {
-        guard let firebaseUser = Auth.auth().currentUser else {
-            paymentStatus = "User not logged in."
-            return
-        }
-
-        let addressComponents = userModel.defaultAddress.components(separatedBy: ", ")
-        let city = addressComponents.count > 1 ? addressComponents[1] : "Unknown City"
-        let zip = addressComponents.count > 2 ? addressComponents[2] : "00000"
-
-        let customer = Customer(
-            id: firebaseUser.uid.hashValue,
-            email: firebaseUser.email ?? "",
-            firstName: authViewModel.username,
-            lastName: "",
-            phone: userModel.phoneNumber,
-            defaultAddress: ShoppingAddress(
-                address1: userModel.defaultAddress,
-                city: city,
-                zip: zip,
-                countryCode: .cd
-            )
-        )
-
-        orderViewModel.checkout(cartItems: viewModel.cartItems, customer: customer)
-    }
+//    private func showCODConfirmation() {
+//        showPaymentOptions = false
+//        isLoadingOrder = true
+//
+//        checkoutViewModel.processPayment(for: viewModel.cartItems, total: viewModel.total) {
+//            paymentStatus = "Cash on Delivery initiated"
+//            if checkoutViewModel.showPaymentSuccess {
+//                paymentStatus = "Cash on Delivery confirmed"
+//                createOrder()
+//            }
+//            isLoadingOrder = false
+//        }
+//    }
+//
+//    private func createOrder() {
+//        guard let firebaseUser = Auth.auth().currentUser else {
+//            paymentStatus = "User not logged in."
+//            return
+//        }
+//
+//        let addressComponents = userModel.defaultAddress.components(separatedBy: ", ")
+//        let city = addressComponents.count > 1 ? addressComponents[1] : "Unknown City"
+//        let zip = addressComponents.count > 2 ? addressComponents[2] : "00000"
+//
+//        let customer = Customer(
+//            id: firebaseUser.uid.hashValue,
+//            email: firebaseUser.email ?? "",
+//            firstName: authViewModel.username,
+//            lastName: "",
+//            phone: userModel.phoneNumber,
+//            defaultAddress: ShoppingAddress(
+//                address1: userModel.defaultAddress,
+//                city: city,
+//                zip: zip,
+//                countryCode: .cd
+//            )
+//        )
+//
+//        orderViewModel.checkout(cartItems: viewModel.cartItems, customer: customer)
+//    }
 
 
     private func startApplePay() {
@@ -303,24 +309,24 @@ struct CartView: View {
         }
     }
 
-    private func processPayPalSandboxPayment() {
-                checkoutViewModel.processPayPalPayment(for: viewModel.cartItems, total: viewModel.total) { success, message in
-            DispatchQueue.main.async {
-                if success {
-                    paymentStatus = "PayPal payment successful!"
-                    createOrder()
-//                    viewModel.clearCart()
-//                    presentationMode.wrappedValue.dismiss()
-                } else {
-                    paymentStatus = message ?? "PayPal payment failed"
-                    checkoutViewModel.showError = true
-                    checkoutViewModel.errorMessage = message ?? "Unknown error"
-        
-                }
-            }
-        }
-    }
-}
+//    private func processPayPalSandboxPayment() {
+//                checkoutViewModel.processPayPalPayment(for: viewModel.cartItems, total: viewModel.total) { success, message in
+//            DispatchQueue.main.async {
+//                if success {
+//                    paymentStatus = "PayPal payment successful!"
+//                    createOrder()
+////                    viewModel.clearCart()
+////                    presentationMode.wrappedValue.dismiss()
+//                } else {
+//                    paymentStatus = message ?? "PayPal payment failed"
+//                    checkoutViewModel.showError = true
+//                    checkoutViewModel.errorMessage = message ?? "Unknown error"
+//        
+//                }
+//            }
+//        }
+//    }
+//}
 
 struct CartView_Previews: PreviewProvider {
     static var previews: some View {
@@ -329,65 +335,66 @@ struct CartView_Previews: PreviewProvider {
 }
 
 // MARK: - Payment Options View
-struct PaymentOptionsView: View {
-    @Binding var isPresented: Bool
-    @Binding var selectedPaymentMethod: String?
-    let onPaymentMethodSelected: (PaymentMethod) -> Void
-    
-    var body: some View {
-        NavigationView {
-            VStack(spacing: 20) {
-                Text("Select Payment Method")
-                    .font(.headline)
-                    .padding(.top)
-                
-                Button(action: {
-                    selectedPaymentMethod = "PayPal"
-                    onPaymentMethodSelected(.payPal)
-                }) {
-                    paymentOptionView(
-                        icon: "dollarsign.circle",
-                        title: "PayPal (Sandbox)",
-                        color: .blue
-                    )
+    struct PaymentOptionsView: View {
+        @Binding var isPresented: Bool
+        @Binding var selectedPaymentMethod: String?
+        let onPaymentMethodSelected: (PaymentMethod) -> Void
+        
+        var body: some View {
+            NavigationView {
+                VStack(spacing: 20) {
+                    Text("Select Payment Method")
+                        .font(.headline)
+                        .padding(.top)
+                    
+                    Button(action: {
+                        selectedPaymentMethod = "PayPal"
+                        onPaymentMethodSelected(.payPal)
+                    }) {
+                        paymentOptionView(
+                            icon: "dollarsign.circle",
+                            title: "PayPal (Sandbox)",
+                            color: .blue
+                        )
+                    }
+                    
+                    Button(action: {
+                        selectedPaymentMethod = "Cash on Delivery"
+                        onPaymentMethodSelected(.cod)
+                    }) {
+                        paymentOptionView(
+                            icon: "banknote",
+                            title: "Cash on Delivery",
+                            color: .green
+                        )
+                    }
+                    
+                    Button("Cancel") {
+                        isPresented = false
+                    }
+                    .foregroundColor(.red)
+                    .padding(.bottom)
                 }
-                
-                Button(action: {
-                    selectedPaymentMethod = "Cash on Delivery"
-                    onPaymentMethodSelected(.cod)
-                }) {
-                    paymentOptionView(
-                        icon: "banknote",
-                        title: "Cash on Delivery",
-                        color: .green
-                    )
-                }
-                
-                Button("Cancel") {
-                    isPresented = false
-                }
-                .foregroundColor(.red)
-                .padding(.bottom)
+                .padding()
+                .navigationBarHidden(true)
             }
+        }
+        
+        private func paymentOptionView(
+            icon: String,
+            title: String,
+            color: Color
+        ) -> some View {
+            HStack {
+                Image(systemName: icon)
+                    .foregroundColor(color)
+                Text(title)
+                    .foregroundColor(color)
+            }
+            .frame(maxWidth: .infinity)
             .padding()
-            .navigationBarHidden(true)
+            .background(color.opacity(0.2))
+            .cornerRadius(10)
         }
-    }
-    
-    private func paymentOptionView(
-        icon: String,
-        title: String,
-        color: Color
-    ) -> some View {
-        HStack {
-            Image(systemName: icon)
-                .foregroundColor(color)
-            Text(title)
-                .foregroundColor(color)
-        }
-        .frame(maxWidth: .infinity)
-        .padding()
-        .background(color.opacity(0.2))
-        .cornerRadius(10)
     }
 }
