@@ -17,6 +17,7 @@ struct CartView: View {
     @StateObject private var checkoutViewModel = CheckoutViewModel()
     @StateObject private var orderViewModel = OrderViewModel()
     @StateObject private var authViewModel = AuthViewModel()
+    @StateObject private var userModel = UserModel()
     @StateObject private var settingsViewModel = SettingsViewModel()
 
     @SwiftUI.State private var showDeleteAlert = false
@@ -260,21 +261,20 @@ struct CartView: View {
             return
         }
 
-        let displayName = firebaseUser.displayName ?? authViewModel.username
-    
-        let firstName = displayName
-        let lastName = ""
+        let addressComponents = userModel.defaultAddress.components(separatedBy: ", ")
+        let city = addressComponents.count > 1 ? addressComponents[1] : "Unknown City"
+        let zip = addressComponents.count > 2 ? addressComponents[2] : "00000"
 
         let customer = Customer(
             id: firebaseUser.uid.hashValue,
-            email: firebaseUser.email ?? "habibmai09@gmail.com",
-            firstName: firstName,
-            lastName: lastName,
-            phone: "+1234567890", 
+            email: firebaseUser.email ?? "",
+            firstName: authViewModel.username,
+            lastName: "",
+            phone: userModel.phoneNumber,
             defaultAddress: ShoppingAddress(
-                address1: "123 Test Street",
-                city: "Berlin",
-                zip: "10115",
+                address1: userModel.defaultAddress,
+                city: city,
+                zip: zip,
                 countryCode: .cd
             )
         )

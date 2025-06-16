@@ -19,9 +19,9 @@ struct OrderPayload: Encodable {
             firstName: customer.firstName ?? "",
             lastName: customer.lastName ?? "",
             address1: customer.defaultAddress?.address1 ?? "",
-            city: customer.defaultAddress?.city ?? "",
-//            country: customer.defaultAddress.country.
-            zip: customer.defaultAddress?.zip ?? ""
+            city: customer.defaultAddress?.city ?? "Not Provided",
+            countryCode: customer.defaultAddress?.countryCode?.rawValue ?? "US",
+            zip: customer.defaultAddress?.zip ?? "00000"
         )
 
         self.order = OrderData(
@@ -66,12 +66,13 @@ struct ShippingAddressPayload: Encodable {
     let lastName: String
     let address1: String
     let city: String
-//    let country: String
+    let countryCode: String
     let zip: String
 
     enum CodingKeys: String, CodingKey {
         case firstName = "first_name"
         case lastName = "last_name"
         case address1, city, zip
+        case countryCode = "country_code"
     }
 }

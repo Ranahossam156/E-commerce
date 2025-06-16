@@ -19,11 +19,16 @@ struct OrderDetailView: View {
                         .font(.title2)
                         .bold()
                     
-                    Text("\(order.shippingAddress?.address1)")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+                    Text([
+                        order.shippingAddress?.address1,
+                        order.shippingAddress?.city,
+                        order.shippingAddress?.zip,
+                        order.shippingAddress?.countryCode?.rawValue
+                    ].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: ", "))
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
                     
-                    Text("\(order.createdAt)")
+                    Text("\(formattedDate(from: order.createdAt))")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }

@@ -63,20 +63,4 @@ struct OrderCard: View {
     }
 }
 
-extension DateFormatter {
-    static let iso8601: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
-        formatter.timeZone = TimeZone(secondsFromGMT: 0)
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        return formatter
-    }()
-}
 
-private func formattedDate(from date: Date?) -> String {
-    guard let date = date else { return "N/A" }
-    let formatter = DateFormatter()
-    formatter.dateStyle = .medium
-    formatter.timeStyle = .short
-    return formatter.string(from: date)
-}
