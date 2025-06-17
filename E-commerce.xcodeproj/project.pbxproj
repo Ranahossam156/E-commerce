@@ -49,6 +49,7 @@
 		E13937C92DF96BAD004983BB /* PayPalCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13937C82DF96BAD004983BB /* PayPalCoordinator.swift */; };
 		E13937CB2DF96BDD004983BB /* PayPalPaymentResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13937CA2DF96BDD004983BB /* PayPalPaymentResult.swift */; };
 		E14977EC2E018C9E00076377 /* AddressesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14977EB2E018C9E00076377 /* AddressesView.swift */; };
+		E14977F02E01928600076377 /* LogoutSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14977EF2E01928600076377 /* LogoutSection.swift */; };
 		E159DF192DF9E6DE0048DDEB /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = E159DF182DF9E6DE0048DDEB /* FirebaseAuth */; };
 		E159DF1B2DF9E6E30048DDEB /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = E159DF1A2DF9E6E30048DDEB /* FirebaseCore */; };
 		E159DF1D2DF9E6EC0048DDEB /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = E159DF1C2DF9E6EC0048DDEB /* Kingfisher */; };
@@ -179,6 +180,7 @@
 		E13937C82DF96BAD004983BB /* PayPalCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayPalCoordinator.swift; sourceTree = "<group>"; };
 		E13937CA2DF96BDD004983BB /* PayPalPaymentResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayPalPaymentResult.swift; sourceTree = "<group>"; };
 		E14977EB2E018C9E00076377 /* AddressesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressesView.swift; sourceTree = "<group>"; };
+		E14977EF2E01928600076377 /* LogoutSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogoutSection.swift; sourceTree = "<group>"; };
 		E15A59252DEF4EC600FB39E5 /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 		E15A59282DEF652A00FB39E5 /* CurrencyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyService.swift; sourceTree = "<group>"; };
 		E15A592A2DEF677800FB39E5 /* FreeCurrencyRateResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeCurrencyRateResponse.swift; sourceTree = "<group>"; };
@@ -519,6 +521,7 @@
 		E11F26902DEE397B0063716E /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				E14977EF2E01928600076377 /* LogoutSection.swift */,
 				E14977EB2E018C9E00076377 /* AddressesView.swift */,
 				E11F26912DEE39930063716E /* SettingsView.swift */,
 			);
@@ -804,6 +807,7 @@
 				FA9C0D332DEB86BE00618379 /* ProductsResponse.swift in Sources */,
 				229EFA702DE35A0C006F0D77 /* ContentView.swift in Sources */,
 				FA805C392DE89EC400853AA4 /* CategoriesView.swift in Sources */,
+				E14977F02E01928600076377 /* LogoutSection.swift in Sources */,
 				223E6A282DF703B900354ED4 /* SearchItemView.swift in Sources */,
 				E1FFCD6C2E00011A007B3641 /* MainTabView 2.swift in Sources */,
 				E17102E82DE4EA7E00C511CC /* CartViewModel.swift in Sources */,
