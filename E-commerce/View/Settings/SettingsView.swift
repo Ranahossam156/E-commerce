@@ -27,7 +27,8 @@ struct SettingsView: View {
                 viewModel.loadSettings()
                 userModel.loadUserData()
                 currencyService.fetchExchangeRates()
-                viewModel.currencyService = currencyService
+                viewModel.currencyService = currencyService // Existing assignment
+                currencyService.settingsViewModel = viewModel
             }
         }
     }
