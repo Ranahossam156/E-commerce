@@ -55,7 +55,9 @@ struct FavoriteScreen: View {
                                     FavoriteItemView(product: product) {
                                         Task {
                                             await viewModel.removeFavorite(product: product)
-                                        }                                    }
+                                            NotificationCenter.default.post(name: .favoritesChanged, object: nil)
+                                        }
+                                    }
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }

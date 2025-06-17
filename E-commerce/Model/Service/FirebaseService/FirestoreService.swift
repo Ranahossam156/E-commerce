@@ -1,13 +1,7 @@
-//
-//  FirestoreService.swift
-//  E-commerce
-//
-//  Created by Macos on 14/06/2025.
-//
-
 import Foundation
 import FirebaseFirestore
 import FirebaseFirestoreSwift
+
 class FirestoreService {
     static let shared = FirestoreService()
     private let db = Firestore.firestore()
@@ -16,25 +10,16 @@ class FirestoreService {
         return db.collection("users").document(userId).collection("favorites")
     }
 
-    func uploadFavorites(_ favorites: [FavoriteProductModel], for userId: String) {
+    func uploadFavorites(_ favorites: [FavoriteProductModel], for userId: String) async throws {
         let collection = favoritesCollection(for: userId)
+        let batch = db.batch()
 
         for favorite in favorites {
-            let encodedImages = favorite.imagesData?.map { $0.base64EncodedString() } ?? []
-
-            let data: [String: Any] = [
-                "id": favorite.id,
-                "title": favorite.title,
-                "bodyHTML": favorite.bodyHTML,
-                "price": favorite.price,
-                "colors": favorite.colors,
-                "sizes": favorite.sizes,
-                "imageURLs": favorite.imageURLs,
-                "imagesData": encodedImages
-            ]
-
-            collection.document("\(favorite.id)").setData(data)
+            let docRef = collection.document("\(favorite.id)")
+            try batch.setData(from: favorite, forDocument: docRef)
         }
+        
+        try await batch.commit()
     }
 
     func deleteFavorite(for userId: String, productId: Int64) async throws {
@@ -45,8 +30,13 @@ class FirestoreService {
     func fetchFavorites(for userId: String) async throws -> [FavoriteProductModel] {
         let snapshot = try await favoritesCollection(for: userId).getDocuments()
         
-        let favorites = try snapshot.documents.compactMap { document in
-            try document.data(as: FavoriteProductModel.self)
+        let favorites = try snapshot.documents.compactMap { document -> FavoriteProductModel? in
+            do {
+                return try document.data(as: FavoriteProductModel.self)
+            } catch {
+                print("Failed to decode favorite with ID \(document.documentID): \(error)")
+                return nil
+            }
         }
         
         return favorites
