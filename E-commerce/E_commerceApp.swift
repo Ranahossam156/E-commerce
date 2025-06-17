@@ -16,6 +16,7 @@ struct E_commerceApp: App {
     @StateObject private var currencyService = CurrencyService()
     @StateObject private var orderViewModel = OrderViewModel()
     @StateObject private var authViewModel = AuthViewModel()
+    @StateObject private var userModel = UserModel()
 
     init() {
         FirebaseApp.configure()
@@ -34,6 +35,7 @@ struct E_commerceApp: App {
                 .environmentObject(currencyService)
                 .environmentObject(orderViewModel)
                 .environmentObject(authViewModel)
+                .environmentObject(userModel)
         }
     }
 }

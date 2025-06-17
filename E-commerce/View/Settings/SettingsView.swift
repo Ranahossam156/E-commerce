@@ -1,7 +1,6 @@
 // SettingsView.swift
 // E-commerce
-// Created by Kerolos on 02/06/2025. (Last updated: 08:42 PM EEST, June 03, 2025)
-
+// Created by Kerolos on 02/06/2025. (Last updated: 09:45 PM EEST, June 17, 2025)
 
 import SwiftUI
 import MapKit
@@ -11,7 +10,7 @@ import FirebaseAuth
 
 struct SettingsView: View {
     @StateObject private var viewModel = SettingsViewModel()
-    @StateObject private var userModel = UserModel()
+    @EnvironmentObject var userModel: UserModel // Use shared UserModel instance
     @EnvironmentObject var currencyService: CurrencyService
     @EnvironmentObject var authViewModel: AuthViewModel
     @State private var isDataLoaded = false
@@ -19,8 +18,8 @@ struct SettingsView: View {
     var body: some View {
         NavigationView {
             List {
-                UserInfoHeader(userModel: userModel)
-                SettingsSection(viewModel: viewModel, currencyService: currencyService, userModel: userModel)
+                UserInfoHeader() // No need to pass userModel, use @EnvironmentObject
+                SettingsSection(viewModel: viewModel, currencyService: currencyService)
                 VersionSection()
                 LogoutSection(viewModel: viewModel).environmentObject(authViewModel)
             }
@@ -42,10 +41,9 @@ struct SettingsView: View {
     }
 }
 
-// [Rest of the subviews (UserInfoHeader, EditProfileView, SettingsSection, VersionSection, LogoutSection, MapSubView) remain unchanged]
 // Subview for User Info Header
 struct UserInfoHeader: View {
-    @ObservedObject var userModel: UserModel
+    @EnvironmentObject var userModel: UserModel
     
     var body: some View {
         Section {
@@ -82,12 +80,12 @@ struct UserInfoHeader: View {
                         .accessibilityLabel("Phone number: \(userModel.phoneNumber.isEmpty ? "Not set" : userModel.phoneNumber)")
                 }
                 
-                
                 Spacer()
                 
-                NavigationLink(destination: EditProfileView(userModel: userModel)) {
-                    
-                }.frame(width: 1)
+                NavigationLink(destination: EditProfileView()) {
+                    EmptyView() // Placeholder, adjust if needed
+                }
+                .frame(width: 1)
             }
             .padding(.vertical, 12)
         }
@@ -96,18 +94,16 @@ struct UserInfoHeader: View {
 
 // Subview for Editing Profile
 struct EditProfileView: View {
-    @ObservedObject var userModel: UserModel
+    @EnvironmentObject var userModel: UserModel // Use shared UserModel instance
     @Environment(\.dismiss) var dismiss
     @State private var editedName: String
     @State private var editedPhoneNumber: String
     @State private var editedEmail: String
     
-    
-    init(userModel: UserModel) {
-        self.userModel = userModel
-        _editedName = State(initialValue: userModel.name)
-        _editedPhoneNumber = State(initialValue: userModel.phoneNumber)
-        _editedEmail = State(initialValue: userModel.email)
+    init() {
+        _editedName = State(initialValue: UserModel().name) // Initial value, will be updated by environment
+        _editedPhoneNumber = State(initialValue: UserModel().phoneNumber)
+        _editedEmail = State(initialValue: UserModel().email)
     }
     
     var body: some View {
@@ -156,17 +152,22 @@ struct EditProfileView: View {
                 dismiss()
             }) {
                 Text("Save Changes")
-                    .font(.body)
                     .foregroundColor(.white)
-                    .padding()
+                    .fontWeight(.semibold)
                     .frame(maxWidth: .infinity)
-                    .background(editedName.isEmpty ? Color.gray : Color.blue)
-                    .cornerRadius(8)
+                    .padding()
             }
-            .disabled(editedName.isEmpty)
-            .accessibilityLabel("Save profile changes")
+            .background(Color("primary"))
+            .clipShape(Capsule())
+            .padding(.horizontal)
         }
         .navigationTitle("Edit Profile")
+        .onAppear {
+            // Sync initial values with environment object
+            editedName = userModel.name
+            editedPhoneNumber = userModel.phoneNumber
+            editedEmail = userModel.email
+        }
     }
 }
 
@@ -174,7 +175,7 @@ struct EditProfileView: View {
 struct SettingsSection: View {
     @ObservedObject var viewModel: SettingsViewModel
     @ObservedObject var currencyService: CurrencyService
-    @ObservedObject var userModel: UserModel
+    @EnvironmentObject var userModel: UserModel // Use shared UserModel instance
     
     var body: some View {
         Section(header: Text("Settings").font(.caption).foregroundColor(.gray)) {
@@ -207,7 +208,6 @@ struct SettingsSection: View {
     }
 }
 
-// Subview for Version Section
 struct VersionSection: View {
     var body: some View {
         Section(header: Text("POLICY").font(.caption).foregroundColor(.gray)) {
@@ -222,87 +222,6 @@ struct VersionSection: View {
             }
             .accessibilityLabel("App version 1.0.0")
         }
-    }
-}
-
-struct LogoutSection: View {
-    @ObservedObject var viewModel: SettingsViewModel
-    @EnvironmentObject var authViewModel: AuthViewModel
-    @State private var navigateToSignIn = false
-    @State private var navigateToHome = false
-    @State private var showLogoutAlert = false
-    
-    var body: some View {
-        VStack(spacing: 0) {
-         
-            // Button Container
-            ZStack {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color(.systemGray6))
-                    .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
-                
-                if Auth.auth().currentUser != nil {
-                    // Log Out Button
-                    Button(action: {
-                        showLogoutAlert = true
-                    }) {
-                        Text("Log Out")
-                            .font(.headline)
-                            .foregroundColor(.red)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                    }
-                    .buttonStyle(.plain)
-                } else {
-                    // Sign In Button with Navigation
-                    NavigationLink(destination: LoginScreen(), isActive: $navigateToSignIn) {
-                        EmptyView()
-                    }
-                    .hidden()
-                    
-                    Button(action: {
-                        withAnimation {
-                            navigateToSignIn = true
-                        }
-                    }) {
-                        Text("Sign In")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color("primary"))
-                            .clipShape(Capsule())
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
-            )
-        }
-        .background(Color(.systemBackground))
-        .alert("Confirm Logout", isPresented: $showLogoutAlert) {
-            Button("Cancel", role: .cancel) { }
-            Button("Log Out", role: .destructive) {
-                Task {
-                    guard let userId = Auth.auth().currentUser?.uid else { return }
-                    await FavoriteManager.shared.syncFavoritesToFirestore(for: userId)
-                    do {
-                        try Auth.auth().signOut()
-                        authViewModel.isAuthenticated = false
-                    } catch {
-                        print("Error logging out: \(error.localizedDescription)")
-                    }
-                }
-            }
-        } message: {
-            Text("Are you sure you want to log out?")
-        }
-      
-        .listRowInsets(EdgeInsets()) // Ensures no separators if used in a List
     }
 }
 
@@ -325,19 +244,8 @@ struct MapSubView: View {
                             mapViewModel.handleMapTap(at: tapPoint, in: mapViewModel.region, mapSize: mapSize)
                         }
                 )
-                .frame(width:300,height: 300)
+                .frame(width: 300, height: 300)
                 .cornerRadius(8)
-            
-            //            Button(action: {
-            //                mapViewModel.centerOnUserLocation()
-            //            }) {
-            //                Image(systemName: "location.fill")
-            //                    .padding(10)
-            //                    .background(Color.white)
-            //                    .clipShape(Circle())
-            //                    .shadow(radius: 2)
-            //            }
-                .padding(16)
         }
     }
 }
@@ -346,5 +254,7 @@ struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         SettingsView()
             .environmentObject(CurrencyService()) // Required for previews
+            .environmentObject(UserModel()) // Add for previews
+            .environmentObject(AuthViewModel()) // Add for previews
     }
 }

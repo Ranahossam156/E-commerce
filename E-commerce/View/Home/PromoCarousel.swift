@@ -41,7 +41,7 @@ struct PromoCarousel: View {
             .onReceive(timer) { _ in
                 if viewModel.priceRules.count > 0 {
                     withAnimation {
-                        currentIndex = (currentIndex + 1) % min(viewModel.priceRules.count, 3)
+                        currentIndex = (currentIndex + 1) % min(viewModel.priceRules.count, 5)
                     }
                 }
             }
