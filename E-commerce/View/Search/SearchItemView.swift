@@ -65,27 +65,27 @@ struct SearchItemView: View {
     }
 
     private func toggleFavorite() {
-        let id = product.id
+        Task {
+            let id = product.id
 
-        if isFavorited {
-            if let favorite = favoritesViewModel.favorites.first(where: { $0.id == id }) {
-                favoritesViewModel.removeFavorite(product: favorite)
-            }
-        } else {
-            let favoriteProduct = FavoriteProductModel(
-                id: Int64(id),
-                title: product.title,
-                bodyHTML: product.bodyHTML,
-                price: product.variants.first?.price ?? "0.00",
-                colors: [],
-                sizes: [],
-                imageURLs: product.images.compactMap { $0.src }
-            )
+            if isFavorited {
+                if let favorite = favoritesViewModel.favorites.first(where: { $0.id == id }) {
+                    await favoritesViewModel.removeFavorite(product: favorite)
+                }
+            } else {
+                let favoriteProduct = FavoriteProductModel(
+                    id: Int64(id),
+                    title: product.title,
+                    bodyHTML: product.bodyHTML,
+                    price: product.variants.first?.price ?? "0.00",
+                    colors: [],
+                    sizes: [],
+                    imageURLs: product.images.compactMap { $0.src }
+                )
 
-            Task {
                 await FavoriteManager.shared.addToFavorites(product: favoriteProduct)
                 await MainActor.run {
-                    favoritesViewModel.fetchFavorites() 
+                    favoritesViewModel.fetchFavorites()
                 }
             }
         }
