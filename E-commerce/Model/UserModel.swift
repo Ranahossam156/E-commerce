@@ -1,13 +1,10 @@
-//
-//  File.swift
-//  E-commerce
-//
-//  Created by Kerolos on 03/06/2025.
-//
+// UserModel.swift
+// E-commerce
+// Created by Kerolos on 03/06/2025. (Last updated: 03:00 PM EEST, June 17, 2025)
 
 import Foundation
-import Combine
-
+import FirebaseAuth
+import FirebaseFirestore
 
 struct Address: Identifiable, Codable {
     let id: String
@@ -20,43 +17,67 @@ class UserModel: ObservableObject {
     @Published var addresses: [Address] = []
     @Published var defaultAddressId: String?
     @Published var phoneNumber: String = ""
+    @Published var isLoading: Bool = false
     
-    private let addressesKey = "userAddresses"
-    private let defaultAddressIdKey = "defaultAddressId"
+    private let db = Firestore.firestore()
     
     init() {
-        loadUserData()
+        loadUserDataFromFirebase()
     }
     
-    func loadUserData() {
-        name = UserDefaults.standard.string(forKey: "userName") ?? ""
-        email = UserDefaults.standard.string(forKey: "userEmail") ?? ""
-        phoneNumber = UserDefaults.standard.string(forKey: "userPhoneNumber") ?? ""
-        
-        if let data = UserDefaults.standard.data(forKey: addressesKey),
-           let savedAddresses = try? JSONDecoder().decode([Address].self, from: data) {
-            addresses = savedAddresses
+    func loadUserDataFromFirebase() {
+        guard let userId = Auth.auth().currentUser?.uid else {
+            print("No authenticated user, user data not loaded")
+            return
         }
-        
-        defaultAddressId = UserDefaults.standard.string(forKey: defaultAddressIdKey)
+        isLoading = true
+        db.collection("users").document(userId).getDocument { [weak self] (document, error) in
+            guard let self = self else { return }
+            if let document = document, document.exists {
+                if let data = document.data() {
+                    self.name = data["name"] as? String ?? ""
+                    self.email = data["email"] as? String ?? ""
+                    self.phoneNumber = data["phoneNumber"] as? String ?? ""
+                    self.defaultAddressId = data["defaultAddressId"] as? String
+                    
+                    if let addressesData = data["addresses"] as? [[String: String]] {
+                        self.addresses = addressesData.compactMap { dict in
+                            guard let id = dict["id"], let addressText = dict["addressText"] else { return nil }
+                            return Address(id: id, addressText: addressText)
+                        }
+                    }
+                }
+            } else {
+                print("No user data found, initializing with defaults")
+            }
+            self.isLoading = false
+        }
     }
     
     func saveUserData() {
-        UserDefaults.standard.set(name, forKey: "userName")
-        UserDefaults.standard.set(email, forKey: "userEmail")
-        UserDefaults.standard.set(phoneNumber, forKey: "userPhoneNumber")
-        
-        if let encoded = try? JSONEncoder().encode(addresses) {
-            UserDefaults.standard.set(encoded, forKey: addressesKey) // Fixed key
+        guard let userId = Auth.auth().currentUser?.uid else {
+            print("No authenticated user, user data not saved")
+            return
         }
-        UserDefaults.standard.set(defaultAddressId, forKey: defaultAddressIdKey)
+        let addressesData = addresses.map { ["id": $0.id, "addressText": $0.addressText] }
+        let userData: [String: Any] = [
+            "name": name,
+            "email": email,
+            "phoneNumber": phoneNumber,
+            "defaultAddressId": defaultAddressId ?? "",
+            "addresses": addressesData
+        ]
+        db.collection("users").document(userId).setData(userData) { error in
+            if let error = error {
+                print("Error saving user data: \(error.localizedDescription)")
+            } else {
+                print("User data saved successfully: \(userData)")
+            }
+        }
     }
     
     func addAddress(addressText: String) {
-        let newAddress = Address(
-            id: UUID().uuidString,
-            addressText: addressText
-        )
+        let newAddress = Address(id: UUID().uuidString, addressText: addressText)
         addresses.append(newAddress)
         
         if addresses.count == 1 {
@@ -89,46 +110,3 @@ class UserModel: ObservableObject {
         return addresses.first?.addressText ?? "Not Set"
     }
 }
-    /*import FirebaseAuth
-     import FirebaseFirestore
-     
-     class UserModel: ObservableObject {
-     @Published var name: String = ""
-     @Published var email: String = ""
-     @Published var address: String = ""
-     @Published var phoneNumber: String = ""
-     
-     init() {
-     loadUserDataFromFirebase()
-     }
-     
-     func loadUserDataFromFirebase() {
-     if let user = Auth.auth().currentUser {
-     email = user.email ?? ""
-     let db = Firestore.firestore()
-     db.collection("users").document(user.uid).getDocument { (document, error) in
-     if let document = document, document.exists {
-     self.name = document.get("name") as? String ?? ""
-     self.address = document.get("address") as? String ?? ""
-     self.phoneNumber = document.get("phoneNumber") as? String ?? ""
-     }
-     }
-     }
-     }
-     
-     func saveUserData() {
-     if let user = Auth.auth().currentUser {
-     let db = Firestore.firestore()
-     db.collection("users").document(user.uid).setData([
-     "name": name,
-     "email": email,
-     "address": address,
-     "phoneNumber": phoneNumber
-     ]) { error in
-     if let error = error {
-     print("Error saving user data: \(error)")
-     }
-     }
-     }
-     }
-     }*/
