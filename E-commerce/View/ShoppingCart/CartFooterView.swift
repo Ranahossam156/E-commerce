@@ -29,20 +29,25 @@ struct CartFooterView: View {
             }
             .padding(.horizontal)
             .padding(.top, 15) // Add top padding after divider
-
+            
             
             Button(action: checkoutAction) {
                 Text("Checkout")
-                    .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.white)
+                    .fontWeight(.semibold)
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.blue)
-                    .cornerRadius(10)
             }
+            .background(Color("primary"))
+            .clipShape(Capsule())
             .padding(.horizontal)
-            .padding(.bottom, 8)
         }
-        .background(Color.white)
     }
 }
+
+struct cartFooter_Previews: PreviewProvider {
+    static var previews: some View {
+        CartFooterView(total: 10, checkoutAction: {print("")})
+    }
+}
+
