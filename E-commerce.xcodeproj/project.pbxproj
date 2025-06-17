@@ -48,6 +48,8 @@
 		E13937C72DF969D1004983BB /* PayPalWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13937C62DF969D1004983BB /* PayPalWebViewController.swift */; };
 		E13937C92DF96BAD004983BB /* PayPalCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13937C82DF96BAD004983BB /* PayPalCoordinator.swift */; };
 		E13937CB2DF96BDD004983BB /* PayPalPaymentResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13937CA2DF96BDD004983BB /* PayPalPaymentResult.swift */; };
+		E14977EC2E018C9E00076377 /* AddressesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14977EB2E018C9E00076377 /* AddressesView.swift */; };
+		E14977F02E01928600076377 /* LogoutSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14977EF2E01928600076377 /* LogoutSection.swift */; };
 		E159DF192DF9E6DE0048DDEB /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = E159DF182DF9E6DE0048DDEB /* FirebaseAuth */; };
 		E159DF1B2DF9E6E30048DDEB /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = E159DF1A2DF9E6E30048DDEB /* FirebaseCore */; };
 		E159DF1D2DF9E6EC0048DDEB /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = E159DF1C2DF9E6EC0048DDEB /* Kingfisher */; };
@@ -67,6 +69,7 @@
 		E17102F42DE4EBCB00C511CC /* CartItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17102F32DE4EBCB00C511CC /* CartItemRow.swift */; };
 		E17102F62DE4EBDF00C511CC /* CartFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17102F52DE4EBDF00C511CC /* CartFooterView.swift */; };
 		E17102F82DE4EBF300C511CC /* EmptyCartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17102F72DE4EBF300C511CC /* EmptyCartView.swift */; };
+		E181CDB42E014E5D00897AEE /* SettingsFirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E181CDB32E014E5D00897AEE /* SettingsFirestoreService.swift */; };
 		E186FC042DF5569100BD6DA4 /* PaymentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E186FC032DF5569100BD6DA4 /* PaymentHandler.swift */; };
 		E191DFAA2DF85D0400ADB394 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = E191DFA92DF85D0400ADB394 /* Config.swift */; };
 		E19745162DF044E700F0AA4C /* ProductInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19745142DF044E700F0AA4C /* ProductInfoView.swift */; };
@@ -180,6 +183,8 @@
 		E13937C62DF969D1004983BB /* PayPalWebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayPalWebViewController.swift; sourceTree = "<group>"; };
 		E13937C82DF96BAD004983BB /* PayPalCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayPalCoordinator.swift; sourceTree = "<group>"; };
 		E13937CA2DF96BDD004983BB /* PayPalPaymentResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayPalPaymentResult.swift; sourceTree = "<group>"; };
+		E14977EB2E018C9E00076377 /* AddressesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressesView.swift; sourceTree = "<group>"; };
+		E14977EF2E01928600076377 /* LogoutSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogoutSection.swift; sourceTree = "<group>"; };
 		E15A59252DEF4EC600FB39E5 /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 		E15A59282DEF652A00FB39E5 /* CurrencyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyService.swift; sourceTree = "<group>"; };
 		E15A592A2DEF677800FB39E5 /* FreeCurrencyRateResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeCurrencyRateResponse.swift; sourceTree = "<group>"; };
@@ -192,6 +197,7 @@
 		E17102F32DE4EBCB00C511CC /* CartItemRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartItemRow.swift; sourceTree = "<group>"; };
 		E17102F52DE4EBDF00C511CC /* CartFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartFooterView.swift; sourceTree = "<group>"; };
 		E17102F72DE4EBF300C511CC /* EmptyCartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyCartView.swift; sourceTree = "<group>"; };
+		E181CDB32E014E5D00897AEE /* SettingsFirestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsFirestoreService.swift; sourceTree = "<group>"; };
 		E186FC032DF5569100BD6DA4 /* PaymentHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentHandler.swift; sourceTree = "<group>"; };
 		E191DFA92DF85D0400ADB394 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		E19745142DF044E700F0AA4C /* ProductInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductInfoView.swift; sourceTree = "<group>"; };
@@ -335,6 +341,7 @@
 				228A2CE42DF6216600F138A3 /* AllProductResponse.swift */,
 				E191DFA92DF85D0400ADB394 /* Config.swift */,
 				E13937C22DF968B5004983BB /* PaypalModels.swift */,
+				E17102E42DE4EA5600C511CC /* CartItem.swift */,
 				FA91A34E2DFA378A00E7AB7D /* OrderItem.swift */,
 				FA91A3502DFA3BBD00E7AB7D /* OrderModel.swift */,
 				FABDC4162DFC7FDB006E8A5B /* OrderPayload.swift */,
@@ -524,6 +531,8 @@
 		E11F26902DEE397B0063716E /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				E14977EF2E01928600076377 /* LogoutSection.swift */,
+				E14977EB2E018C9E00076377 /* AddressesView.swift */,
 				E11F26912DEE39930063716E /* SettingsView.swift */,
 			);
 			path = Settings;
@@ -548,7 +557,6 @@
 			isa = PBXGroup;
 			children = (
 				E13937C82DF96BAD004983BB /* PayPalCoordinator.swift */,
-				E17102E42DE4EA5600C511CC /* CartItem.swift */,
 				E17102EB2DE4EAD900C511CC /* CartView.swift */,
 				E17102F12DE4EBAE00C511CC /* CartHeaderView.swift */,
 				E17102F32DE4EBCB00C511CC /* CartItemRow.swift */,
@@ -581,6 +589,7 @@
 			children = (
 				E1FFCD612DFFFE07007B3641 /* CartFireStoreService.swift */,
 				E1FFCD622DFFFE07007B3641 /* FirestoreService.swift */,
+				E181CDB32E014E5D00897AEE /* SettingsFirestoreService.swift */,
 			);
 			path = FirebaseService;
 			sourceTree = "<group>";
@@ -815,10 +824,12 @@
 				FA524F3B2DEB1920008FEA88 /* CategoryService.swift in Sources */,
 				22FC15B82DF0CFCD000FD95C /* FavoritesModel.xcdatamodeld in Sources */,
 				228A2CE52DF6216600F138A3 /* AllProductResponse.swift in Sources */,
+				E181CDB42E014E5D00897AEE /* SettingsFirestoreService.swift in Sources */,
 				FA9AE0162DF797370011B599 /* OrderDetailsView.swift in Sources */,
 				FA9C0D332DEB86BE00618379 /* ProductsResponse.swift in Sources */,
 				229EFA702DE35A0C006F0D77 /* ContentView.swift in Sources */,
 				FA805C392DE89EC400853AA4 /* CategoriesView.swift in Sources */,
+				E14977F02E01928600076377 /* LogoutSection.swift in Sources */,
 				223E6A282DF703B900354ED4 /* SearchItemView.swift in Sources */,
 				E1FFCD6C2E00011A007B3641 /* MainTabView 2.swift in Sources */,
 				E17102E82DE4EA7E00C511CC /* CartViewModel.swift in Sources */,
@@ -873,6 +884,7 @@
 				FA805B7A2DE898BB00853AA4 /* TabView.swift in Sources */,
 				E13937C92DF96BAD004983BB /* PayPalCoordinator.swift in Sources */,
 				E13937C32DF968B5004983BB /* PaypalModels.swift in Sources */,
+				E14977EC2E018C9E00076377 /* AddressesView.swift in Sources */,
 				E13937C72DF969D1004983BB /* PayPalWebViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

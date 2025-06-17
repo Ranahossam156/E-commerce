@@ -8,11 +8,14 @@ import MapKit
 import Combine
 import CoreLocation
 import FirebaseAuth
+
 struct SettingsView: View {
     @StateObject private var viewModel = SettingsViewModel()
     @StateObject private var userModel = UserModel()
     @EnvironmentObject var currencyService: CurrencyService
     @EnvironmentObject var authViewModel: AuthViewModel
+    @State private var isDataLoaded = false
+    
     var body: some View {
         NavigationView {
             List {
@@ -25,15 +28,21 @@ struct SettingsView: View {
             .navigationBarHidden(true)
             .onAppear {
                 viewModel.loadSettings()
-                userModel.loadUserData()
+                if userModel.addresses.isEmpty && Auth.auth().currentUser?.uid != nil {
+                    userModel.loadUserDataFromFirebase()
+                }
                 currencyService.fetchExchangeRates()
-                viewModel.currencyService = currencyService // Existing assignment
+                viewModel.currencyService = currencyService
                 currencyService.settingsViewModel = viewModel
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    isDataLoaded = true
+                }
             }
         }
     }
 }
 
+// [Rest of the subviews (UserInfoHeader, EditProfileView, SettingsSection, VersionSection, LogoutSection, MapSubView) remain unchanged]
 // Subview for User Info Header
 struct UserInfoHeader: View {
     @ObservedObject var userModel: UserModel
@@ -216,136 +225,87 @@ struct VersionSection: View {
     }
 }
 
-
 struct LogoutSection: View {
     @ObservedObject var viewModel: SettingsViewModel
     @EnvironmentObject var authViewModel: AuthViewModel
-
+    @State private var navigateToSignIn = false
+    @State private var navigateToHome = false
+    @State private var showLogoutAlert = false
+    
     var body: some View {
-        Section(header: Text("ACCOUNT").font(.caption).foregroundColor(.gray)) {
-            Button(action: {
-                Task {
-                    guard let userId = Auth.auth().currentUser?.uid else {
-                        return
+        VStack(spacing: 0) {
+         
+            // Button Container
+            ZStack {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color(.systemGray6))
+                    .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                
+                if Auth.auth().currentUser != nil {
+                    // Log Out Button
+                    Button(action: {
+                        showLogoutAlert = true
+                    }) {
+                        Text("Log Out")
+                            .font(.headline)
+                            .foregroundColor(.red)
+                            .frame(maxWidth: .infinity)
+                            .padding()
                     }
+                    .buttonStyle(.plain)
+                } else {
+                    // Sign In Button with Navigation
+                    NavigationLink(destination: LoginScreen(), isActive: $navigateToSignIn) {
+                        EmptyView()
+                    }
+                    .hidden()
                     
+                    Button(action: {
+                        withAnimation {
+                            navigateToSignIn = true
+                        }
+                    }) {
+                        Text("Sign In")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color("primary"))
+                            .clipShape(Capsule())
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
+            )
+        }
+        .background(Color(.systemBackground))
+        .alert("Confirm Logout", isPresented: $showLogoutAlert) {
+            Button("Cancel", role: .cancel) { }
+            Button("Log Out", role: .destructive) {
+                Task {
+                    guard let userId = Auth.auth().currentUser?.uid else { return }
                     await FavoriteManager.shared.syncFavoritesToFirestore(for: userId)
-                    
                     do {
                         try Auth.auth().signOut()
                         authViewModel.isAuthenticated = false
                     } catch {
+                        print("Error logging out: \(error.localizedDescription)")
                     }
                 }
-            }) {
-                Text("Log Out")
-                    .font(.body)
-                    .foregroundColor(.red)
-                    .frame(maxWidth: .infinity, alignment: .center)
             }
-            .accessibilityLabel("Log out")
+        } message: {
+            Text("Are you sure you want to log out?")
         }
+      
+        .listRowInsets(EdgeInsets()) // Ensures no separators if used in a List
     }
 }
 
-struct AddressesView: View {
-    @ObservedObject var userModel: UserModel
-    @StateObject private var mapViewModel = MapViewModel()
-    @State private var showDeleteAlert = false
-    @State private var addressToDelete : IndexSet? // Store the IndexSet for deletion
-    
-    var body: some View {
-        Form {
-            Section(header: Text("Your Addresses").font(.headline)) {
-                if userModel.addresses.isEmpty {
-                    Text("No addresses added")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                } else {
-                    ForEach(userModel.addresses) { address in
-                        HStack {
-                            Text(address.addressText)
-                            Spacer()
-                            if userModel.defaultAddressId == address.id {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .foregroundColor(.green)
-                            }
-                        }
-                        .onTapGesture {
-                            userModel.setDefaultAddress(id: address.id)
-                        }
-                    }
-                    .onDelete(perform:{ offsets in
-                        addressToDelete = offsets
-                        showDeleteAlert = true
-                    })
-                }
-            }
-            
-            Section(header: Text("Add New Address").font(.headline)) {
-                MapSubView(mapViewModel: mapViewModel)
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Address")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                    
-                    Text(mapViewModel.selectedAddress ?? "Select a location on the map")
-                        .font(.body)
-                        .foregroundColor(mapViewModel.selectedAddress == nil ? .gray : .primary)
-                        .padding()
-                        .frame(maxWidth: .infinity, alignment: .leading) // Fixed width
-                        .fixedSize(horizontal: false, vertical: true) // Allow vertical expansion
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                        .multilineTextAlignment(.leading) // Align text to leading edge
-                }
-                
-                Button(action: {
-                    if let selectedAddress = mapViewModel.selectedAddress {
-                        userModel.addAddress(addressText: selectedAddress)
-                        mapViewModel.resetSelectedLocation()
-                    }
-                }) {
-                    Text("Add Address")
-                        .font(.body)
-                        .foregroundColor(.white)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(mapViewModel.selectedAddress == nil ? Color.gray : Color.blue)
-                        .cornerRadius(8)
-                }
-                .disabled(mapViewModel.selectedAddress == nil)
-            }
-        }
-        .navigationTitle("Addresses")
-        .toolbar {
-            EditButton()
-        }
-        .alert(isPresented: $showDeleteAlert){
-            Alert (
-                title: Text("Delete Address"),
-                message: Text("Are you sure you want to delete this address?"),
-                primaryButton: .destructive(Text ("Delete"), action: {
-                    if let offsets = addressToDelete {
-                        deleteAddresses(at: offsets)
-                        addressToDelete = nil
-                    }
-                }), secondaryButton: .cancel{
-                    addressToDelete = nil
-                }
-            )
-        }
-    }
-    
-    private func deleteAddresses(at offsets: IndexSet) {
-        offsets.forEach{ index in
-            let addressId = userModel.addresses[index].id
-            userModel.deleteAddress(id: addressId)
-            
-        }
-    }
-}
 struct MapSubView: View {
     @ObservedObject var mapViewModel: MapViewModel
     private let mapSize = CGSize(width: 270, height: 250)
