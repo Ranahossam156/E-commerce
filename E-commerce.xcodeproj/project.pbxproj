@@ -67,6 +67,8 @@
 		E17102F42DE4EBCB00C511CC /* CartItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17102F32DE4EBCB00C511CC /* CartItemRow.swift */; };
 		E17102F62DE4EBDF00C511CC /* CartFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17102F52DE4EBDF00C511CC /* CartFooterView.swift */; };
 		E17102F82DE4EBF300C511CC /* EmptyCartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17102F72DE4EBF300C511CC /* EmptyCartView.swift */; };
+		E181CDB42E014E5D00897AEE /* SettingsFirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E181CDB32E014E5D00897AEE /* SettingsFirestoreService.swift */; };
+		E181CDB62E015AFD00897AEE /* AddressesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E181CDB52E015AFD00897AEE /* AddressesView.swift */; };
 		E186FC042DF5569100BD6DA4 /* PaymentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E186FC032DF5569100BD6DA4 /* PaymentHandler.swift */; };
 		E191DFAA2DF85D0400ADB394 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = E191DFA92DF85D0400ADB394 /* Config.swift */; };
 		E19745162DF044E700F0AA4C /* ProductInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19745142DF044E700F0AA4C /* ProductInfoView.swift */; };
@@ -188,6 +190,8 @@
 		E17102F32DE4EBCB00C511CC /* CartItemRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartItemRow.swift; sourceTree = "<group>"; };
 		E17102F52DE4EBDF00C511CC /* CartFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartFooterView.swift; sourceTree = "<group>"; };
 		E17102F72DE4EBF300C511CC /* EmptyCartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyCartView.swift; sourceTree = "<group>"; };
+		E181CDB32E014E5D00897AEE /* SettingsFirestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsFirestoreService.swift; sourceTree = "<group>"; };
+		E181CDB52E015AFD00897AEE /* AddressesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressesView.swift; sourceTree = "<group>"; };
 		E186FC032DF5569100BD6DA4 /* PaymentHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentHandler.swift; sourceTree = "<group>"; };
 		E191DFA92DF85D0400ADB394 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		E19745142DF044E700F0AA4C /* ProductInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductInfoView.swift; sourceTree = "<group>"; };
@@ -514,6 +518,7 @@
 		E11F26902DEE397B0063716E /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				E181CDB52E015AFD00897AEE /* AddressesView.swift */,
 				E11F26912DEE39930063716E /* SettingsView.swift */,
 			);
 			path = Settings;
@@ -571,6 +576,7 @@
 			children = (
 				E1FFCD612DFFFE07007B3641 /* CartFireStoreService.swift */,
 				E1FFCD622DFFFE07007B3641 /* FirestoreService.swift */,
+				E181CDB32E014E5D00897AEE /* SettingsFirestoreService.swift */,
 			);
 			path = FirebaseService;
 			sourceTree = "<group>";
@@ -793,6 +799,7 @@
 				FA524F3B2DEB1920008FEA88 /* CategoryService.swift in Sources */,
 				22FC15B82DF0CFCD000FD95C /* FavoritesModel.xcdatamodeld in Sources */,
 				228A2CE52DF6216600F138A3 /* AllProductResponse.swift in Sources */,
+				E181CDB42E014E5D00897AEE /* SettingsFirestoreService.swift in Sources */,
 				FA9AE0162DF797370011B599 /* OrderDetailsView.swift in Sources */,
 				FA9C0D332DEB86BE00618379 /* ProductsResponse.swift in Sources */,
 				229EFA702DE35A0C006F0D77 /* ContentView.swift in Sources */,
@@ -849,6 +856,7 @@
 				FA805B7A2DE898BB00853AA4 /* TabView.swift in Sources */,
 				E13937C92DF96BAD004983BB /* PayPalCoordinator.swift in Sources */,
 				E13937C32DF968B5004983BB /* PaypalModels.swift in Sources */,
+				E181CDB62E015AFD00897AEE /* AddressesView.swift in Sources */,
 				E13937C72DF969D1004983BB /* PayPalWebViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
