@@ -24,6 +24,7 @@ struct CheckoutView: View {
     @SwiftUI.State private var showSuccessAlert = false
     @SwiftUI.State private var navigateToAddresses = false
     
+    
     private var discountedTotal: Double {
         max(0, cartVM.total - discount)
     }
@@ -261,26 +262,15 @@ struct CheckoutView: View {
         }
     }
     
-//    private func processPayPalSandboxPayment() {
-//        checkoutViewModel.processPayPalPayment(for: cartVM.cartItems, total: cartVM.total) { success, message in
-//            DispatchQueue.main.async {
-//                if success {
-//                    paymentStatus = "PayPal payment successful!"
-//                    createOrder()
-//                } else {
-//                    paymentStatus = message ?? "PayPal payment failed"
-//                    checkoutViewModel.showError = true
-//                    checkoutViewModel.errorMessage = message ?? "Unknown error"
-//                }
-//            }
-//        }
-//    }
+
     private func processPayPalPayment() {
         checkoutViewModel.processPayPalPayment(for: cartVM.cartItems, total: discountedTotal) { success, message in
             DispatchQueue.main.async {
                 if success {
                     paymentStatus = "PayPal payment successful!"
                     createOrder()
+                    cartVM.clearCart()
+
                 } else {
                     paymentStatus = message ?? "PayPal payment failed"
                     checkoutViewModel.showError = true
@@ -297,6 +287,7 @@ struct CheckoutView: View {
             if checkoutViewModel.showPaymentSuccess {
                 paymentStatus = "Cash on Delivery confirmed"
                 createOrder()
+                cartVM.clearCart()
             } else {
                 paymentStatus = "Cash on Delivery failed"
             }
@@ -333,7 +324,7 @@ struct CheckoutView: View {
         paymentStatus = "Order placed successfully!"
         showSuccessAlert = true
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             showSuccessAlert = false
             dismiss()
         }

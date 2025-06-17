@@ -3,12 +3,13 @@
 //  E-commerce
 //
 //  Created by Macos on 25/05/2025.
-//
-import SwiftUI
-import Firebase
+
 
 import SwiftUI
 import Firebase
+import PayPalCheckout
+import CorePayments
+
 
 @main
 struct E_commerceApp: App {
@@ -18,6 +19,13 @@ struct E_commerceApp: App {
 
     init() {
         FirebaseApp.configure()
+
+        let config = CheckoutConfig(
+                   clientID: Config.paypalClientId,
+                   environment: .sandbox // or .live for production
+               )
+        Checkout.set(config: config)
+
     }
 
     var body: some Scene {

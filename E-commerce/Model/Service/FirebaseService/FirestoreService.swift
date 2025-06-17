@@ -1,7 +1,6 @@
 import Foundation
 import FirebaseFirestore
 import FirebaseAuth
-import FirebaseFirestoreSwift
 
 class FirestoreService {
     static let shared = FirestoreService()
