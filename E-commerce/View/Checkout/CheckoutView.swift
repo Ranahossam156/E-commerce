@@ -5,25 +5,25 @@ import SwiftUI
 struct CheckoutView: View {
     
     @ObservedObject var cartVM = CartViewModel.shared
-    @State private var selectedMethod: PaymentMethod? = nil
-    @State private var pendingPaymentMethod: PaymentMethod? = nil
-    @State private var paymentStatus: String? = nil
-    @State private var promoStatus: String? = nil
-    @State private var showAddressScreen = false
+    @SwiftUI.State private var selectedMethod: PaymentMethod? = nil
+    @SwiftUI.State private var pendingPaymentMethod: PaymentMethod? = nil
+    @SwiftUI.State private var paymentStatus: String? = nil
+    @SwiftUI.State private var promoStatus: String? = nil
+    @SwiftUI.State private var showAddressScreen = false
 
 
-    @State private var promoCode: String = ""
-    @State private var discount: Double = 0.0
+    @SwiftUI.State private var promoCode: String = ""
+    @SwiftUI.State private var discount: Double = 0.0
 
-    @Environment(\.dismiss) var dismiss
-    @StateObject private var checkoutViewModel = CheckoutViewModel()
-    @StateObject private var orderViewModel = OrderViewModel()
-    @StateObject private var authViewModel = AuthViewModel()
-    @StateObject private var userModel = UserModel()
-    @StateObject private var settingsViewModel = SettingsViewModel()
+    @SwiftUI.Environment(\.dismiss) var dismiss
+    @SwiftUI.StateObject private var checkoutViewModel = CheckoutViewModel()
+    @SwiftUI.StateObject private var orderViewModel = OrderViewModel()
+    @SwiftUI.StateObject private var authViewModel = AuthViewModel()
+    @SwiftUI.StateObject private var userModel = UserModel()
+    @SwiftUI.StateObject private var settingsViewModel = SettingsViewModel()
 
-    @State private var isLoadingOrder = false
-    @State private var showSuccessAlert = false
+    @SwiftUI.State private var isLoadingOrder = false
+    @SwiftUI.State private var showSuccessAlert = false
 
     private var discountedTotal: Double {
         max(0, cartVM.total - discount)
@@ -282,7 +282,7 @@ struct CheckoutView: View {
     }
     
 
-    private func processPayPalSandboxPayment() {
+    private func processPayPalPayment() {
         checkoutViewModel.processPayPalPayment(
             for: cartVM.cartItems,
             total: cartVM.total
