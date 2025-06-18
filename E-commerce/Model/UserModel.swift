@@ -1,6 +1,6 @@
 // UserModel.swift
 // E-commerce
-// Created by Kerolos on 03/06/2025. (Last updated: 03:00 PM EEST, June 17, 2025)
+// Created by Kerolos on 03/06/2025. (Last updated: 06:50 PM EEST, June 18, 2025)
 
 import Foundation
 import FirebaseAuth
@@ -22,36 +22,42 @@ class UserModel: ObservableObject {
     private let db = Firestore.firestore()
     
     init() {
-        loadUserDataFromFirebase()
+        // Do not call loadUserDataFromFirebase() here to avoid blocking
     }
     
-    func loadUserDataFromFirebase() {
+    func loadUserDataFromFirebase() async throws {
         guard let userId = Auth.auth().currentUser?.uid else {
             print("No authenticated user, user data not loaded")
             return
         }
         isLoading = true
-        db.collection("users").document(userId).getDocument { [weak self] (document, error) in
-            guard let self = self else { return }
-            if let document = document, document.exists {
+        print("Fetching user data for \(userId)")
+        do {
+            let document = try await db.collection("users").document(userId).getDocument()
+            if document.exists {
                 if let data = document.data() {
-                    self.name = data["name"] as? String ?? ""
-                    self.email = data["email"] as? String ?? ""
-                    self.phoneNumber = data["phoneNumber"] as? String ?? ""
-                    self.defaultAddressId = data["defaultAddressId"] as? String
+                    print("Data fetched, processing...")
+                    name = data["name"] as? String ?? ""
+                    email = data["email"] as? String ?? ""
+                    phoneNumber = data["phoneNumber"] as? String ?? ""
+                    defaultAddressId = data["defaultAddressId"] as? String
                     
                     if let addressesData = data["addresses"] as? [[String: String]] {
-                        self.addresses = addressesData.compactMap { dict in
+                        addresses = addressesData.compactMap { dict in
                             guard let id = dict["id"], let addressText = dict["addressText"] else { return nil }
                             return Address(id: id, addressText: addressText)
                         }
                     }
+                    print("User data loaded: \(name), \(email)")
                 }
             } else {
                 print("No user data found, initializing with defaults")
             }
-            self.isLoading = false
+        } catch {
+            print("Error loading user data: \(error.localizedDescription)")
+            throw error
         }
+        isLoading = false
     }
     
     func saveUserData() {

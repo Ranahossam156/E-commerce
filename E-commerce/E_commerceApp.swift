@@ -32,10 +32,11 @@ struct E_commerceApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(currencyService)
-                .environmentObject(orderViewModel)
                 .environmentObject(authViewModel)
                 .environmentObject(userModel)
+                .environmentObject(orderViewModel)
+                .environmentObject(currencyService)
+
         }
     }
 }

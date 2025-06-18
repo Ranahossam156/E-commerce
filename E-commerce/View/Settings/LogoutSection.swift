@@ -1,34 +1,23 @@
-//
-//  LogoutSection.swift
-//  E-commerce
-//
-//  Created by Kerolos on 17/06/2025.
-//
-
-import SwiftUICore
-import Foundation
+// LogoutSection.swift
 import SwiftUI
 import FirebaseAuth
 
 struct LogoutSection: View {
     @ObservedObject var viewModel: SettingsViewModel
     @EnvironmentObject var authViewModel: AuthViewModel
-    @StateObject private var userModel = UserModel() // Ensure UserModel is accessible
-    @State private var navigateToSignIn = false
-    @State private var navigateToHome = false
+    @EnvironmentObject var userModel: UserModel
+    @Environment(\.presentationMode) var presentationMode
+    @State private var navigateToLogin = false
     @State private var showLogoutAlert = false
     
     var body: some View {
         VStack(spacing: 0) {
-            
-            // Button Container
             ZStack {
                 RoundedRectangle(cornerRadius: 12)
                     .fill(Color(.systemGray6))
                     .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
                 
                 if Auth.auth().currentUser != nil {
-                    // Log Out Button
                     Button(action: {
                         showLogoutAlert = true
                     }) {
@@ -40,16 +29,8 @@ struct LogoutSection: View {
                     }
                     .buttonStyle(.plain)
                 } else {
-                    // Sign In Button with Navigation
-                    NavigationLink(destination: LoginScreen(), isActive: $navigateToSignIn) {
-                        EmptyView()
-                    }
-                    .hidden()
-                    
                     Button(action: {
-                        withAnimation {
-                            navigateToSignIn = true
-                        }
+                        navigateToLogin = true
                     }) {
                         Text("Sign In")
                             .font(.headline)
@@ -77,14 +58,17 @@ struct LogoutSection: View {
                     guard let userId = Auth.auth().currentUser?.uid else { return }
                     await FavoriteManager.shared.syncFavoritesToFirestore(for: userId)
                     do {
+                        print("Before sign out")
                         try Auth.auth().signOut()
+                        print("After sign out")
                         authViewModel.isAuthenticated = false
                         userModel.name = ""
                         userModel.email = ""
                         userModel.phoneNumber = ""
                         userModel.addresses = []
-                        userModel.defaultAddressId = nil                    }
-                    catch {
+                        userModel.defaultAddressId = nil
+                        navigateToLogin = true
+                    } catch {
                         print("Error logging out: \(error.localizedDescription)")
                     }
                 }
@@ -92,7 +76,21 @@ struct LogoutSection: View {
         } message: {
             Text("Are you sure you want to log out?")
         }
-        
-        .listRowInsets(EdgeInsets()) // Ensures no separators if used in a List
+        .background(
+            NavigationLink(destination: LoginScreen().navigationBarBackButtonHidden(true), isActive: $navigateToLogin) {
+                EmptyView()
+            }
+            .hidden()
+        )
+        .listRowInsets(EdgeInsets())
+    }
+}
+
+// Assuming LoginView exists or replace with your actual login view
+struct LoginView: View {
+    var body: some View {
+        Text("Login Screen")
+            .navigationTitle("Login")
+            .navigationBarBackButtonHidden(true)
     }
 }

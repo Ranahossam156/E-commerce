@@ -1,6 +1,6 @@
 // SettingsView.swift
 // E-commerce
-// Created by Kerolos on 02/06/2025. (Last updated: 09:45 PM EEST, June 17, 2025)
+// Created by Kerolos on 02/06/2025. (Last updated: 06:50 PM EEST, June 18, 2025)
 
 import SwiftUI
 import MapKit
@@ -18,7 +18,7 @@ struct SettingsView: View {
     var body: some View {
         NavigationView {
             List {
-                UserInfoHeader() // No need to pass userModel, use @EnvironmentObject
+                UserInfoHeader()
                 SettingsSection(viewModel: viewModel, currencyService: currencyService)
                 VersionSection()
                 LogoutSection(viewModel: viewModel).environmentObject(authViewModel)
@@ -26,17 +26,34 @@ struct SettingsView: View {
             .navigationTitle("Settings")
             .navigationBarHidden(true)
             .onAppear {
+                print("SettingsView onAppear called")
                 viewModel.loadSettings()
-                if userModel.addresses.isEmpty && Auth.auth().currentUser?.uid != nil {
-                    userModel.loadUserDataFromFirebase()
-                }
+                loadUserDataIfNeeded()
                 currencyService.fetchExchangeRates()
                 viewModel.currencyService = currencyService
                 currencyService.settingsViewModel = viewModel
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     isDataLoaded = true
+                    print("Data loaded: \(isDataLoaded)")
                 }
             }
+        }
+    }
+    
+    private func loadUserDataIfNeeded() {
+        print("Checking user data load condition")
+        if userModel.addresses.isEmpty, let userId = Auth.auth().currentUser?.uid {
+            print("Loading user data for userId: \(userId)")
+            Task {
+                do {
+                    try await userModel.loadUserDataFromFirebase()
+                    print("User data loaded successfully: \(userModel.name), \(userModel.email)")
+                } catch {
+                    print("Failed to load user data: \(error.localizedDescription)")
+                }
+            }
+        } else {
+            print("User data already loaded or no authenticated user")
         }
     }
 }
@@ -72,7 +89,7 @@ struct UserInfoHeader: View {
                         .font(.subheadline)
                         .foregroundColor(.gray)
                         .accessibilityLabel("Current address: \(userModel.defaultAddress)")
-                        .lineLimit(6) // Allow multiple lines for long addresses
+                        .lineLimit(6)
                     
                     Text("Phone: \(userModel.phoneNumber.isEmpty ? "Not Set" : userModel.phoneNumber)")
                         .font(.subheadline)
@@ -83,9 +100,10 @@ struct UserInfoHeader: View {
                 Spacer()
                 
                 NavigationLink(destination: EditProfileView()) {
-                    EmptyView() // Placeholder, adjust if needed
+                   
                 }
                 .frame(width: 1)
+
             }
             .padding(.vertical, 12)
         }
@@ -94,16 +112,16 @@ struct UserInfoHeader: View {
 
 // Subview for Editing Profile
 struct EditProfileView: View {
-    @EnvironmentObject var userModel: UserModel // Use shared UserModel instance
+    @EnvironmentObject var userModel: UserModel
     @Environment(\.dismiss) var dismiss
     @State private var editedName: String
     @State private var editedPhoneNumber: String
     @State private var editedEmail: String
     
     init() {
-        _editedName = State(initialValue: UserModel().name) // Initial value, will be updated by environment
-        _editedPhoneNumber = State(initialValue: UserModel().phoneNumber)
-        _editedEmail = State(initialValue: UserModel().email)
+        _editedName = State(initialValue: "")
+        _editedPhoneNumber = State(initialValue: "")
+        _editedEmail = State(initialValue: "")
     }
     
     var body: some View {
@@ -160,10 +178,11 @@ struct EditProfileView: View {
             .background(Color("primary"))
             .clipShape(Capsule())
             .padding(.horizontal)
+            .disabled(editedName.isEmpty)
         }
         .navigationTitle("Edit Profile")
         .onAppear {
-            // Sync initial values with environment object
+            print("EditProfileView onAppear, userModel: \(userModel.name), \(userModel.email), \(userModel.phoneNumber)")
             editedName = userModel.name
             editedPhoneNumber = userModel.phoneNumber
             editedEmail = userModel.email
@@ -175,7 +194,7 @@ struct EditProfileView: View {
 struct SettingsSection: View {
     @ObservedObject var viewModel: SettingsViewModel
     @ObservedObject var currencyService: CurrencyService
-    @EnvironmentObject var userModel: UserModel // Use shared UserModel instance
+    @EnvironmentObject var userModel: UserModel
     
     var body: some View {
         Section(header: Text("Settings").font(.caption).foregroundColor(.gray)) {
@@ -237,15 +256,15 @@ struct MapSubView: View {
                 annotationItems: mapViewModel.selectedLocation != nil ? [mapViewModel.selectedLocation!] : []) { location in
                 MapMarker(coordinate: location.coordinate, tint: .red)
             }
-                .gesture(
-                    DragGesture(minimumDistance: 0)
-                        .onEnded { value in
-                            let tapPoint = value.location
-                            mapViewModel.handleMapTap(at: tapPoint, in: mapViewModel.region, mapSize: mapSize)
-                        }
-                )
-                .frame(width: 300, height: 300)
-                .cornerRadius(8)
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .onEnded { value in
+                        let tapPoint = value.location
+                        mapViewModel.handleMapTap(at: tapPoint, in: mapViewModel.region, mapSize: mapSize)
+                    }
+            )
+            .frame(width: 300, height: 300)
+            .cornerRadius(8)
         }
     }
 }
@@ -253,8 +272,8 @@ struct MapSubView: View {
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         SettingsView()
-            .environmentObject(CurrencyService()) // Required for previews
-            .environmentObject(UserModel()) // Add for previews
-            .environmentObject(AuthViewModel()) // Add for previews
+            .environmentObject(CurrencyService())
+            .environmentObject(UserModel())
+            .environmentObject(AuthViewModel())
     }
 }
