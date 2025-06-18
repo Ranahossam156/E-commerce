@@ -117,6 +117,7 @@
 		FAE411262E0099E200EDB731 /* CheckoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE411252E0099E200EDB731 /* CheckoutView.swift */; };
 		FAE4112A2E00B5CD00EDB731 /* order-success.json in Resources */ = {isa = PBXBuildFile; fileRef = FAE411292E00B5CD00EDB731 /* order-success.json */; };
 		FAE4112D2E00B6C100EDB731 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = FAE4112C2E00B6C100EDB731 /* Lottie */; };
+		FAF0A1AC2E03473B0077708F /* BrandCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF0A1AB2E03473B0077708F /* BrandCardView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -239,6 +240,7 @@
 		FAC88A262DE8E2880041EF40 /* BrandProductsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrandProductsView.swift; sourceTree = "<group>"; };
 		FAE411252E0099E200EDB731 /* CheckoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckoutView.swift; sourceTree = "<group>"; };
 		FAE411292E00B5CD00EDB731 /* order-success.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "order-success.json"; sourceTree = "<group>"; };
+		FAF0A1AB2E03473B0077708F /* BrandCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrandCardView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -614,6 +616,7 @@
 				FAC889632DE8C1950041EF40 /* BrandsSectionView.swift */,
 				FAC88A222DE8DD350041EF40 /* PromoCarousel.swift */,
 				E1FFCD6B2E00011A007B3641 /* MainTabView 2.swift */,
+				FAF0A1AB2E03473B0077708F /* BrandCardView.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -793,6 +796,7 @@
 			files = (
 				22FB96592DE7264800BF0DA6 /* GoogleButton.swift in Sources */,
 				E17102F82DE4EBF300C511CC /* EmptyCartView.swift in Sources */,
+				FAF0A1AC2E03473B0077708F /* BrandCardView.swift in Sources */,
 				22790BB12E01B763006B0BA5 /* temp.swift in Sources */,
 				FA9C0D2F2DEB852B00618379 /* BrandProductService.swift in Sources */,
 				FA91A34F2DFA378A00E7AB7D /* OrderItem.swift in Sources */,

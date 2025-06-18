@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CustomHeaderView: View {
+    @EnvironmentObject var userModel: UserModel
     var body: some View {
         HStack {
             // MARK: - User Info
@@ -18,7 +19,7 @@ struct CustomHeaderView: View {
                     .clipShape(Circle())
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Hi, Jonathan")
+                    Text("Hi, \(userModel.name.isEmpty ? "User" : userModel.name)")
                         .font(.headline)
                         .fontWeight(.semibold)
                         .foregroundColor(.black)
