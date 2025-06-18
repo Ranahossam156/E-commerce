@@ -1,30 +1,30 @@
-import SwiftUI
 import FirebaseAuth
 import PayPalCheckout
+import SwiftUI
 
 struct CheckoutView: View {
     
     @ObservedObject var cartVM = CartViewModel.shared
-    
-    @SwiftUI.State private var selectedMethod: PaymentMethod? = nil
-    @SwiftUI.State private var pendingPaymentMethod: PaymentMethod? = nil
-    @SwiftUI.State private var paymentStatus: String? = nil
-    
-    @SwiftUI.State private var promoCode: String = ""
-    @SwiftUI.State private var discount: Double = 0.0
-    
-    @SwiftUI.Environment(\.dismiss) var dismiss
-    @SwiftUI.StateObject private var checkoutViewModel = CheckoutViewModel()
-    @SwiftUI.StateObject private var orderViewModel = OrderViewModel()
-    @SwiftUI.StateObject private var authViewModel = AuthViewModel()
-    @SwiftUI.StateObject private var userModel = UserModel()
-    @SwiftUI.StateObject private var settingsViewModel = SettingsViewModel()
-    
-    @SwiftUI.State private var isLoadingOrder = false
-    @SwiftUI.State private var showSuccessAlert = false
-    @SwiftUI.State private var navigateToAddresses = false
-    
-    
+    @State private var selectedMethod: PaymentMethod? = nil
+    @State private var pendingPaymentMethod: PaymentMethod? = nil
+    @State private var paymentStatus: String? = nil
+    @State private var promoStatus: String? = nil
+    @State private var showAddressScreen = false
+
+
+    @State private var promoCode: String = ""
+    @State private var discount: Double = 0.0
+
+    @Environment(\.dismiss) var dismiss
+    @StateObject private var checkoutViewModel = CheckoutViewModel()
+    @StateObject private var orderViewModel = OrderViewModel()
+    @StateObject private var authViewModel = AuthViewModel()
+    @StateObject private var userModel = UserModel()
+    @StateObject private var settingsViewModel = SettingsViewModel()
+
+    @State private var isLoadingOrder = false
+    @State private var showSuccessAlert = false
+
     private var discountedTotal: Double {
         max(0, cartVM.total - discount)
     }
@@ -40,17 +40,15 @@ struct CheckoutView: View {
                             Text("Address")
                                 .font(.title3.bold())
                             Spacer()
-                            
-                            NavigationLink(destination: AddressesView(userModel: userModel), isActive: $navigateToAddresses) {
-                                EmptyView()
-                            }
-                            .hidden()
-                            
-                            Button("Edit") {
-                                navigateToAddresses=true
-                            }
-                            .foregroundColor(.purple)
-                            .font(.subheadline)
+                            NavigationLink(destination: AddressesView(userModel: userModel), isActive: $showAddressScreen) {
+                                    Button("Edit") {
+                                        showAddressScreen = true
+                                    }
+                                    .foregroundColor(Color("primaryColor"))
+                                    .font(.system(size: 18))
+
+                                }
+                            .buttonStyle(PlainButtonStyle())
                         }
                         
                         HStack(alignment: .top) {
@@ -62,12 +60,13 @@ struct CheckoutView: View {
                                 .cornerRadius(10)
                             
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("Home")
+                                Text("House")
                                     .font(.headline)
-                                Text(userModel.defaultAddress.isEmpty ? "No default address set" : userModel.defaultAddress)
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
-                                    .lineLimit(2) // Allow multiple lines for long addresses
+                                Text(
+                                    "\(userModel.defaultAddress)"
+                                )
+                                .font(.subheadline)
+                                .foregroundColor(.gray)
                             }
                         }
                         
@@ -80,10 +79,15 @@ struct CheckoutView: View {
                                 CartItemRow(
                                     item: item,
                                     updateQuantity: { newQty in
-                                        cartVM.updateQuantity(for: item, quantity: newQty)
+                                        cartVM.updateQuantity(
+                                            for: item,
+                                            quantity: newQty
+                                        )
                                     },
                                     removeItem: {
-                                        cartVM.removeFromCart(variantId: item.selectedVariant.id)
+                                        cartVM.removeFromCart(
+                                            variantId: item.selectedVariant.id
+                                        )
                                     }
                                 )
                             }
@@ -92,9 +96,8 @@ struct CheckoutView: View {
                         // Coupon
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Coupon")
-                                .font(.subheadline.bold())
-                                .foregroundColor(.blue)
-                            
+                                .font(.title3.bold())
+                                .foregroundColor(.black)
                             HStack {
                                 TextField("ABC123", text: $promoCode)
                                     .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -105,23 +108,32 @@ struct CheckoutView: View {
                                     Text("Apply")
                                         .padding(.vertical, 10)
                                         .padding(.horizontal, 20)
-                                        .background(Color.blue)
+                                        .background(Color("primaryColor"))
                                         .foregroundColor(.white)
                                         .cornerRadius(8)
                                 }
                             }
+
+                            if let promo = promoStatus {
+                                Text(promo)
+                                    .font(.subheadline)
+                                    .foregroundColor(promo.contains("success") ? .green : .red)
+                                    .padding(.top, 4)
+                            }
                         }
-                        
                         // Payment Method
                         Text("Payment Method")
                             .font(.title3.bold())
                         
                         VStack(spacing: 12) {
+                            let firebaseUser = Auth.auth().currentUser
                             paymentMethodCard(
                                 method: .payPal,
                                 label: "PayPal",
-                                details: "sask****@mail.com",
-                                icon: "paypal-icon",
+                                details: maskedEmail(
+                                    firebaseUser!.email ?? "unknown@mail.com"
+                                ),
+                                icon: "paypal",
                                 color: .blue
                             )
                             
@@ -147,23 +159,26 @@ struct CheckoutView: View {
                         // Checkout Button
                         Button(action: {
                             guard let selected = selectedMethod else {
-                                paymentStatus = "Please select a payment method."
+                                paymentStatus =
+                                    "Please select a payment method."
                                 return
                             }
                             pendingPaymentMethod = selected
                             handlePaymentOptionChange()
                         }) {
-                            Text("Checkout Now")
+                            Text("Place Order")
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding()
-                                .background(Color.purple)
-                                .cornerRadius(30)
+                                .background(Color("primaryColor"))
+                                .cornerRadius(10)
                         }
                         
                         if let status = paymentStatus {
                             Text(status)
-                                .foregroundColor(status.contains("Success") ? .green : .red)
+                                .foregroundColor(
+                                    status.contains("Success") ? .green : .red
+                                )
                                 .padding(.top)
                         }
                     }
@@ -180,7 +195,9 @@ struct CheckoutView: View {
                             .foregroundColor(.white)
                             .cornerRadius(12)
                             .shadow(radius: 10)
-                            .transition(.move(edge: .bottom).combined(with: .opacity))
+                            .transition(
+                                .move(edge: .bottom).combined(with: .opacity)
+                            )
                             .padding(.bottom, 32)
                     }
                     .animation(.easeInOut, value: showSuccessAlert)
@@ -229,10 +246,12 @@ struct CheckoutView: View {
                 }
                 
                 Spacer()
-                
-                Image(systemName: selectedMethod == method ? "checkmark.circle.fill" : "circle")
-                    .foregroundColor(selectedMethod == method ? .purple : .gray)
-                    .imageScale(.large)
+                Image(
+                    systemName: selectedMethod == method
+                        ? "checkmark.circle.fill" : "circle"
+                )
+                .foregroundColor(selectedMethod == method ? .green : .gray)
+                .imageScale(.large)
             }
             .padding()
             .background(Color.gray.opacity(0.1))
@@ -245,10 +264,10 @@ struct CheckoutView: View {
     private  func applyPromoCode() {
         if promoCode.lowercased() == "save10" {
             discount = cartVM.total * 0.10
-            paymentStatus = "Promo applied successfully."
+            promoStatus = "Promo applied successfully."
         } else {
             discount = 0
-            paymentStatus = "Invalid promo code."
+            promoStatus = "Invalid promo code."
         }
     }
     
@@ -263,8 +282,11 @@ struct CheckoutView: View {
     }
     
 
-    private func processPayPalPayment() {
-        checkoutViewModel.processPayPalPayment(for: cartVM.cartItems, total: discountedTotal) { success, message in
+    private func processPayPalSandboxPayment() {
+        checkoutViewModel.processPayPalPayment(
+            for: cartVM.cartItems,
+            total: cartVM.total
+        ) { success, message in
             DispatchQueue.main.async {
                 if success {
                     paymentStatus = "PayPal payment successful!"
@@ -283,7 +305,10 @@ struct CheckoutView: View {
     
     private func showCODConfirmation() {
         isLoadingOrder = true
-        checkoutViewModel.processPayment(for: cartVM.cartItems, total: cartVM.total) {
+        checkoutViewModel.processPayment(
+            for: cartVM.cartItems,
+            total: cartVM.total
+        ) {
             if checkoutViewModel.showPaymentSuccess {
                 paymentStatus = "Cash on Delivery confirmed"
                 createOrder()
@@ -301,9 +326,12 @@ struct CheckoutView: View {
             paymentStatus = "User not logged in."
             return
         }
-        
-        let addressComponents = userModel.defaultAddress.components(separatedBy: ", ")
-        let city = addressComponents.count > 1 ? addressComponents[1] : "Unknown City"
+
+        let addressComponents = userModel.defaultAddress.components(
+            separatedBy: ", "
+        )
+        let city =
+            addressComponents.count > 1 ? addressComponents[1] : "Unknown City"
         let zip = addressComponents.count > 2 ? addressComponents[2] : "00000"
         
         let customer = Customer(

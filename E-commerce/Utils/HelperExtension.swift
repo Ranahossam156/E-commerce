@@ -31,3 +31,18 @@ func formattedDate(from date: Date?) -> String {
     formatter.timeStyle = .short
     return formatter.string(from: date)
 }
+
+func maskedEmail(_ email: String) -> String {
+    let components = email.split(separator: "@")
+    guard components.count == 2 else { return email }
+
+    let name = String(components[0])
+    let domain = components[1]
+
+    let visibleCount = min(4, name.count)
+    let visiblePrefix = name.prefix(visibleCount)
+    let masked = String(repeating: "*", count: max(0, name.count - visibleCount))
+
+    return "\(visiblePrefix)\(masked)@\(domain)"
+}
+

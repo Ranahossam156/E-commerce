@@ -117,7 +117,6 @@
 		FAE411262E0099E200EDB731 /* CheckoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE411252E0099E200EDB731 /* CheckoutView.swift */; };
 		FAE4112A2E00B5CD00EDB731 /* order-success.json in Resources */ = {isa = PBXBuildFile; fileRef = FAE411292E00B5CD00EDB731 /* order-success.json */; };
 		FAE4112D2E00B6C100EDB731 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = FAE4112C2E00B6C100EDB731 /* Lottie */; };
-		FAE4112F2E00B86C00EDB731 /* LottieView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE4112E2E00B86C00EDB731 /* LottieView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -240,7 +239,6 @@
 		FAC88A262DE8E2880041EF40 /* BrandProductsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrandProductsView.swift; sourceTree = "<group>"; };
 		FAE411252E0099E200EDB731 /* CheckoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckoutView.swift; sourceTree = "<group>"; };
 		FAE411292E00B5CD00EDB731 /* order-success.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "order-success.json"; sourceTree = "<group>"; };
-		FAE4112E2E00B86C00EDB731 /* LottieView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -632,7 +630,6 @@
 			isa = PBXGroup;
 			children = (
 				FAE411252E0099E200EDB731 /* CheckoutView.swift */,
-				FAE4112E2E00B86C00EDB731 /* LottieView.swift */,
 			);
 			path = Checkout;
 			sourceTree = "<group>";
@@ -878,7 +875,6 @@
 				FAE411262E0099E200EDB731 /* CheckoutView.swift in Sources */,
 				E186FC042DF5569100BD6DA4 /* PaymentHandler.swift in Sources */,
 				22FC15BF2DF0D0B4000FD95C /* FavoriteManager.swift in Sources */,
-				FAE4112F2E00B86C00EDB731 /* LottieView.swift in Sources */,
 				FA5CA25E2DF78BAC00468F98 /* OrderCard.swift in Sources */,
 				E17102F42DE4EBCB00C511CC /* CartItemRow.swift in Sources */,
 				22FC15C72DF0D4A1000FD95C /* FavoritesModel+CoreDataProperties.swift in Sources */,
