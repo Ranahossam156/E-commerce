@@ -1,10 +1,24 @@
 import SwiftUI
 
 struct LoginScreen: View {
-    @State private var email: String = ""
-    @State private var password: String = ""
-    @StateObject private var viewModel = AuthViewModel()
+   // @StateObject private var viewModel = AuthViewModel()
+    @EnvironmentObject var viewModel: AuthViewModel
+
     var body: some View {
+        NavigationStack {
+            ZStack {
+                if viewModel.isLoading {
+                       ProgressView("Signing in...")
+                   } else if viewModel.isAuthenticated {
+                       MainTabView()
+                   } else {
+                       loginForm
+                   }
+            }
+        }
+    }
+
+    var loginForm: some View {
         VStack(alignment: .leading) {
             HStack{
                 Text("Login Account")
@@ -35,19 +49,17 @@ struct LoginScreen: View {
             CustomPasswordField(label: "Password", placeholder: "Enter your password", iconName: "lock2", text: $viewModel.password)
                 .padding(.bottom, 12)
 
-            HStack {
-                Spacer()
-                Button("Forgot Password?") {
-                    print("Forgot password tapped")
-                }
-                .foregroundColor(Color("primary"))
-            }
-            .padding(.bottom, 28)
+//            HStack {
+//                Spacer()
+//                Button("Forgot Password?") {
+//                    print("Forgot password tapped")
+//                }
+//                .foregroundColor(Color("primary"))
+//            }
+//            .padding(.bottom, 28)
 
             Button(action: {
-                print("Sign In tapped")
                 viewModel.login()
-
             }) {
                 Text("Sign In")
                     .foregroundColor(.white)
@@ -58,37 +70,51 @@ struct LoginScreen: View {
             .background(Color("primary"))
             .clipShape(Capsule())
             .padding(.horizontal)
-            Group{
+
+            Group {
                 if let error = viewModel.errorMessage {
                     Text(error)
                         .foregroundColor(.red)
                         .font(.caption)
                 }
+
                 Spacer().frame(height: 24)
+
                 Text("Or using other method")
                     .foregroundColor(Color("myGray"))
                     .frame(maxWidth: .infinity, alignment: .center)
+
                 Spacer().frame(height: 24)
 
                 GoogleSignInButton()
+
                 Spacer().frame(height: 32)
-                HStack{
+
+                HStack {
                     Text("Don't have an account?")
                         .foregroundColor(Color("myBlack"))
-                    NavigationLink(destination: SignupScreen()) {
+                    NavigationLink(destination: SignupScreen().environmentObject(viewModel)) {
                         Text("Sign up")
                             .foregroundColor(Color("primary"))
                             .fontWeight(.medium)
                     }
-                }.frame(maxWidth: .infinity, alignment: .center)
+                }
+                .frame(maxWidth: .infinity, alignment: .center)
             }
+        }
+        .onAppear {
+            viewModel.email = ""
+            viewModel.password = ""
+            viewModel.errorMessage = nil
+        }
 
-        }.navigationBarBackButtonHidden(true)
+        .navigationBarBackButtonHidden(true)
         .padding(.horizontal, 24)
         .padding(.vertical)
         .frame(maxHeight: .infinity, alignment: .top)
     }
 }
+
 
 struct LoginScreen_Previews: PreviewProvider {
     static var previews: some View {

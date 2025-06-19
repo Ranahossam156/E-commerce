@@ -21,7 +21,7 @@ struct ContentView: View {
 
             } else {
                 NavigationStack{
-                    SignupScreen().environmentObject(authViewModel)
+                    LoginScreen().environmentObject(authViewModel)
                 }
 
             }

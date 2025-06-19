@@ -61,21 +61,21 @@ class FavoriteManager {
 
                 // Ensure valid user ID
                 guard let userId = Auth.auth().currentUser?.uid else {
-                    print("❌ No authenticated user. Cannot delete from Firestore.")
+                    print("No authenticated user. Cannot delete from Firestore.")
                     return
                 }
 
                 Task {
                     do {
                         try await FirestoreService.shared.deleteFavorite(for: userId, productId: id)
-                        print("✅ Removed from Firestore.")
+                        print("Removed from Firestore.")
                     } catch {
-                        print("❌ Failed to remove from Firestore: \(error)")
+                        print("Failed to remove from Firestore: \(error)")
                     }
                 }
             }
         } catch {
-            print("❌ Failed to remove favorite with id \(id): \(error.localizedDescription)")
+            print("Failed to remove favorite with id \(id): \(error.localizedDescription)")
         }
     }
 
@@ -165,7 +165,7 @@ class FavoriteManager {
         do {
             try context.execute(deleteRequest)
             CoreDataManager.shared.save()
-            print("🗑️ All favorites deleted from Core Data.")
+            print("All favorites deleted from Core Data.")
         } catch {
         }
     }

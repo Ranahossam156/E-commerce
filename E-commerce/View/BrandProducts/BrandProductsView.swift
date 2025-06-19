@@ -2,18 +2,14 @@ import SwiftUI
 import Kingfisher
 
 struct BrandProductsView: View {
+    // 1️⃣ Your brand’s product list & search state
     @State private var products: [BrandProduct] = []
     @State private var searchText: String = ""
     @State private var viewUpdater = false
-    
-    @EnvironmentObject var currencyService: CurrencyService
 
-    var filteredProducts: [BrandProduct] {
-        products.filter { product in
-            let matchesSearch = searchText.isEmpty || (product.title?.lowercased().contains(searchText.lowercased()) ?? false)
-            return matchesSearch
-        }
-    }
+    // 2️⃣ Firestore-backed favorites VM
+    @StateObject private var favoritesVM = FavoritesViewModel()
+    @EnvironmentObject var currencyService: CurrencyService
 
     let viewModel = ProductsViewModel()
     let vendor: String
@@ -23,9 +19,17 @@ struct BrandProductsView: View {
         GridItem(.flexible())
     ]
 
+    private var filteredProducts: [BrandProduct] {
+        products.filter { product in
+            searchText.isEmpty
+                || (product.title?.lowercased().contains(searchText.lowercased()) ?? false)
+        }
+    }
+
     var body: some View {
         NavigationView {
             ScrollView {
+                // Search bar
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.gray)
@@ -34,22 +38,22 @@ struct BrandProductsView: View {
                     Spacer()
                 }
                 .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                )
+                .background(RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color.gray.opacity(0.3), lineWidth: 1))
                 .padding(.horizontal)
                 .padding(.top, 16)
 
+                // Product grid
                 LazyVGrid(columns: columns, spacing: 20) {
                     ForEach(filteredProducts) { product in
-                        NavigationLink(destination: ProductInfoView(productID: product.id ?? 0)) {
+                        let id64 = Int64(product.id ?? 0)
+                        let isFav = favoritesVM.favorites.contains { $0.id == id64 }
+
+                        NavigationLink(destination: ProductInfoView(productID: Int(product.id ?? 0))) {
                             ProductCardView(
                                 product: product,
-                                isFavorited: FavoriteManager.shared.isFavorited(id: Int64(product.id ?? 0)),
-                                onHeartTap: {
-                                    toggleFavorite(for: product)
-                                },
+                                isFavorited: isFav,
+                                onHeartTap: { toggleFavorite(for: product) },
                                 currencyService: currencyService
                             )
                         }
@@ -61,29 +65,31 @@ struct BrandProductsView: View {
             }
             .navigationTitle(vendor)
             .onAppear {
-                self.getBrandProducts()
-            }
-        }
-    }
-
-    func getBrandProducts() {
-        viewModel.getBrandProducts(vendor: vendor) { result, error in
-            if let error = error {
-                print("Error fetching products: \(error.localizedDescription)")
-            }
-            
-            if let result = result {
-                DispatchQueue.main.async {
-                    self.products = result.products ?? []
+                getBrandProducts()
+                Task { @MainActor in
+                    await favoritesVM.fetchFavorites()
                 }
             }
         }
     }
 
+    // MARK: – Data loading
+    private func getBrandProducts() {
+        viewModel.getBrandProducts(vendor: vendor) { result, error in
+            if let error = error {
+                print("Error fetching products:", error.localizedDescription)
+            } else if let result = result {
+                DispatchQueue.main.async {
+                    products = result.products ?? []
+                }
+            }
+        }
+    }
+
+    // MARK: – Heart toggle
     private func toggleFavorite(for product: BrandProduct) {
         let productId = Int64(product.id ?? 0)
-        
-        let productModel = FavoriteProductModel(
+        let model = FavoriteProductModel(
             id: productId,
             title: product.title ?? "",
             bodyHTML: product.bodyHTML ?? "",
@@ -93,28 +99,24 @@ struct BrandProductsView: View {
             imageURLs: [product.imageReponse?.src ?? ""]
         )
 
-        Task {
-            if FavoriteManager.shared.isFavorited(id: productId) {
-                FavoriteManager.shared.removeFromFavorites(id: productId)
+        Task { @MainActor in
+            if favoritesVM.favorites.contains(where: { $0.id == productId }) {
+                await favoritesVM.removeFavorite(id: productId)
             } else {
-                await FavoriteManager.shared.addToFavorites(product: productModel)
-            }
-            
-            await MainActor.run {
-                viewUpdater.toggle()
-                NotificationCenter.default.post(name: .favoritesChanged, object: nil)
+                await favoritesVM.addFavorite(model)
             }
         }
     }
 }
 
+// MARK: – ProductCardView
 
 struct ProductCardView: View {
     let product: BrandProduct
-    @State var isFavorited: Bool
+    var isFavorited: Bool
     let onHeartTap: () -> Void
     let currencyService: CurrencyService
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             ZStack(alignment: .topTrailing) {
@@ -122,15 +124,17 @@ struct ProductCardView: View {
                     KFImage(url)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(maxWidth: .infinity)
-                        .clipped()
                         .cornerRadius(12)
+                } else {
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.2))
+                        .cornerRadius(12)
+                        .frame(height: 120)
                 }
-                
-                Button(action: {
-                    isFavorited.toggle()
+
+                Button {
                     onHeartTap()
-                }) {
+                } label: {
                     Image(systemName: isFavorited ? "heart.fill" : "heart")
                         .resizable()
                         .scaledToFit()
@@ -143,26 +147,21 @@ struct ProductCardView: View {
                 }
                 .padding([.top, .trailing], 8)
             }
-            
+
             Text(product.title?.uppercased() ?? "")
                 .font(.system(size: 14, weight: .bold))
-                .foregroundColor(.black)
                 .lineLimit(2)
-                .multilineTextAlignment(.leading)
-            
+
             Text(product.vendor ?? "")
                 .font(.system(size: 12))
                 .foregroundColor(.gray)
-            
+
             if let priceString = product.variants?.first?.price,
                let price = Double(priceString) {
-                Text(String(format: "\(currencyService.getCurrencySymbol(for: currencyService.selectedCurrency)) %.2f",
-                            currencyService.convert(price: price)))
+                Text("\(currencyService.getCurrencySymbol(for: currencyService.selectedCurrency)) \(String(format: "%.2f", currencyService.convert(price: price)))")
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(.black)
             } else {
                 Text("$-")
-                    .font(.system(size: 14, weight: .medium))
                     .foregroundColor(.gray)
             }
         }

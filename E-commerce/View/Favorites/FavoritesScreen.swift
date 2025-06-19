@@ -2,97 +2,77 @@ import SwiftUI
 
 struct FavoriteScreen: View {
     @StateObject private var viewModel = FavoritesViewModel()
-    @State private var selectedFilter = "All"
     @State private var searchText: String = ""
 
-    let filters = ["All", "Latest", "Most Popular", "Cheapest"]
     let columns = [GridItem(.flexible()), GridItem(.flexible())]
-    var filteredProducts: [FavoritesModel] {
+
+    var filteredProducts: [FavoriteProductModel] {
         viewModel.favorites.filter { product in
-            let matchesSearch = searchText.isEmpty || (product.title?.lowercased().contains(searchText.lowercased()) ?? false)
-            return matchesSearch
+            searchText.isEmpty || product.title.lowercased().contains(searchText.lowercased())
         }
     }
+
     var body: some View {
-        ZStack {
-            NavigationStack {
-                VStack(spacing: 16) {
-                    ZStack {
-                        Text("My Favorite")
-                            .font(.title3.bold())
-                        HStack {
-                            Spacer()
-                            Image(systemName: "bell.badge.fill")
-                                .foregroundColor(.black)
-                        }
-                    }
-                    .padding(.horizontal)
+        NavigationStack {
+            VStack(spacing: 16) {
+                Text("My Favorites")
+                    .font(.title3.bold())
+                    .padding(.top)
 
-                    HStack {
-                        Image(systemName: "magnifyingglass")
-                            .foregroundColor(.gray)
+                SearchBar(text: $searchText)
 
-                        TextField("Search something...", text: $searchText)
-                            .foregroundColor(.primary)
-
-                        Spacer()
-
-                    }
-                    .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                    )
-                    .padding(.horizontal)
-                    .padding(.top, 16)
-
+                if viewModel.isLoading {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if let error = viewModel.errorMessage {
+                    Text("Error: \(error)")
+                        .foregroundColor(.red)
+                        .multilineTextAlignment(.center)
+                        .padding()
+                } else if filteredProducts.isEmpty {
+                    Text("No favorites found.")
+                        .foregroundColor(.gray)
+                        .padding()
+                } else {
                     ScrollView {
                         LazyVGrid(columns: columns, spacing: 20) {
-                            ForEach(filteredProducts, id: \.self) { product in
-                                NavigationLink {
-                                    ProductInfoView(productID: Int(product.id))
-                                } label: {
-                                    FavoriteItemView(product: product) {
-                                        Task {
-                                            await viewModel.removeFavorite(product: product)
-                                            NotificationCenter.default.post(name: .favoritesChanged, object: nil)
-                                        }
-                                    }
+                          ForEach(filteredProducts, id: \.id) { product in
+                            NavigationLink(destination: ProductInfoView(productID: Int(product.id))) {
+                              FavoriteItemView(productModel: product) {
+                                Task { @MainActor in
+                                  await viewModel.removeFavorite(id: product.id)
                                 }
-                                .buttonStyle(PlainButtonStyle())
+                              }
                             }
+                            .buttonStyle(PlainButtonStyle())
+                          }
                         }
-                        .padding()
                     }
                 }
-                .background(Color.white)
-                .navigationBarTitleDisplayMode(.inline)
-                .navigationBarBackButtonHidden(true)
             }
-
-            VStack {
-                Spacer()
-                Rectangle()
-                    .fill(Color.clear)
-                    .frame(height: 20)
-            }
+            .navigationTitle("Favorites")
+            .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                    Task { @MainActor in
+                          await viewModel.fetchFavorites()
+                    }            }
         }
-        .onAppear {
-            viewModel.fetchFavorites()
-            DispatchQueue.main.async {
-                UIView.setAnimationsEnabled(false)
-            }
-        }
-        .onDisappear {
-            UIView.setAnimationsEnabled(true)
-        }
-        .toolbar(.visible, for: .tabBar)
     }
 }
 
+struct SearchBar: View {
+    @Binding var text: String
 
-struct FavoritesScreen_Previews: PreviewProvider {
-    static var previews: some View {
-        FavoriteScreen()
+    var body: some View {
+        HStack {
+            Image(systemName: "magnifyingglass")
+            TextField("Search favorites...", text: $text)
+                .autocapitalization(.none)
+                .disableAutocorrection(true)
+        }
+        .padding(8)
+        .background(RoundedRectangle(cornerRadius: 8).stroke(Color.gray.opacity(0.3)))
+        .padding(.horizontal)
     }
 }
+

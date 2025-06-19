@@ -17,7 +17,7 @@ struct E_commerceApp: App {
     @StateObject private var orderViewModel = OrderViewModel()
     @StateObject private var authViewModel = AuthViewModel()
     @StateObject private var userModel = UserModel()
-
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     init() {
         FirebaseApp.configure()
 

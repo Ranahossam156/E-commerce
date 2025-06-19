@@ -1,28 +1,20 @@
-//
-//  FavoriteItemView.swift
-//  E-commerce
-//
-//  Created by Macos on 05/06/2025.
-//
-
-import Foundation
 import SwiftUI
+import Kingfisher
 
 struct FavoriteItemView: View {
-    let product: FavoritesModel
+    let productModel: FavoriteProductModel
     let onRemove: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             ZStack(alignment: .topTrailing) {
-                if let imagesDataArray = product.images as? [Data],
-                   let firstImageData = imagesDataArray.first,
-                   let uiImage = UIImage(data: firstImageData) {
-                    
-                    Image(uiImage: uiImage)
+                if let firstURL = productModel.imageURLs.first,
+                   let url = URL(string: firstURL) {
+                    KFImage(url)
                         .resizable()
                         .scaledToFit()
                         .cornerRadius(16)
+                        .frame(height: 120)
                 } else {
                     Rectangle()
                         .fill(Color.gray.opacity(0.2))
@@ -30,34 +22,38 @@ struct FavoriteItemView: View {
                         .frame(height: 120)
                 }
 
-                Button(action: onRemove) { 
+                Button(action: onRemove) {
                     Image(systemName: "heart.fill")
-                        .padding(8)
-                        .background(Color.white.opacity(0.6))
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 16, height: 16)
+                        .padding(10)
+                        .background(Color.white)
                         .clipShape(Circle())
+                        .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
                         .foregroundColor(.red)
                 }
-                .padding(6)
+                .padding([.top, .trailing], 8)
             }
 
-            Text(product.title ?? "")
+            Text(productModel.title)
                 .font(.subheadline.bold())
                 .lineLimit(1)
                 .frame(maxWidth: .infinity, alignment: .center)
 
-            Text(product.desc ?? "")
+            Text(productModel.bodyHTML)
                 .font(.caption)
                 .foregroundColor(.gray)
                 .lineLimit(1)
                 .frame(maxWidth: .infinity, alignment: .center)
 
-            Text(product.price ?? "")
+            Text("$\(productModel.price)")
                 .font(.subheadline.bold())
                 .frame(maxWidth: .infinity, alignment: .center)
         }
         .padding()
         .background(Color.white)
         .cornerRadius(16)
-        .shadow(color: .gray.opacity(0.1), radius: 4, x: 0, y: 2)
+        .shadow(color: Color.gray.opacity(0.1), radius: 4, x: 0, y: 2)
     }
 }

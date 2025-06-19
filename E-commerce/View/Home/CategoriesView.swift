@@ -2,42 +2,51 @@ import SwiftUI
 import Kingfisher
 
 struct CategoriesView: View {
+    // MARK: – Data sources & state
     @State private var categories: [Category] = []
     @State private var selectedCategory: Category?
     @State private var products: [BrandProduct] = []
-    @StateObject private var favoritesViewModel = FavoritesViewModel()
-
+    
+    @StateObject private var favoritesVM = FavoritesViewModel()
+    
     @State private var searchText: String = ""
     @State private var selectedProductType: String = "All"
     @State private var availableProductTypes: [String] = []
-
+    
     @State private var viewUpdater = false
+    
+    private let categoryVM = CategoryViewModel()
+    @EnvironmentObject var currencyService: CurrencyService
 
-    let viewModel = CategoryViewModel()
-    let currencyService = CurrencyService()
+    // grid layout
+    private let gridItems = [
+        GridItem(.flexible(), spacing: 16),
+        GridItem(.flexible())
+    ]
 
-    var filteredProducts: [BrandProduct] {
-        products.filter { product in
-            let matchesSearch = searchText.isEmpty || (product.title?.lowercased().contains(searchText.lowercased()) ?? false)
-            let matchesType = selectedProductType == "All" || product.productType == selectedProductType
+    // products filtered by search & type
+    private var filteredProducts: [BrandProduct] {
+        products.filter { p in
+            let matchesSearch = searchText.isEmpty
+                || (p.title?.lowercased().contains(searchText.lowercased()) ?? false)
+            let matchesType = selectedProductType == "All"
+                || p.productType == selectedProductType
             return matchesSearch && matchesType
         }
     }
 
     var body: some View {
-        VStack(alignment: .leading) {
-            
+        VStack(spacing: 0) {
+            // MARK: – Search & filter bar
             HStack {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.gray)
-
                 TextField("Search something...", text: $searchText)
-                    .foregroundColor(.primary)
-
+                    .disableAutocorrection(true)
+                    .autocapitalization(.none)
                 Spacer()
-
                 Menu {
-                    Picker(selection: $selectedProductType, label: EmptyView()) {
+                    Picker("Type", selection: $selectedProductType) {
                         Text("All").tag("All")
                         ForEach(availableProductTypes, id: \.self) { type in
                             Text(type.capitalizingFirstLetterOnly).tag(type)
@@ -46,154 +55,147 @@ struct CategoriesView: View {
                 } label: {
                     Image(systemName: "slider.horizontal.3")
                         .foregroundColor(.gray)
-                        .padding(.trailing, 4)
                 }
             }
-            .padding()
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-            )
+            .padding(8)
+            .background(RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.gray.opacity(0.3), lineWidth: 1))
             .padding(.horizontal)
-            .padding(.top, 16)
+            .padding(.top)
 
+            // MARK: – Category picker
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
                     ForEach(categories) { category in
-                        Button(action: {
+                        let isSelected = category.id == selectedCategory?.id
+                        Button {
                             selectedCategory = category
-                            if let id = category.id {
-                                fetchProductsForCategory(collectionId: id)
+                            if let cid = category.id {
+                                fetchProducts(for: cid)
                             }
-                        }) {
-                            Text((category.title ?? "Untitled").capitalizingFirstLetterOnly)
-                                .font(.system(size: 16, weight: .medium))
-                                .padding(.vertical, 8)
-                                .padding(.horizontal, 16)
-                                .background(
-                                    selectedCategory?.id == category.id ? Color("primaryColor").opacity(0.1) : Color.white
-                                )
-                                .foregroundColor(
-                                    selectedCategory?.id == category.id ? Color("primaryColor") : Color("black")
-                                )
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .stroke(Color("gray").opacity(0.3), lineWidth: 1)
-                                )
+                        } label: {
+                            Text((category.title ?? "Untitled")
+                                    .capitalizingFirstLetterOnly)
+                                .font(.system(size: 14, weight: .medium))
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(isSelected
+                                            ? Color("primaryColor").opacity(0.2)
+                                            : Color.white)
+                                .foregroundColor(isSelected
+                                                 ? Color("primaryColor")
+                                                 : Color.black)
+                                .overlay(RoundedRectangle(cornerRadius: 8)
+                                            .stroke(Color.gray.opacity(0.3)))
                                 .cornerRadius(8)
                         }
                     }
                 }
                 .padding(.horizontal)
-                .padding(.top, 8)
+                .padding(.vertical, 8)
             }
 
+            // MARK: – Product grid
             ScrollView {
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                LazyVGrid(columns: gridItems, spacing: 16) {
                     ForEach(filteredProducts, id: \.id) { product in
-                        NavigationLink(destination: ProductInfoView(productID: product.id ?? 0)) {
+                        let pid = Int64(product.id ?? 0)
+                        let isFav = favoritesVM.favorites.contains { $0.id == pid }
+
+                        NavigationLink(destination: ProductInfoView(productID: Int(pid))) {
                             ProductCardView(
                                 product: product,
-                                isFavorited: favoritesViewModel.favorites.contains(where: { $0.id == product.id ?? -1 }),
-                                onHeartTap: {
-                                    toggleFavorite(for: product)
-                                },
+                                isFavorited: isFav,
+                                onHeartTap: { toggleFavorite(for: product) },
                                 currencyService: currencyService
                             )
                         }
+                        .buttonStyle(PlainButtonStyle())
                     }
                 }
                 .padding()
                 .id(viewUpdater)
             }
         }
+        .navigationTitle("Categories")
         .onAppear {
-            self.getCategories()
-        }
-    }
-
-    func getCategories() {
-        viewModel.getCategories { result, error in
-            if let error = error {
-                print("Error fetching categories: \(error.localizedDescription)")
-            }
-
-            if let result = result {
-                DispatchQueue.main.async {
-                    self.categories = result.customCollections ?? []
-                    if var first = self.categories.first, first.title == "Home page" {
-                        first.title = "All"
-                        self.categories[0] = first
-                    }
-                    self.selectedCategory = self.categories.first
-                    if let firstId = self.selectedCategory?.id {
-                        fetchProductsForCategory(collectionId: firstId)
-                    }
-                }
+            loadCategories()
+            // fetch initial favorites
+            Task { @MainActor in
+                await favoritesVM.fetchFavorites()
             }
         }
     }
 
-    func fetchProductsForCategory(collectionId: Int) {
-        CategoryProductNetworkService.fetchProducts(for: collectionId) { response, error in
-            if let error = error {
-                print("Error fetching products: \(error.localizedDescription)")
+    // MARK: – Category loading
+    private func loadCategories() {
+        categoryVM.getCategories { result, error in
+            if let err = error {
+                print("Category error:", err.localizedDescription)
                 return
             }
-
-            if let fetched = response?.products {
-                for product in fetched {
-                    print("Product: \(product.title ?? "N/A") | Vendor: \(product.vendor ?? "N/A") | Type: \(product.productType ?? "N/A")")
+            guard let collections = result?.customCollections else { return }
+            DispatchQueue.main.async {
+                self.categories = collections.map { col in
+                    var c = col
+                    // rename “Home page” → “All”
+                    if c.title == "Home page" { c.title = "All" }
+                    return c
                 }
-
-                let types = Set(fetched.compactMap { $0.productType })
-
-                DispatchQueue.main.async {
-                    self.products = fetched
-                    self.availableProductTypes = Array(types).sorted()
-                    self.selectedProductType = "All"
-                }
-            } else {
-                print("No products found for category \(collectionId)")
-                DispatchQueue.main.async {
-                    self.products = []
-                    self.availableProductTypes = []
-                    self.selectedProductType = "All"
+                // select first & load its products
+                if let first = categories.first, let fid = first.id {
+                    selectedCategory = first
+                    fetchProducts(for: fid)
                 }
             }
         }
     }
 
-    func toggleFavorite(for product: BrandProduct) {
+    // MARK: – Products loading
+    private func fetchProducts(for collectionId: Int) {
+        CategoryProductNetworkService.fetchProducts(for: collectionId) { response, error in
+            if let err = error {
+                print("Products error:", err.localizedDescription)
+                return
+            }
+            guard let fetched = response?.products else { return }
+            let types = Set(fetched.compactMap { $0.productType })
+
+            DispatchQueue.main.async {
+                self.products = fetched
+                self.availableProductTypes = Array(types).sorted()
+                self.selectedProductType = "All"
+            }
+        }
+    }
+
+    // MARK: – Favorite toggle
+    private func toggleFavorite(for product: BrandProduct) {
         guard let id = product.id else { return }
+        let pid = Int64(id)
 
-        if favoritesViewModel.favorites.contains(where: { $0.id == id }) {
-            if let favorite = favoritesViewModel.favorites.first(where: { $0.id == id }) {
-                Task{
-                   await favoritesViewModel.removeFavorite(product: favorite)
-                }
-                    viewUpdater.toggle()
-                
-            }
-        } else {
-            Task {
-                let favoriteProduct = FavoriteProductModel(
-                    id: Int64(id),
-                    title: product.title ?? "No Title",
-                    bodyHTML: product.bodyHTML ?? "",
-                    price: product.variants?.first?.price ?? "0.00",
-                    colors: [],
-                    sizes: [],
-                    imageURLs: product.images?.compactMap { $0.src } ?? []
-                )
+        // build Firestore model
+        let model = FavoriteProductModel(
+            id: pid,
+            title: product.title ?? "",
+            bodyHTML: product.bodyHTML ?? "",
+            price: product.variants?.first?.price ?? "0.00",
+            colors: [],
+            sizes: [],
+            imageURLs: [product.imageReponse?.src ?? ""]
+        )
 
-                await FavoriteManager.shared.addToFavorites(product: favoriteProduct)
-                
-                await MainActor.run {
-                    favoritesViewModel.fetchFavorites()
-                    viewUpdater.toggle()
-                }
+        Task { @MainActor in
+            if favoritesVM.favorites.contains(where: { $0.id == pid }) {
+                await favoritesVM.removeFavorite(id: pid)
+            } else {
+                await favoritesVM.addFavorite(model)
             }
+            // force view update
+            viewUpdater.toggle()
         }
     }
 }
+
+// MARK: – Helpers
+

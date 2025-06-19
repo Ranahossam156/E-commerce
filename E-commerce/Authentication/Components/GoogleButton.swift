@@ -1,16 +1,38 @@
 import SwiftUI
+import UIKit
+
+extension UIApplication {
+    func topMostViewController(base: UIViewController? = UIApplication.shared.connectedScenes
+        .compactMap { ($0 as? UIWindowScene)?.keyWindow }
+        .first?.rootViewController) -> UIViewController? {
+
+        if let nav = base as? UINavigationController {
+            return topMostViewController(base: nav.visibleViewController)
+        }
+        if let tab = base as? UITabBarController {
+            return topMostViewController(base: tab.selectedViewController)
+        }
+        if let presented = base?.presentedViewController {
+            return topMostViewController(base: presented)
+        }
+        return base
+    }
+}
 
 struct GoogleSignInButton: View {
+    @EnvironmentObject var viewModel: AuthViewModel
     var body: some View {
         Button(action: {
-            print("Google Sign-In tapped")
-        }) {
+            if let topVC = UIApplication.shared.topMostViewController() {
+                viewModel.signInWithGoogle(presentingVC: topVC)
+            }
+        }){
             HStack(spacing: 12) {
                 Image("google")
                     .resizable()
                     .frame(width: 20, height: 20)
 
-                Text("Sign In with Google")
+                Text("Continue with Google")
                     .foregroundColor(Color("myBlack"))
                     .fontWeight(.medium)
             }
