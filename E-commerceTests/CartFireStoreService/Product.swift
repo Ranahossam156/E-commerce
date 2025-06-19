@@ -11,16 +11,14 @@ struct Product: Codable {
     let title: String
     let price: Double
     
-    // Add other properties as needed
 }
 
 import Foundation
 
 struct Variant: Codable {
     let id: String
-    let option1: String? // e.g., size
-    let option2: String? // e.g., color
+    let option1: String?
+    let option2: String?
     let price: Double
     
-    // Add other properties as needed
 }

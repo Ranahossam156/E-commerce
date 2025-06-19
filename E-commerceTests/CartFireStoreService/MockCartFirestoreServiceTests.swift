@@ -60,13 +60,12 @@ class MockCartFirestoreServiceTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Update item")
         var testItem = CartItem(product: testProduct, selectedVariant: testVariant, quantity: 1)
         
-        // First save
         mockService.saveCartItem(testItem, for: testUserId) { _ in
-            // Then update
             testItem.quantity = 3
             self.mockService.updateCartItem(testItem, for: self.testUserId) { updateResult in
                 switch updateResult {
                 case .success:
+                    
                     self.mockService.loadCartItems(for: self.testUserId) { loadResult in
                         switch loadResult {
                         case .success(let items):
@@ -90,9 +89,7 @@ class MockCartFirestoreServiceTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Delete item")
         let testItem = CartItem(product: testProduct, selectedVariant: testVariant, quantity: 1)
         
-        // First save
         mockService.saveCartItem(testItem, for: testUserId) { _ in
-            // Then delete
             self.mockService.deleteCartItem(testItem, for: self.testUserId) { deleteResult in
                 switch deleteResult {
                 case .success:
@@ -119,9 +116,7 @@ class MockCartFirestoreServiceTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Clear cart")
         let testItem = CartItem(product: testProduct, selectedVariant: testVariant, quantity: 1)
         
-        // First save
         mockService.saveCartItem(testItem, for: testUserId) { _ in
-            // Then clear
             self.mockService.clearCart(for: self.testUserId) { clearResult in
                 switch clearResult {
                 case .success:

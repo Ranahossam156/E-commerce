@@ -8,7 +8,7 @@
 import Foundation
 
 class MockCartFirestoreService: CartServiceProtocol {
-    var cartItems: [String: [CartItem]] = [:] // userId: [CartItems]
+    var cartItems: [String: [CartItem]] = [:] 
     var shouldFail = false
     var delay: TimeInterval = 0
     
@@ -25,11 +25,9 @@ class MockCartFirestoreService: CartServiceProtocol {
     }
     
     func saveCartItem(_ cartItem: CartItem, for userId: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        // Capture self strongly to prevent premature deallocation
         let strongSelf = self
         
         DispatchQueue.global().asyncAfter(deadline: .now() + strongSelf.delay) {
-            // Check if we should simulate failure
             if strongSelf.shouldFail {
                 DispatchQueue.main.async {
                     completion(.failure(NSError(domain: "MockError", code: -1, userInfo: nil)))
@@ -37,7 +35,6 @@ class MockCartFirestoreService: CartServiceProtocol {
                 return
             }
             
-            // Perform thread-safe access to cartItems
             var items = strongSelf.cartItems[userId] ?? []
             if let index = items.firstIndex(where: { $0.id == cartItem.id }) {
                 items[index] = cartItem
@@ -45,14 +42,12 @@ class MockCartFirestoreService: CartServiceProtocol {
                 items.append(cartItem)
             }
             
-            // Thread-safe write
             DispatchQueue.main.async {
                 strongSelf.cartItems[userId] = items
                 completion(.success(()))
             }
         }
     }
-    // Implement other protocol methods similarly...
     func updateCartItem(_ cartItem: CartItem, for userId: String, completion: @escaping (Result<Void, Error>) -> Void) {
         saveCartItem(cartItem, for: userId, completion: completion)
     }

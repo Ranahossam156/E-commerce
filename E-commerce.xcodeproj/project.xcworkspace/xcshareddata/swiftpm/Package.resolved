@@ -1,4 +1,5 @@
 {
+  "originHash" : "80796c2a7a3b7e226c0dbb5bbd6b40a11ef90a1db52b360ab454683f50cc6c8e",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -12,10 +13,10 @@
     {
       "identity" : "alamofire",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Alamofire/Alamofire",
+      "location" : "https://github.com/Alamofire/Alamofire.git",
       "state" : {
-        "revision" : "f455c2975872ccd2d9c81594c658af65716e9b9a",
-        "version" : "5.9.1"
+        "revision" : "513364f870f6bfc468f9d2ff0a95caccc10044c5",
+        "version" : "5.10.2"
       }
     },
     {
@@ -156,7 +157,7 @@
     {
       "identity" : "paypal-ios",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/paypal/paypal-ios",
+      "location" : "https://github.com/paypal/paypal-ios.git",
       "state" : {
         "revision" : "924418c4dafbcbd820c35c02c13acdda2d9a820e",
         "version" : "0.0.11"
@@ -199,5 +200,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }
