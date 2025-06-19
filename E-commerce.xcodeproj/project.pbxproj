@@ -66,6 +66,7 @@
 		E13937CB2DF96BDD004983BB /* PayPalPaymentResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13937CA2DF96BDD004983BB /* PayPalPaymentResult.swift */; };
 		E14977EC2E018C9E00076377 /* AddressesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14977EB2E018C9E00076377 /* AddressesView.swift */; };
 		E14977F02E01928600076377 /* LogoutSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14977EF2E01928600076377 /* LogoutSection.swift */; };
+		E1586CAF2E0451170096A155 /* Variant.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1586CAE2E0451170096A155 /* Variant.swift */; };
 		E15A59262DEF4EC600FB39E5 /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15A59252DEF4EC600FB39E5 /* UserModel.swift */; };
 		E15A59292DEF652A00FB39E5 /* CurrencyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15A59282DEF652A00FB39E5 /* CurrencyService.swift */; };
 		E15A592B2DEF677800FB39E5 /* FreeCurrencyRateResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15A592A2DEF677800FB39E5 /* FreeCurrencyRateResponse.swift */; };
@@ -199,6 +200,7 @@
 		E13937CA2DF96BDD004983BB /* PayPalPaymentResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayPalPaymentResult.swift; sourceTree = "<group>"; };
 		E14977EB2E018C9E00076377 /* AddressesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressesView.swift; sourceTree = "<group>"; };
 		E14977EF2E01928600076377 /* LogoutSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogoutSection.swift; sourceTree = "<group>"; };
+		E1586CAE2E0451170096A155 /* Variant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Variant.swift; sourceTree = "<group>"; };
 		E15A59252DEF4EC600FB39E5 /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 		E15A59282DEF652A00FB39E5 /* CurrencyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyService.swift; sourceTree = "<group>"; };
 		E15A592A2DEF677800FB39E5 /* FreeCurrencyRateResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeCurrencyRateResponse.swift; sourceTree = "<group>"; };
@@ -499,6 +501,7 @@
 		229EFA7D2DE35A0F006F0D77 /* E-commerceTests */ = {
 			isa = PBXGroup;
 			children = (
+				E1586CAD2E0450E80096A155 /* Models */,
 				E17E32452E03F56A00BC935E /* CartFireStoreService */,
 				E17E323C2E03F0B400BC935E /* PriceRulesServiceTest */,
 			);
@@ -576,6 +579,17 @@
 			path = Settings;
 			sourceTree = "<group>";
 		};
+		E1586CAD2E0450E80096A155 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				E1586CAE2E0451170096A155 /* Variant.swift */,
+				E17E32462E03F6F300BC935E /* Product.swift */,
+				E17E323F2E03F32600BC935E /* CartItem.swift */,
+				E17E32342E03DA1500BC935E /* Coupons.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		E17102EE2DE4EB7200C511CC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -586,7 +600,6 @@
 		E17E323C2E03F0B400BC935E /* PriceRulesServiceTest */ = {
 			isa = PBXGroup;
 			children = (
-				E17E32342E03DA1500BC935E /* Coupons.swift */,
 				E17E32362E03DEFD00BC935E /* PriceRulesTest.swift */,
 			);
 			path = PriceRulesServiceTest;
@@ -596,9 +609,7 @@
 			isa = PBXGroup;
 			children = (
 				E18540DB2E04301E00FAB1D7 /* MockCartFirestoreService.swift */,
-				E17E32462E03F6F300BC935E /* Product.swift */,
 				E17E323D2E03F27F00BC935E /* CartFireStoreServiceTests.swift */,
-				E17E323F2E03F32600BC935E /* CartItem.swift */,
 				E17E32482E03FB3800BC935E /* MockCartFirestoreServiceTests.swift */,
 			);
 			path = CartFireStoreService;
@@ -964,6 +975,7 @@
 				E17E32492E03FB3800BC935E /* MockCartFirestoreServiceTests.swift in Sources */,
 				E17E32472E03F6F300BC935E /* Product.swift in Sources */,
 				E18540DC2E04301E00FAB1D7 /* MockCartFirestoreService.swift in Sources */,
+				E1586CAF2E0451170096A155 /* Variant.swift in Sources */,
 				E17E32402E03F32600BC935E /* CartItem.swift in Sources */,
 				E17E32352E03DA1500BC935E /* Coupons.swift in Sources */,
 			);
