@@ -74,6 +74,9 @@
 		E17E32402E03F32600BC935E /* CartItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17E323F2E03F32600BC935E /* CartItem.swift */; };
 		E17E32472E03F6F300BC935E /* Product.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17E32462E03F6F300BC935E /* Product.swift */; };
 		E17E32492E03FB3800BC935E /* CartFireStoreServiceTests2.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17E32482E03FB3800BC935E /* CartFireStoreServiceTests2.swift */; };
+		E18540DC2E04301E00FAB1D7 /* MockCartFirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18540DB2E04301E00FAB1D7 /* MockCartFirestoreService.swift */; };
+		E18540E22E04339800FAB1D7 /* CartServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18540E12E04339800FAB1D7 /* CartServiceProtocol.swift */; };
+		E18540E32E04339800FAB1D7 /* CartServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18540E12E04339800FAB1D7 /* CartServiceProtocol.swift */; };
 		E186FC042DF5569100BD6DA4 /* PaymentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E186FC032DF5569100BD6DA4 /* PaymentHandler.swift */; };
 		E191DFAA2DF85D0400ADB394 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = E191DFA92DF85D0400ADB394 /* Config.swift */; };
 		E19745162DF044E700F0AA4C /* ProductInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19745142DF044E700F0AA4C /* ProductInfoView.swift */; };
@@ -205,6 +208,8 @@
 		E17E323F2E03F32600BC935E /* CartItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartItem.swift; sourceTree = "<group>"; };
 		E17E32462E03F6F300BC935E /* Product.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Product.swift; sourceTree = "<group>"; };
 		E17E32482E03FB3800BC935E /* CartFireStoreServiceTests2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartFireStoreServiceTests2.swift; sourceTree = "<group>"; };
+		E18540DB2E04301E00FAB1D7 /* MockCartFirestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCartFirestoreService.swift; sourceTree = "<group>"; };
+		E18540E12E04339800FAB1D7 /* CartServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartServiceProtocol.swift; sourceTree = "<group>"; };
 		E186FC032DF5569100BD6DA4 /* PaymentHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentHandler.swift; sourceTree = "<group>"; };
 		E191DFA92DF85D0400ADB394 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		E19745142DF044E700F0AA4C /* ProductInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductInfoView.swift; sourceTree = "<group>"; };
@@ -565,6 +570,7 @@
 		E17E32452E03F56A00BC935E /* CartFireStoreService */ = {
 			isa = PBXGroup;
 			children = (
+				E18540DB2E04301E00FAB1D7 /* MockCartFirestoreService.swift */,
 				E17E32462E03F6F300BC935E /* Product.swift */,
 				E17E323D2E03F27F00BC935E /* CartFireStoreServiceTests.swift */,
 				E17E323F2E03F32600BC935E /* CartItem.swift */,
@@ -616,6 +622,7 @@
 			children = (
 				E1FFCD612DFFFE07007B3641 /* CartFireStoreService.swift */,
 				E1FFCD622DFFFE07007B3641 /* FirestoreService.swift */,
+				E18540E12E04339800FAB1D7 /* CartServiceProtocol.swift */,
 			);
 			path = FirebaseService;
 			sourceTree = "<group>";
@@ -905,6 +912,7 @@
 				22FC15BF2DF0D0B4000FD95C /* FavoriteManager.swift in Sources */,
 				FA5CA25E2DF78BAC00468F98 /* OrderCard.swift in Sources */,
 				E17102F42DE4EBCB00C511CC /* CartItemRow.swift in Sources */,
+				E18540E22E04339800FAB1D7 /* CartServiceProtocol.swift in Sources */,
 				22FC15C72DF0D4A1000FD95C /* FavoritesModel+CoreDataProperties.swift in Sources */,
 				FA805B7A2DE898BB00853AA4 /* TabView.swift in Sources */,
 				E13937C92DF96BAD004983BB /* PayPalCoordinator.swift in Sources */,
@@ -918,9 +926,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				E17E32372E03DEFD00BC935E /* PriceRulesTest.swift in Sources */,
+				E18540E32E04339800FAB1D7 /* CartServiceProtocol.swift in Sources */,
 				E17E323E2E03F27F00BC935E /* CartFireStoreServiceTests.swift in Sources */,
 				E17E32492E03FB3800BC935E /* CartFireStoreServiceTests2.swift in Sources */,
 				E17E32472E03F6F300BC935E /* Product.swift in Sources */,
+				E18540DC2E04301E00FAB1D7 /* MockCartFirestoreService.swift in Sources */,
 				E17E32402E03F32600BC935E /* CartItem.swift in Sources */,
 				E17E32352E03DA1500BC935E /* Coupons.swift in Sources */,
 			);

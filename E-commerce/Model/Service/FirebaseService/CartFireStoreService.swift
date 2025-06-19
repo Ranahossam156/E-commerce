@@ -8,7 +8,7 @@ import Foundation
 import FirebaseFirestore
 import FirebaseAuth
 
-class CartFireStoreService {
+class CartFireStoreService : CartServiceProtocol {
     private let db = Firestore.firestore()
     
     // MARK: - Cart Operations
@@ -76,12 +76,4 @@ class CartFireStoreService {
         }
     }
 }
-
-extension CartFireStoreService {
-    func saveFavorite(_ favorite: FavoriteProductModel, completion: @escaping (Result<Void, Error>) -> Void) {
-    }
-}
-
-
-
 

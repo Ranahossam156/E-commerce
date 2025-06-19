@@ -8,8 +8,8 @@
 import Foundation
 
 
-struct CartItem: Identifiable, Codable {
-    let id: UUID
+public struct CartItem: Identifiable, Codable {
+    public let id: UUID
     let product: Product
     let selectedVariant: Variant
     var quantity: Int
