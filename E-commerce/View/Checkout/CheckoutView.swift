@@ -23,9 +23,11 @@ struct CheckoutView: View {
 
     @SwiftUI.State private var isLoadingOrder = false
     @SwiftUI.State private var showSuccessAlert = false
+    @SwiftUI.State private var discountType: String = "fixed_amount"
+    @SwiftUI.State private var discountValue: Double = 0.0
 
     private var discountedTotal: Double {
-        max(0, cartVM.total - discount)
+        max(0, cartVM.total - discountValue)
     }
     
     var body: some View {
@@ -40,9 +42,7 @@ struct CheckoutView: View {
                                 .font(.title3.bold())
                             Spacer()
                             NavigationLink(
-                                destination: AddressesView(
-                                    userModel: userModel
-                                ),
+                                destination: AddressesView(userModel: userModel),
                                 isActive: $showAddressScreen
                             ) {
                                 Button("Edit") {
@@ -50,7 +50,6 @@ struct CheckoutView: View {
                                 }
                                 .foregroundColor(Color("primaryColor"))
                                 .font(.system(size: 18))
-
                             }
                             .buttonStyle(PlainButtonStyle())
                         }
@@ -66,11 +65,9 @@ struct CheckoutView: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("House")
                                     .font(.headline)
-                                Text(
-                                    "\(userModel.defaultAddress)"
-                                )
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
+                                Text(userModel.defaultAddress)
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
                             }
                         }
                         
@@ -83,15 +80,10 @@ struct CheckoutView: View {
                                 CartItemRow(
                                     item: item,
                                     updateQuantity: { newQty in
-                                        cartVM.updateQuantity(
-                                            for: item,
-                                            quantity: newQty
-                                        )
+                                        cartVM.updateQuantity(for: item, quantity: newQty)
                                     },
                                     removeItem: {
-                                        cartVM.removeFromCart(
-                                            variantId: item.selectedVariant.id
-                                        )
+                                        cartVM.removeFromCart(variantId: item.selectedVariant.id)
                                     }
                                 )
                             }
@@ -104,9 +96,7 @@ struct CheckoutView: View {
                                 .foregroundColor(.black)
                             HStack {
                                 TextField("ABC123", text: $promoCode)
-                                    .textFieldStyle(
-                                        RoundedBorderTextFieldStyle()
-                                    )
+                                    .textFieldStyle(RoundedBorderTextFieldStyle())
                                 Button(action: {
                                     applyPromoCode()
                                 }) {
@@ -122,13 +112,11 @@ struct CheckoutView: View {
                             if let promo = promoStatus {
                                 Text(promo)
                                     .font(.subheadline)
-                                    .foregroundColor(
-                                        promo.contains("success")
-                                            ? .green : .red
-                                    )
+                                    .foregroundColor(promo.contains("success") ? .green : .red)
                                     .padding(.top, 4)
                             }
                         }
+                        
                         // Payment Method
                         Text("Payment Method")
                             .font(.title3.bold())
@@ -138,9 +126,7 @@ struct CheckoutView: View {
                             paymentMethodCard(
                                 method: .payPal,
                                 label: "PayPal",
-                                details: maskedEmail(
-                                    firebaseUser!.email ?? "unknown@mail.com"
-                                ),
+                                details: maskedEmail(firebaseUser?.email ?? "unknown@mail.com"),
                                 icon: "paypal",
                                 color: .blue
                             )
@@ -167,8 +153,7 @@ struct CheckoutView: View {
                         // Checkout Button
                         Button(action: {
                             guard let selected = selectedMethod else {
-                                paymentStatus =
-                                    "Please select a payment method."
+                                paymentStatus = "Please select a payment method."
                                 return
                             }
                             pendingPaymentMethod = selected
@@ -184,9 +169,7 @@ struct CheckoutView: View {
                         
                         if let status = paymentStatus {
                             Text(status)
-                                .foregroundColor(
-                                    status.contains("Success") ? .green : .red
-                                )
+                                .foregroundColor(status.contains("Success") ? .green : .red)
                                 .padding(.top)
                         }
                     }
@@ -196,16 +179,14 @@ struct CheckoutView: View {
                 if showSuccessAlert {
                     VStack {
                         Spacer()
-                        Text("🎉 Order placed successfully!")
+                        Text("Order placed successfully!")
                             .font(.headline)
                             .padding()
                             .background(Color.green.opacity(0.95))
                             .foregroundColor(.white)
                             .cornerRadius(12)
                             .shadow(radius: 10)
-                            .transition(
-                                .move(edge: .bottom).combined(with: .opacity)
-                            )
+                            .transition(.move(edge: .bottom).combined(with: .opacity))
                             .padding(.bottom, 32)
                     }
                     .animation(.easeInOut, value: showSuccessAlert)
@@ -215,7 +196,7 @@ struct CheckoutView: View {
             .navigationBarTitleDisplayMode(.inline)
         }
     }
-    
+
     // MARK: - Payment Card UI
     private func paymentMethodCard(
         method: PaymentMethod,
@@ -231,13 +212,9 @@ struct CheckoutView: View {
             HStack {
                 Group {
                     if isSystemImage {
-                        Image(systemName: icon)
-                            .resizable()
-                            .scaledToFit()
+                        Image(systemName: icon).resizable().scaledToFit()
                     } else {
-                        Image(icon)
-                            .resizable()
-                            .scaledToFit()
+                        Image(icon).resizable().scaledToFit()
                     }
                 }
                 .frame(width: 40, height: 40)
@@ -246,20 +223,14 @@ struct CheckoutView: View {
                 .cornerRadius(8)
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(label)
-                        .font(.headline)
-                    Text(details)
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
+                    Text(label).font(.headline)
+                    Text(details).font(.subheadline).foregroundColor(.gray)
                 }
                 
                 Spacer()
-                Image(
-                    systemName: selectedMethod == method
-                        ? "checkmark.circle.fill" : "circle"
-                )
-                .foregroundColor(selectedMethod == method ? .green : .gray)
-                .imageScale(.large)
+                Image(systemName: selectedMethod == method ? "checkmark.circle.fill" : "circle")
+                    .foregroundColor(selectedMethod == method ? .green : .gray)
+                    .imageScale(.large)
             }
             .padding()
             .background(Color.gray.opacity(0.1))
@@ -267,18 +238,53 @@ struct CheckoutView: View {
         }
         .buttonStyle(PlainButtonStyle())
     }
-    
-    // MARK: - Promo
-    private  func applyPromoCode() {
-        if promoCode.lowercased() == "save10" {
-            discount = cartVM.total * 0.10
-            promoStatus = "Promo applied successfully."
-        } else {
-            discount = 0
-            promoStatus = "Invalid promo code."
+
+    // MARK: - Promo Code Logic
+    private func applyPromoCode() {
+        let sanitizedCode = promoCode.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        
+        PriceRuleNetworkService.fetchDataFromAPI { rulesResponse, error in
+            guard let rules = rulesResponse?.priceRules else {
+                DispatchQueue.main.async {
+                    promoStatus = "Failed to load discounts."
+                }
+                return
+            }
+            
+            var matchFound = false
+            let group = DispatchGroup()
+            
+            for rule in rules {
+                group.enter()
+                PriceRuleNetworkService.fetchDiscountCodes(for: rule.id) { codes, error in
+                    if let matchedCode = codes?.first(where: { $0.code.lowercased() == sanitizedCode }) {
+                        let rawValue = Double(rule.value) ?? 0
+                        print(rule.value)
+                        DispatchQueue.main.async {
+                            matchFound = true
+                            if rule.valueType == "percentage" {
+                                discountValue = cartVM.total * abs(rawValue) / 100.0
+                                print(discount)
+                            } else {
+                                discountValue = abs(rawValue)
+                                discountType = "fixed_amount"
+                            }
+                            promoStatus = "Promo applied successfully."
+                        }
+                    }
+                    group.leave()
+                }
+            }
+            
+            group.notify(queue: .main) {
+                if !matchFound {
+                    discount = 0
+                    promoStatus = "Invalid or expired promo code."
+                }
+            }
         }
     }
-    
+
     private func handlePaymentOptionChange() {
         guard let method = pendingPaymentMethod else { return }
         switch method {
@@ -288,19 +294,17 @@ struct CheckoutView: View {
             showCODConfirmation()
         }
     }
-    
 
     private func processPayPalPayment() {
         checkoutViewModel.processPayPalPayment(
             for: cartVM.cartItems,
-            total: cartVM.total
+            total: discountedTotal
         ) { success, message in
             DispatchQueue.main.async {
                 if success {
                     paymentStatus = "PayPal payment successful!"
                     createOrder()
                     cartVM.clearCart()
-
                 } else {
                     paymentStatus = message ?? "PayPal payment failed"
                     checkoutViewModel.showError = true
@@ -310,12 +314,11 @@ struct CheckoutView: View {
         }
     }
 
-    
     private func showCODConfirmation() {
         isLoadingOrder = true
         checkoutViewModel.processPayment(
             for: cartVM.cartItems,
-            total: cartVM.total
+            total: discountedTotal
         ) {
             if checkoutViewModel.showPaymentSuccess {
                 paymentStatus = "Cash on Delivery confirmed"
@@ -327,19 +330,15 @@ struct CheckoutView: View {
             isLoadingOrder = false
         }
     }
-    
-    // MARK: - Order Finalization
+
     private func createOrder() {
         guard let firebaseUser = Auth.auth().currentUser else {
             paymentStatus = "User not logged in."
             return
         }
 
-        let addressComponents = userModel.defaultAddress.components(
-            separatedBy: ", "
-        )
-        let city =
-            addressComponents.count > 1 ? addressComponents[1] : "Unknown City"
+        let addressComponents = userModel.defaultAddress.components(separatedBy: ", ")
+        let city = addressComponents.count > 1 ? addressComponents[1] : "Unknown City"
         let zip = addressComponents.count > 2 ? addressComponents[2] : "00000"
         
         let customer = Customer(
@@ -355,12 +354,15 @@ struct CheckoutView: View {
                 countryCode: .cd
             )
         )
+        
         orderViewModel.checkout(
             cartItems: cartVM.cartItems,
             customer: customer,
             discountCode: promoCode.isEmpty ? nil : promoCode,
-            discountAmount: discount
+            discountAmount: discountValue,
+            discountType: discountType  
         )
+        
         paymentStatus = "Order placed successfully!"
         showSuccessAlert = true
         
@@ -370,6 +372,7 @@ struct CheckoutView: View {
         }
     }
 }
+
 
 // MARK: - Preview
 struct CheckoutView_Previews: PreviewProvider {

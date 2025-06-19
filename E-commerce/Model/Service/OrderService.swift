@@ -22,7 +22,7 @@ class OrderService {
     }()
 
     func createOrder(cartItems: [CartItem], customer: Customer, discountCode: String?,
-                     discountAmount: Double?, completion: @escaping (Result<OrderResponse, Error>) -> Void) {
+                     discountAmount: Double?, discountType: String, completion: @escaping (Result<OrderResponse, Error>) -> Void) {
         let headers: HTTPHeaders = [
             "X-Shopify-Access-Token": accessToken,
             "Content-Type": "application/json",
@@ -30,7 +30,7 @@ class OrderService {
         ]
 
         let payload = OrderPayload(cartItems: cartItems, customer: customer, discountCode: discountCode,
-                                   discountAmount: discountAmount)
+                                   discountAmount: discountAmount, discountType: discountType)
         
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601

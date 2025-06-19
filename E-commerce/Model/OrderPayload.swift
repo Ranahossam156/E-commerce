@@ -12,19 +12,19 @@ struct OrderPayload: Encodable {
 
     init(cartItems: [CartItem], customer: Customer, discountCode: String? = nil,
          discountAmount: Double? = nil,
-         discountType: String = "percentage") {
+         discountType: String) {
         let lineItems = cartItems.map {
             LineItemPayload(variantId: $0.selectedVariant.id, quantity: $0.quantity)
         }
         
         let discountPayload: [DiscountCodePayload]? = {
-                guard let code = discountCode, let amount = discountAmount, amount > 0 else { return nil }
-                return [DiscountCodePayload(
-                    code: code,
-                    amount: String(format: "%.2f", amount),
-                    type: discountType
-                )]
-            }()
+            guard let code = discountCode, let amount = discountAmount, amount > 0 else { return nil }
+            return [DiscountCodePayload(
+                code: code,
+                amount: String(format: "%.2f", amount),
+                type: discountType 
+            )]
+        }()
 
         let shipping = ShippingAddressPayload(
             firstName: customer.firstName ?? "",
