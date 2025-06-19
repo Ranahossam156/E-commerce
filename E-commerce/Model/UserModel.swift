@@ -30,25 +30,29 @@ class UserModel: ObservableObject {
             print("No authenticated user, user data not loaded")
             return
         }
-        isLoading = true
+        DispatchQueue.main.async { [weak self] in
+            self?.isLoading = true
+        }
         print("Fetching user data for \(userId)")
         do {
             let document = try await db.collection("users").document(userId).getDocument()
             if document.exists {
                 if let data = document.data() {
                     print("Data fetched, processing...")
-                    name = data["name"] as? String ?? ""
-                    email = data["email"] as? String ?? ""
-                    phoneNumber = data["phoneNumber"] as? String ?? ""
-                    defaultAddressId = data["defaultAddressId"] as? String
-                    
-                    if let addressesData = data["addresses"] as? [[String: String]] {
-                        addresses = addressesData.compactMap { dict in
-                            guard let id = dict["id"], let addressText = dict["addressText"] else { return nil }
-                            return Address(id: id, addressText: addressText)
+                    DispatchQueue.main.async { [weak self] in
+                        self?.name = data["name"] as? String ?? ""
+                        self?.email = data["email"] as? String ?? ""
+                        self?.phoneNumber = data["phoneNumber"] as? String ?? ""
+                        self?.defaultAddressId = data["defaultAddressId"] as? String
+                        
+                        if let addressesData = data["addresses"] as? [[String: String]] {
+                            self?.addresses = addressesData.compactMap { dict in
+                                guard let id = dict["id"], let addressText = dict["addressText"] else { return nil }
+                                return Address(id: id, addressText: addressText)
+                            }
                         }
+                        print("User data loaded: \(self?.name ?? ""), \(self?.email ?? "")")
                     }
-                    print("User data loaded: \(name), \(email)")
                 }
             } else {
                 print("No user data found, initializing with defaults")
@@ -57,9 +61,10 @@ class UserModel: ObservableObject {
             print("Error loading user data: \(error.localizedDescription)")
             throw error
         }
-        isLoading = false
+        DispatchQueue.main.async { [weak self] in
+            self?.isLoading = false
+        }
     }
-    
     func saveUserData() {
         guard let userId = Auth.auth().currentUser?.uid else {
             print("No authenticated user, user data not saved")
@@ -84,12 +89,13 @@ class UserModel: ObservableObject {
     
     func addAddress(addressText: String) {
         let newAddress = Address(id: UUID().uuidString, addressText: addressText)
-        addresses.append(newAddress)
-        
-        if addresses.count == 1 {
-            defaultAddressId = newAddress.id
+        DispatchQueue.main.async { [weak self] in
+            self?.addresses.append(newAddress)
+            if self?.addresses.count == 1 {
+                self?.defaultAddressId = newAddress.id
+            }
+            self?.saveUserData()
         }
-        saveUserData()
     }
     
     func deleteAddress(id: String) {

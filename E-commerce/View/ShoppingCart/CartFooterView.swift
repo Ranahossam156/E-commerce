@@ -13,6 +13,8 @@ import SwiftUI
 struct CartFooterView: View {
     let total: Double
     let checkoutAction: () -> Void
+    @EnvironmentObject var currencyService: CurrencyService
+   
     
     var body: some View {
         VStack(spacing: 15) {
@@ -23,8 +25,10 @@ struct CartFooterView: View {
                     .font(.system(size: 18, weight: .semibold))
                 
                 Spacer()
+            
+                var currSympol = currencyService.getCurrencySymbol(for: currencyService.selectedCurrency)
                 
-                Text("$\(String(format: "%.2f", total))")
+                Text("\(currSympol) \(String(format: "%.2f", total))")
                     .font(.system(size: 18, weight: .bold))
             }
             .padding(.horizontal)
