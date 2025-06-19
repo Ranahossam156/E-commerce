@@ -11,7 +11,6 @@ struct CheckoutView: View {
     @State private var promoStatus: String? = nil
     @State private var showAddressScreen = false
 
-
     @State private var promoCode: String = ""
     @State private var discount: Double = 0.0
 
@@ -40,14 +39,19 @@ struct CheckoutView: View {
                             Text("Address")
                                 .font(.title3.bold())
                             Spacer()
-                            NavigationLink(destination: AddressesView(userModel: userModel), isActive: $showAddressScreen) {
-                                    Button("Edit") {
-                                        showAddressScreen = true
-                                    }
-                                    .foregroundColor(Color("primaryColor"))
-                                    .font(.system(size: 18))
-
+                            NavigationLink(
+                                destination: AddressesView(
+                                    userModel: userModel
+                                ),
+                                isActive: $showAddressScreen
+                            ) {
+                                Button("Edit") {
+                                    showAddressScreen = true
                                 }
+                                .foregroundColor(Color("primaryColor"))
+                                .font(.system(size: 18))
+
+                            }
                             .buttonStyle(PlainButtonStyle())
                         }
 
@@ -101,7 +105,9 @@ struct CheckoutView: View {
 
                             HStack {
                                 TextField("ABC123", text: $promoCode)
-                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .textFieldStyle(
+                                        RoundedBorderTextFieldStyle()
+                                    )
 
                                 Button(action: {
                                     applyPromoCode()
@@ -118,11 +124,13 @@ struct CheckoutView: View {
                             if let promo = promoStatus {
                                 Text(promo)
                                     .font(.subheadline)
-                                    .foregroundColor(promo.contains("success") ? .green : .red)
+                                    .foregroundColor(
+                                        promo.contains("success")
+                                            ? .green : .red
+                                    )
                                     .padding(.top, 4)
                             }
                         }
-
 
                         // Payment Method
                         Text("Payment Method")
@@ -348,7 +356,12 @@ struct CheckoutView: View {
             )
         )
 
-        orderViewModel.checkout(cartItems: cartVM.cartItems, customer: customer)
+        orderViewModel.checkout(
+            cartItems: cartVM.cartItems,
+            customer: customer,
+            discountCode: promoCode.isEmpty ? nil : promoCode,
+            discountAmount: discount
+        )
         paymentStatus = "Order placed successfully!"
         showSuccessAlert = true
 

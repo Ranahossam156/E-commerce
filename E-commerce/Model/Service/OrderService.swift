@@ -21,14 +21,16 @@ class OrderService {
         return Session(configuration: config)
     }()
 
-    func createOrder(cartItems: [CartItem], customer: Customer, completion: @escaping (Result<OrderResponse, Error>) -> Void) {
+    func createOrder(cartItems: [CartItem], customer: Customer, discountCode: String?,
+                     discountAmount: Double?, completion: @escaping (Result<OrderResponse, Error>) -> Void) {
         let headers: HTTPHeaders = [
             "X-Shopify-Access-Token": accessToken,
             "Content-Type": "application/json",
             "Accept": "application/json"
         ]
 
-        let payload = OrderPayload(cartItems: cartItems, customer: customer)
+        let payload = OrderPayload(cartItems: cartItems, customer: customer, discountCode: discountCode,
+                                   discountAmount: discountAmount)
         
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
