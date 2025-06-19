@@ -42,7 +42,8 @@ struct SettingsView: View {
     
     private func loadUserDataIfNeeded() {
         print("Checking user data load condition")
-        if userModel.addresses.isEmpty, let userId = Auth.auth().currentUser?.uid {
+        if (userModel.addresses.isEmpty || userModel.name.isEmpty || userModel.email.isEmpty || userModel.phoneNumber.isEmpty) && Auth.auth().currentUser?.uid != nil {
+            let userId = Auth.auth().currentUser!.uid
             print("Loading user data for userId: \(userId)")
             Task {
                 do {
@@ -126,70 +127,73 @@ struct EditProfileView: View {
     
     var body: some View {
         Form {
-            Section(header: Text("Edit Profile").font(.headline)) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Name")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                    TextField("Enter name", text: $editedName)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                        .accessibilityLabel("Enter name")
+            if userModel.isLoading {
+                ProgressView("Loading profile...")
+            } else {
+                Section(header: Text("Edit Profile").font(.headline)) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Name")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                        TextField("Enter name", text: $editedName)
+                            .padding()
+                            .background(Color(.systemGray6))
+                            .cornerRadius(8)
+                            .accessibilityLabel("Enter name")
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Email")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                        TextField("Enter Email", text: $editedEmail)
+                            .padding()
+                            .background(Color(.systemGray6))
+                            .cornerRadius(8)
+                            .accessibilityLabel("Enter Email")
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Phone Number")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                        TextField("Enter phone number", text: $editedPhoneNumber)
+                            .padding()
+                            .background(Color(.systemGray6))
+                            .cornerRadius(8)
+                            .keyboardType(.phonePad)
+                            .accessibilityLabel("Enter phone number")
+                    }
                 }
                 
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Email")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                    TextField("Enter Email", text: $editedEmail)
+                Button(action: {
+                    userModel.name = editedName
+                    userModel.phoneNumber = editedPhoneNumber
+                    userModel.email = editedEmail
+                    userModel.saveUserData()
+                    dismiss()
+                }) {
+                    Text("Save Changes")
+                        .foregroundColor(.white)
+                        .fontWeight(.semibold)
+                        .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                        .accessibilityLabel("Enter Email")
                 }
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Phone Number")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                    TextField("Enter phone number", text: $editedPhoneNumber)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                        .keyboardType(.phonePad)
-                        .accessibilityLabel("Enter phone number")
-                }
+                .background(Color("primary"))
+                .clipShape(Capsule())
+                .padding(.horizontal)
+                .disabled(editedName.isEmpty)
             }
-            
-            Button(action: {
-                userModel.name = editedName
-                userModel.phoneNumber = editedPhoneNumber
-                userModel.email = editedEmail
-                userModel.saveUserData()
-                dismiss()
-            }) {
-                Text("Save Changes")
-                    .foregroundColor(.white)
-                    .fontWeight(.semibold)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-            }
-            .background(Color("primary"))
-            .clipShape(Capsule())
-            .padding(.horizontal)
-            .disabled(editedName.isEmpty)
         }
         .navigationTitle("Edit Profile")
         .onAppear {
-            print("EditProfileView onAppear, userModel: \(userModel.name), \(userModel.email), \(userModel.phoneNumber)")
+            print("Auth email: \(Auth.auth().currentUser?.email ?? "None"), UserModel email: \(userModel.email)")
             editedName = userModel.name
             editedPhoneNumber = userModel.phoneNumber
             editedEmail = userModel.email
         }
     }
 }
-
 // Subview for Settings Section
 struct SettingsSection: View {
     @ObservedObject var viewModel: SettingsViewModel

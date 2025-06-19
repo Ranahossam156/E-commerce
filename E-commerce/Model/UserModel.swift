@@ -1,10 +1,7 @@
-// UserModel.swift
-// E-commerce
-// Created by Kerolos on 03/06/2025. (Last updated: 06:50 PM EEST, June 18, 2025)
-
 import Foundation
 import FirebaseAuth
 import FirebaseFirestore
+import Combine
 
 struct Address: Identifiable, Codable {
     let id: String
@@ -20,9 +17,25 @@ class UserModel: ObservableObject {
     @Published var isLoading: Bool = false
     
     private let db = Firestore.firestore()
+    private var cancellables = Set<AnyCancellable>()
     
     init() {
-        // Do not call loadUserDataFromFirebase() here to avoid blocking
+        // Initialize with Firebase Auth data if available
+        if let user = Auth.auth().currentUser {
+            DispatchQueue.main.async { [weak self] in
+                self?.email = user.email ?? ""
+                self?.name = user.displayName ?? ""
+                print("Initialized UserModel with Auth data: email=\(self?.email ?? ""), name=\(self?.name ?? "")")
+            }
+            // Load Firestore data asynchronously
+            Task {
+                do {
+                    try await loadUserDataFromFirebase()
+                } catch {
+                    print("Failed to load Firestore data on init: \(error.localizedDescription)")
+                }
+            }
+        }
     }
     
     func loadUserDataFromFirebase() async throws {
@@ -36,35 +49,45 @@ class UserModel: ObservableObject {
         print("Fetching user data for \(userId)")
         do {
             let document = try await db.collection("users").document(userId).getDocument()
-            if document.exists {
-                if let data = document.data() {
+            DispatchQueue.main.async { [weak self] in
+                if document.exists, let data = document.data() {
                     print("Data fetched, processing...")
-                    DispatchQueue.main.async { [weak self] in
-                        self?.name = data["name"] as? String ?? ""
-                        self?.email = data["email"] as? String ?? ""
-                        self?.phoneNumber = data["phoneNumber"] as? String ?? ""
-                        self?.defaultAddressId = data["defaultAddressId"] as? String
-                        
-                        if let addressesData = data["addresses"] as? [[String: String]] {
-                            self?.addresses = addressesData.compactMap { dict in
-                                guard let id = dict["id"], let addressText = dict["addressText"] else { return nil }
-                                return Address(id: id, addressText: addressText)
-                            }
+                    self?.name = data["name"] as? String ?? self?.name ?? ""
+                    self?.email = data["email"] as? String ?? self?.email ?? Auth.auth().currentUser?.email ?? ""
+                    self?.phoneNumber = data["phoneNumber"] as? String ?? self?.phoneNumber ?? ""
+                    self?.defaultAddressId = data["defaultAddressId"] as? String
+                    
+                    if let addressesData = data["addresses"] as? [[String: String]] {
+                        self?.addresses = addressesData.compactMap { dict in
+                            guard let id = dict["id"], let addressText = dict["addressText"] else { return nil }
+                            return Address(id: id, addressText: addressText)
                         }
-                        print("User data loaded: \(self?.name ?? ""), \(self?.email ?? "")")
                     }
+                    print("User data loaded: \(self?.name ?? ""), \(self?.email ?? "")")
+                    
+                    // Save to Firestore if Auth data was used as fallback
+                    if data["email"] == nil || data["name"] == nil {
+                        self?.saveUserData()
+                    }
+                } else {
+                    print("No user data found, saving defaults from Auth")
+                    self?.email = Auth.auth().currentUser?.email ?? self?.email ?? ""
+                    self?.name = Auth.auth().currentUser?.displayName ?? self?.name ?? ""
+                    self?.saveUserData()
                 }
-            } else {
-                print("No user data found, initializing with defaults")
             }
         } catch {
             print("Error loading user data: \(error.localizedDescription)")
+            DispatchQueue.main.async { [weak self] in
+                self?.isLoading = false
+            }
             throw error
         }
         DispatchQueue.main.async { [weak self] in
             self?.isLoading = false
         }
     }
+    
     func saveUserData() {
         guard let userId = Auth.auth().currentUser?.uid else {
             print("No authenticated user, user data not saved")
@@ -79,10 +102,12 @@ class UserModel: ObservableObject {
             "addresses": addressesData
         ]
         db.collection("users").document(userId).setData(userData) { error in
-            if let error = error {
-                print("Error saving user data: \(error.localizedDescription)")
-            } else {
-                print("User data saved successfully: \(userData)")
+            DispatchQueue.main.async { [weak self] in
+                if let error = error {
+                    print("Error saving user data: \(error.localizedDescription)")
+                } else {
+                    print("User data saved successfully: \(userData)")
+                }
             }
         }
     }
@@ -99,18 +124,21 @@ class UserModel: ObservableObject {
     }
     
     func deleteAddress(id: String) {
-        addresses.removeAll { $0.id == id }
-        
-        if defaultAddressId == id {
-            defaultAddressId = addresses.first?.id
+        DispatchQueue.main.async { [weak self] in
+            self?.addresses.removeAll { $0.id == id }
+            if self?.defaultAddressId == id {
+                self?.defaultAddressId = self?.addresses.first?.id
+            }
+            self?.saveUserData()
         }
-        saveUserData()
     }
     
     func setDefaultAddress(id: String) {
-        if addresses.contains(where: { $0.id == id }) {
-            defaultAddressId = id
-            saveUserData()
+        DispatchQueue.main.async { [weak self] in
+            if self?.addresses.contains(where: { $0.id == id }) ?? false {
+                self?.defaultAddressId = id
+                self?.saveUserData()
+            }
         }
     }
     
