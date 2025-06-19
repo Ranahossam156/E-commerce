@@ -7,13 +7,13 @@
 
 import Foundation
 
-struct CartItem: Identifiable,Codable {
-    let id : UUID
+public struct CartItem: Identifiable,Codable {
+    public let id : UUID
     let product: Product
     let selectedVariant: Variant
     var quantity: Int
     
-    init(id: UUID, product: Product, selectedVariant: Variant, quantity: Int) {
+      init(id: UUID, product: Product, selectedVariant: Variant, quantity: Int) {
             self.id = id
             self.product = product
             self.selectedVariant = selectedVariant
