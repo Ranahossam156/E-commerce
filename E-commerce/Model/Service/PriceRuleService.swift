@@ -14,7 +14,7 @@ protocol PriceRuleNetworkServiceProtocol {
 
 class PriceRuleNetworkService: PriceRuleNetworkServiceProtocol {
     
-    private static let session: Session = {
+     static var session: Session = {
         #if targetEnvironment(simulator)
                 let config = URLSessionConfiguration.ephemeral
         #else
