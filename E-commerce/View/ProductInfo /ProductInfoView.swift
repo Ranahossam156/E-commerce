@@ -1,6 +1,6 @@
 import SwiftUI
 import Kingfisher
-
+import FirebaseAuth
 struct ProductInfoView: View {
 
     @Environment(\.presentationMode) var presentationMode
@@ -294,11 +294,20 @@ struct ProductInfoView: View {
                 imageURLs: imageURLs
             )
             Task {
-                await FavoriteManager.shared.addToFavorites(product: model)
-                isFavorited = true
+              await FavoriteManager.shared.addToFavorites(product: model)
+              guard let userId = Auth.auth().currentUser?.uid else { return }
+              do {
+                try await FirestoreService.shared.uploadFavorites([model], for: userId)
+                print(" Uploaded new favorite to Firestore")
+              } catch {
+                print("Failed to upload favorite:", error)
+              }
+              isFavorited = true
+              //NotificationCenter.default.post(name: .favoritesChanged, object: nil)
             }
+
         }
-        NotificationCenter.default.post(name: .favoritesChanged, object: nil)
+            //   NotificationCenter.default.post(name: .favoritesChanged, object: nil)
 
     }
 

@@ -1,25 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Bucket
-uuid = "1B9ADA88-C51F-4124-ACE3-7E06F72B7575"
-type = "1"
-version = "2.0">
-   <Breakpoints>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "4C6F9F05-8ECE-4516-8D8F-47412B0524D6"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "E-commerce/View/Search/SearchScreen.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "31"
-            endingLineNumber = "31"
-            landmarkName = "body"
-            landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-   </Breakpoints>
-
+   uuid = "1B9ADA88-C51F-4124-ACE3-7E06F72B7575"
+   type = "1"
+   version = "2.0">
 </Bucket>

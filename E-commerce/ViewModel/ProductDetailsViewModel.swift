@@ -26,20 +26,4 @@ class ProductDetailsViewModel: ObservableObject {
             }
         }
     }
-
-    func getProductVariants(productID: Int) {
-        NetworkService.fetchProductVariants(productID: productID) { res in
-            DispatchQueue.main.async {
-                self.variantsResponse = res
-            }
-        }
-    }
-
-    func getProductImages(productID: Int) {
-        NetworkService.fetchProductImages(productID: productID) { res in
-            DispatchQueue.main.async {
-                self.productImagesResponse = res
-            }
-        }
-    }
 }

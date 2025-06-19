@@ -1,21 +1,22 @@
-import Foundation
+// SearchItemView.swift
+
 import SwiftUI
 import Kingfisher
 
 struct SearchItemView: View {
     let product: Product
-    @ObservedObject var favoritesViewModel: FavoritesViewModel
+    @EnvironmentObject var favoritesViewModel: FavoritesViewModel
 
-    var isFavorited: Bool {
+    private var isFavorited: Bool {
         favoritesViewModel.favorites.contains { $0.id == product.id }
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             ZStack(alignment: .topTrailing) {
-                if let imageUrlString = product.images.first?.src,
-                   let imageUrl = URL(string: imageUrlString) {
-                    KFImage(imageUrl)
+                if let src = product.images.first?.src,
+                   let url = URL(string: src) {
+                    KFImage(url)
                         .resizable()
                         .scaledToFit()
                         .cornerRadius(16)
@@ -27,9 +28,8 @@ struct SearchItemView: View {
                         .frame(height: 120)
                 }
 
-                Button(action: {
-                    toggleFavorite()
-                }) {
+                // Heart button
+                Button(action: toggleFavorite) {
                     Image(systemName: isFavorited ? "heart.fill" : "heart")
                         .resizable()
                         .scaledToFit()
@@ -48,7 +48,7 @@ struct SearchItemView: View {
                 .lineLimit(1)
                 .frame(maxWidth: .infinity, alignment: .center)
 
-            Text(product.bodyHTML)
+            Text(product.vendor)
                 .font(.caption)
                 .foregroundColor(.gray)
                 .lineLimit(1)
@@ -64,17 +64,16 @@ struct SearchItemView: View {
         .shadow(color: .gray.opacity(0.1), radius: 4, x: 0, y: 2)
     }
 
+    // MARK: – Favorite toggle logic
     private func toggleFavorite() {
-        Task {
-            let id = product.id
+        Task { @MainActor in
+            let id64 = Int64(product.id)
 
             if isFavorited {
-                if let favorite = favoritesViewModel.favorites.first(where: { $0.id == id }) {
-                    await favoritesViewModel.removeFavorite(product: favorite)
-                }
+                await favoritesViewModel.removeFavorite(id: id64)
             } else {
-                let favoriteProduct = FavoriteProductModel(
-                    id: Int64(id),
+                let fav = FavoriteProductModel(
+                    id: id64,
                     title: product.title,
                     bodyHTML: product.bodyHTML,
                     price: product.variants.first?.price ?? "0.00",
@@ -82,11 +81,7 @@ struct SearchItemView: View {
                     sizes: [],
                     imageURLs: product.images.compactMap { $0.src }
                 )
-
-                await FavoriteManager.shared.addToFavorites(product: favoriteProduct)
-                await MainActor.run {
-                    favoritesViewModel.fetchFavorites()
-                }
+                await favoritesViewModel.addFavorite(fav)
             }
         }
     }
