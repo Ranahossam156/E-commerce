@@ -23,9 +23,11 @@ struct LogoutSection: View {
                     }) {
                         Text("Log Out")
                             .font(.headline)
-                            .foregroundColor(.red)
+                            .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding()
+                            .background(Color("primary"))
+                            .clipShape(Capsule())
                     }
                     .buttonStyle(.plain)
                 } else {
