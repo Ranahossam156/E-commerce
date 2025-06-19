@@ -120,9 +120,12 @@ struct EditProfileView: View {
     @State private var editedEmail: String
     
     init() {
-        _editedName = State(initialValue: "")
-        _editedPhoneNumber = State(initialValue: "")
-        _editedEmail = State(initialValue: "")
+        // Fetch from Firebase Auth, fallback to ""
+        let currentUser = Auth.auth().currentUser
+        _editedName = State(initialValue: currentUser?.displayName ?? "")
+        _editedPhoneNumber = State(initialValue: "") // No phone number in Firebase Auth
+        _editedEmail = State(initialValue: currentUser?.email ?? "")
+        print("EditProfileView init: name=\(_editedName.wrappedValue), email=\(_editedEmail.wrappedValue), phoneNumber=\(_editedPhoneNumber.wrappedValue)")
     }
     
     var body: some View {
@@ -171,6 +174,16 @@ struct EditProfileView: View {
                     userModel.phoneNumber = editedPhoneNumber
                     userModel.email = editedEmail
                     userModel.saveUserData()
+                    // Optionally update Firebase Auth profile
+                    if let user = Auth.auth().currentUser {
+                        let changeRequest = user.createProfileChangeRequest()
+                        changeRequest.displayName = editedName
+                        changeRequest.commitChanges { error in
+                            if let error = error {
+                                print("Error updating Auth displayName: \(error.localizedDescription)")
+                            }
+                        }
+                    }
                     dismiss()
                 }) {
                     Text("Save Changes")
@@ -188,12 +201,15 @@ struct EditProfileView: View {
         .navigationTitle("Edit Profile")
         .onAppear {
             print("Auth email: \(Auth.auth().currentUser?.email ?? "None"), UserModel email: \(userModel.email)")
-            editedName = userModel.name
-            editedPhoneNumber = userModel.phoneNumber
-            editedEmail = userModel.email
+            // Update with UserModel data if available
+            editedName = userModel.name.isEmpty ? editedName : userModel.name
+            editedPhoneNumber = userModel.phoneNumber.isEmpty ? editedPhoneNumber : userModel.phoneNumber
+            editedEmail = userModel.email.isEmpty ? editedEmail : userModel.email
+            print("EditProfileView onAppear: name=\(editedName), email=\(editedEmail), phoneNumber=\(editedPhoneNumber)")
         }
     }
 }
+
 // Subview for Settings Section
 struct SettingsSection: View {
     @ObservedObject var viewModel: SettingsViewModel
