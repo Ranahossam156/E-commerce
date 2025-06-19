@@ -53,7 +53,10 @@ struct FavoriteScreen: View {
                                     ProductInfoView(productID: Int(product.id))
                                 } label: {
                                     FavoriteItemView(product: product) {
-                                        viewModel.removeFavorite(product: product)
+                                        Task {
+                                            await viewModel.removeFavorite(product: product)
+                                            NotificationCenter.default.post(name: .favoritesChanged, object: nil)
+                                        }
                                     }
                                 }
                                 .buttonStyle(PlainButtonStyle())

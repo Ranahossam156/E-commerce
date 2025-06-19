@@ -7,6 +7,7 @@
 
 import Foundation
 import CoreData
+import FirebaseAuth
 
 class FavoriteManager {
     static let shared = FavoriteManager()
@@ -37,6 +38,8 @@ class FavoriteManager {
         
         favorite.colors = product.colors as NSObject
         favorite.sizes = product.sizes as NSObject
+        favorite.setValue(product.imageURLs, forKey: "imageURLs")
+
 
         CoreDataManager.shared.save()
         print("Favorite saved with \(downloadedImagesData.count) images.")
@@ -55,11 +58,27 @@ class FavoriteManager {
             if let objectToDelete = try context.fetch(request).first {
                 context.delete(objectToDelete)
                 CoreDataManager.shared.save()
+
+                // Ensure valid user ID
+                guard let userId = Auth.auth().currentUser?.uid else {
+                    print("❌ No authenticated user. Cannot delete from Firestore.")
+                    return
+                }
+
+                Task {
+                    do {
+                        try await FirestoreService.shared.deleteFavorite(for: userId, productId: id)
+                        print("✅ Removed from Firestore.")
+                    } catch {
+                        print("❌ Failed to remove from Firestore: \(error)")
+                    }
+                }
             }
         } catch {
-            print("Failed to remove favorite with id \(id): \(error.localizedDescription)")
+            print("❌ Failed to remove favorite with id \(id): \(error.localizedDescription)")
         }
     }
+
     func getFavoriteById(id: Int64) -> FavoriteProductModel? {
         let request: NSFetchRequest<FavoritesModel> = FavoritesModel.fetchRequest()
         request.predicate = NSPredicate(format: "id == %lld", id)
@@ -129,7 +148,7 @@ class FavoriteManager {
                     price: coreDataFavorite.price ?? "0.00",
                     colors: coreDataFavorite.colors as? [String] ?? [],
                     sizes: coreDataFavorite.sizes as? [String] ?? [],
-                    imageURLs: [],
+                    imageURLs: coreDataFavorite.value(forKey: "imageURLs") as? [String] ?? [],
                     imagesData: coreDataFavorite.images as? [Data]
                 )
             }

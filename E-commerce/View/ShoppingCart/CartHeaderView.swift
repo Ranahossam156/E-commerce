@@ -27,13 +27,7 @@ struct CartHeaderView: View {
             
             Spacer()
             
-            Button(action: {
-                // Additional action (e.g., open menu)
-            }) {
-                Image(systemName: "bag")
-                    .font(.system(size: 20, weight: .medium))
-                    .foregroundColor(.primary)
-            }
+         
         }
         .padding(.horizontal)
         .padding(.vertical, 12)

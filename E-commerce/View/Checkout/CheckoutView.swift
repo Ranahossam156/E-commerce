@@ -1,39 +1,39 @@
 import FirebaseAuth
+import PayPalCheckout
 import SwiftUI
 
 struct CheckoutView: View {
-
+    
     @ObservedObject var cartVM = CartViewModel.shared
+    @SwiftUI.State private var selectedMethod: PaymentMethod? = nil
+    @SwiftUI.State private var pendingPaymentMethod: PaymentMethod? = nil
+    @SwiftUI.State private var paymentStatus: String? = nil
+    @SwiftUI.State private var promoStatus: String? = nil
+    @SwiftUI.State private var showAddressScreen = false
 
-    @State private var selectedMethod: PaymentMethod? = nil
-    @State private var pendingPaymentMethod: PaymentMethod? = nil
-    @State private var paymentStatus: String? = nil
-    @State private var promoStatus: String? = nil
-    @State private var showAddressScreen = false
+    @SwiftUI.State private var promoCode: String = ""
+    @SwiftUI.State private var discount: Double = 0.0
 
-    @State private var promoCode: String = ""
-    @State private var discount: Double = 0.0
+    @SwiftUI.Environment(\.dismiss) var dismiss
+    @SwiftUI.StateObject private var checkoutViewModel = CheckoutViewModel()
+    @SwiftUI.StateObject private var orderViewModel = OrderViewModel()
+    @SwiftUI.StateObject private var authViewModel = AuthViewModel()
+    @SwiftUI.StateObject private var userModel = UserModel()
+    @SwiftUI.StateObject private var settingsViewModel = SettingsViewModel()
 
-    @Environment(\.dismiss) var dismiss
-    @StateObject private var checkoutViewModel = CheckoutViewModel()
-    @StateObject private var orderViewModel = OrderViewModel()
-    @StateObject private var authViewModel = AuthViewModel()
-    @StateObject private var userModel = UserModel()
-    @StateObject private var settingsViewModel = SettingsViewModel()
-
-    @State private var isLoadingOrder = false
-    @State private var showSuccessAlert = false
+    @SwiftUI.State private var isLoadingOrder = false
+    @SwiftUI.State private var showSuccessAlert = false
 
     private var discountedTotal: Double {
         max(0, cartVM.total - discount)
     }
-
+    
     var body: some View {
         NavigationStack {
             ZStack {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
-
+                        
                         // Address
                         HStack {
                             Text("Address")
@@ -54,7 +54,7 @@ struct CheckoutView: View {
                             }
                             .buttonStyle(PlainButtonStyle())
                         }
-
+                        
                         HStack(alignment: .top) {
                             Image(systemName: "map.fill")
                                 .resizable()
@@ -62,7 +62,7 @@ struct CheckoutView: View {
                                 .foregroundColor(.red)
                                 .background(Color.blue.opacity(0.1))
                                 .cornerRadius(10)
-
+                            
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("House")
                                     .font(.headline)
@@ -73,11 +73,11 @@ struct CheckoutView: View {
                                 .foregroundColor(.gray)
                             }
                         }
-
+                        
                         // Products
                         Text("Products (\(cartVM.cartItems.count))")
                             .font(.title3.bold())
-
+                        
                         VStack(spacing: 16) {
                             ForEach(cartVM.cartItems) { item in
                                 CartItemRow(
@@ -96,19 +96,17 @@ struct CheckoutView: View {
                                 )
                             }
                         }
-
+                        
                         // Coupon
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Coupon")
                                 .font(.title3.bold())
                                 .foregroundColor(.black)
-
                             HStack {
                                 TextField("ABC123", text: $promoCode)
                                     .textFieldStyle(
                                         RoundedBorderTextFieldStyle()
                                     )
-
                                 Button(action: {
                                     applyPromoCode()
                                 }) {
@@ -131,11 +129,10 @@ struct CheckoutView: View {
                                     .padding(.top, 4)
                             }
                         }
-
                         // Payment Method
                         Text("Payment Method")
                             .font(.title3.bold())
-
+                        
                         VStack(spacing: 12) {
                             let firebaseUser = Auth.auth().currentUser
                             paymentMethodCard(
@@ -147,7 +144,7 @@ struct CheckoutView: View {
                                 icon: "paypal",
                                 color: .blue
                             )
-
+                            
                             paymentMethodCard(
                                 method: .cod,
                                 label: "Cash on Delivery",
@@ -157,7 +154,7 @@ struct CheckoutView: View {
                                 isSystemImage: true
                             )
                         }
-
+                        
                         // Total
                         HStack {
                             Text("Total amount")
@@ -166,7 +163,7 @@ struct CheckoutView: View {
                             Text(String(format: "$ %.2f", discountedTotal))
                                 .bold()
                         }
-
+                        
                         // Checkout Button
                         Button(action: {
                             guard let selected = selectedMethod else {
@@ -184,7 +181,7 @@ struct CheckoutView: View {
                                 .background(Color("primaryColor"))
                                 .cornerRadius(10)
                         }
-
+                        
                         if let status = paymentStatus {
                             Text(status)
                                 .foregroundColor(
@@ -195,7 +192,7 @@ struct CheckoutView: View {
                     }
                     .padding()
                 }
-
+                
                 if showSuccessAlert {
                     VStack {
                         Spacer()
@@ -218,7 +215,7 @@ struct CheckoutView: View {
             .navigationBarTitleDisplayMode(.inline)
         }
     }
-
+    
     // MARK: - Payment Card UI
     private func paymentMethodCard(
         method: PaymentMethod,
@@ -247,7 +244,7 @@ struct CheckoutView: View {
                 .padding(8)
                 .background(Color.white)
                 .cornerRadius(8)
-
+                
                 VStack(alignment: .leading, spacing: 4) {
                     Text(label)
                         .font(.headline)
@@ -255,9 +252,8 @@ struct CheckoutView: View {
                         .font(.subheadline)
                         .foregroundColor(.gray)
                 }
-
+                
                 Spacer()
-
                 Image(
                     systemName: selectedMethod == method
                         ? "checkmark.circle.fill" : "circle"
@@ -271,9 +267,9 @@ struct CheckoutView: View {
         }
         .buttonStyle(PlainButtonStyle())
     }
-
+    
     // MARK: - Promo
-    private func applyPromoCode() {
+    private  func applyPromoCode() {
         if promoCode.lowercased() == "save10" {
             discount = cartVM.total * 0.10
             promoStatus = "Promo applied successfully."
@@ -282,19 +278,19 @@ struct CheckoutView: View {
             promoStatus = "Invalid promo code."
         }
     }
-
-    // MARK: - Payment Handling
+    
     private func handlePaymentOptionChange() {
         guard let method = pendingPaymentMethod else { return }
         switch method {
         case .payPal:
-            processPayPalSandboxPayment()
+            processPayPalPayment()
         case .cod:
             showCODConfirmation()
         }
     }
+    
 
-    private func processPayPalSandboxPayment() {
+    private func processPayPalPayment() {
         checkoutViewModel.processPayPalPayment(
             for: cartVM.cartItems,
             total: cartVM.total
@@ -303,6 +299,8 @@ struct CheckoutView: View {
                 if success {
                     paymentStatus = "PayPal payment successful!"
                     createOrder()
+                    cartVM.clearCart()
+
                 } else {
                     paymentStatus = message ?? "PayPal payment failed"
                     checkoutViewModel.showError = true
@@ -312,6 +310,7 @@ struct CheckoutView: View {
         }
     }
 
+    
     private func showCODConfirmation() {
         isLoadingOrder = true
         checkoutViewModel.processPayment(
@@ -321,13 +320,14 @@ struct CheckoutView: View {
             if checkoutViewModel.showPaymentSuccess {
                 paymentStatus = "Cash on Delivery confirmed"
                 createOrder()
+                cartVM.clearCart()
             } else {
                 paymentStatus = "Cash on Delivery failed"
             }
             isLoadingOrder = false
         }
     }
-
+    
     // MARK: - Order Finalization
     private func createOrder() {
         guard let firebaseUser = Auth.auth().currentUser else {
@@ -341,7 +341,7 @@ struct CheckoutView: View {
         let city =
             addressComponents.count > 1 ? addressComponents[1] : "Unknown City"
         let zip = addressComponents.count > 2 ? addressComponents[2] : "00000"
-
+        
         let customer = Customer(
             id: firebaseUser.uid.hashValue,
             email: firebaseUser.email ?? "",
@@ -355,7 +355,6 @@ struct CheckoutView: View {
                 countryCode: .cd
             )
         )
-
         orderViewModel.checkout(
             cartItems: cartVM.cartItems,
             customer: customer,
@@ -364,8 +363,8 @@ struct CheckoutView: View {
         )
         paymentStatus = "Order placed successfully!"
         showSuccessAlert = true
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             showSuccessAlert = false
             dismiss()
         }

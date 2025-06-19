@@ -37,21 +37,17 @@ class FavoritesViewModel: ObservableObject {
                 throw NSError(domain: "Auth", code: 0, userInfo: [NSLocalizedDescriptionKey: "User not authenticated"])
             }
             
-            // 1. Fetch from Firestore
             let firestoreFavorites = try await FirestoreService.shared.fetchFavorites(for: userId)
             
-            // 2. Clear existing Core Data favorites
             try await clearCoreDataFavorites()
             
-            // 3. Save new favorites to Core Data
             try await saveToCoreData(favorites: firestoreFavorites)
             
-            // 4. Refresh local data
             fetchFavorites()
             
         } catch {
             errorMessage = error.localizedDescription
-            print("❌ Error syncing favorites: \(error)")
+            print("Error syncing favorites: \(error)")
         }
     }
     
@@ -71,11 +67,9 @@ class FavoritesViewModel: ObservableObject {
             newFavorite.price = favorite.price
             newFavorite.desc = favorite.bodyHTML
             
-            // Handle transformable properties
             newFavorite.colors = favorite.colors as NSObject
             newFavorite.sizes = favorite.sizes as NSObject
             
-            // Handle image data
             if let imagesData = favorite.imagesData {
                 newFavorite.images = imagesData 
             }
@@ -96,16 +90,29 @@ class FavoritesViewModel: ObservableObject {
         }
     }
 
-    func removeFavorite(product: FavoritesModel) {
+    @MainActor
+    func removeFavorite(product: FavoritesModel) async {
         do {
             context.delete(product)
             try context.save()
-            fetchFavorites() // Refresh the list
+            fetchFavorites()
+            print(" Removed from Core Data.")
+
+            guard let userId = Auth.auth().currentUser?.uid else {
+                throw NSError(domain: "Auth", code: 0, userInfo: [NSLocalizedDescriptionKey: "User not authenticated"])
+            }
+            
+            try await FirestoreService.shared.deleteFavorite(for: userId, productId: product.id)
+            print("Removed from Firestore.")
+            
         } catch {
             errorMessage = error.localizedDescription
-            print("Error removing favorite: \(error)")
+            print(" Error removing favorite: \(error)")
+            context.rollback()
+            fetchFavorites()
         }
     }
+
 }
 
 extension Notification.Name {
