@@ -20,7 +20,7 @@ class ProductDetailsViewModel: ObservableObject {
     @Published var productImagesResponse: ProductImagesResponse?
 
     func getProductByID(productID: Int) {
-        NetworkService.fetchProductDetails(productID: productID) { res in
+        ProductDetailsService.fetchProductDetails(productID: productID) { res in
             DispatchQueue.main.async {
                 self.singleProductResponse = res
             }

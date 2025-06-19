@@ -64,6 +64,48 @@ struct Product: Codable, Identifiable {
         images = []
         image = ProductImage()
     }
+    
+    init(
+        id: Int,
+        title: String,
+        bodyHTML: String,
+        vendor: String,
+        productType: String,
+        createdAt: String,
+        handle: String,
+        updatedAt: String,
+        publishedAt: String,
+        templateSuffix: String?,
+        publishedScope: String,
+        tags: String,
+        status: String,
+        adminGraphqlAPIID: String,
+        variants: [Variant],
+        options: [ProductOption],
+        images: [ProductImage],
+        image: ProductImage
+    ) {
+        self.id = id
+        self.title = title
+        self.bodyHTML = bodyHTML
+        self.vendor = vendor
+        self.productType = productType
+        self.createdAt = createdAt
+        self.handle = handle
+        self.updatedAt = updatedAt
+        self.publishedAt = publishedAt
+        self.templateSuffix = templateSuffix
+        self.publishedScope = publishedScope
+        self.tags = tags
+        self.status = status
+        self.adminGraphqlAPIID = adminGraphqlAPIID
+        self.variants = variants
+        self.options = options
+        self.images = images
+        self.image = image
+    }
+
+
 }
 
 // MARK: - Variant
@@ -142,6 +184,7 @@ struct Variant: Codable {
         adminGraphqlAPIID = ""
         imageID = nil
     }
+    
 }
 
 // MARK: - Product Option
@@ -189,6 +232,21 @@ struct ProductImage: Codable {
         case variantIDs = "variant_ids"
     }
     
+    init(id: Int, alt: String, position: Int, productID: Int, createdAt: String, updatedAt: String, adminGraphqlAPIID: String, width: Int, height: Int, src: String, variantIDs: [Int]) {
+        self.id = id
+        self.alt = alt
+        self.position = position
+        self.productID = productID
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.adminGraphqlAPIID = adminGraphqlAPIID
+        self.width = width
+        self.height = height
+        self.src = src
+        self.variantIDs = variantIDs
+    
+    }
+    
     init() {
         id = 0
         alt = ""
@@ -202,6 +260,7 @@ struct ProductImage: Codable {
         src = ""
         variantIDs = []
     }
+
 }
 struct ProductImagesResponse: Codable {
     let images: [ProductImage]
