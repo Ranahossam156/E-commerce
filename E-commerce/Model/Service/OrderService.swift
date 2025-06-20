@@ -8,7 +8,13 @@
 import Foundation
 import Alamofire
 
-class OrderService {
+protocol OrderServiceProtocol {
+     func createOrder(cartItems: [CartItem], customer: Customer, discountCode: String?, discountAmount: Double?, discountType: String, currency: String, completion: @escaping (Result<OrderResponse, Error>) -> Void)
+
+     func getOrders(forEmail email: String, completion: @escaping (Result<[OrderModel], Error>) -> Void)
+}
+
+class OrderService : OrderServiceProtocol {
     private let baseURL = "https://ios4-sv.myshopify.com/admin/api/2024-01/orders.json"
     private let accessToken = "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"
     
