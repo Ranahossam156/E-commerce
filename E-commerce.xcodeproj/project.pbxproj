@@ -118,7 +118,6 @@
 		FA859AAF2DE8A9820017C6D5 /* Promotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA859AAE2DE8A9820017C6D5 /* Promotion.swift */; };
 		FA91A34B2DFA2B2A00E7AB7D /* OrderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA91A34A2DFA2B2A00E7AB7D /* OrderService.swift */; };
 		FA91A34D2DFA32B500E7AB7D /* OrdersViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA91A34C2DFA32B500E7AB7D /* OrdersViewModel.swift */; };
-		FA91A34F2DFA378A00E7AB7D /* OrderItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA91A34E2DFA378A00E7AB7D /* OrderItem.swift */; };
 		FA91A3512DFA3BBD00E7AB7D /* OrderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA91A3502DFA3BBD00E7AB7D /* OrderModel.swift */; };
 		FA9AE0142DF7923F0011B599 /* OrdersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9AE0132DF7923F0011B599 /* OrdersView.swift */; };
 		FA9AE0162DF797370011B599 /* OrderDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9AE0152DF797370011B599 /* OrderDetailsView.swift */; };
@@ -253,7 +252,6 @@
 		FA859AAE2DE8A9820017C6D5 /* Promotion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Promotion.swift; sourceTree = "<group>"; };
 		FA91A34A2DFA2B2A00E7AB7D /* OrderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderService.swift; sourceTree = "<group>"; };
 		FA91A34C2DFA32B500E7AB7D /* OrdersViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrdersViewModel.swift; sourceTree = "<group>"; };
-		FA91A34E2DFA378A00E7AB7D /* OrderItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderItem.swift; sourceTree = "<group>"; };
 		FA91A3502DFA3BBD00E7AB7D /* OrderModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderModel.swift; sourceTree = "<group>"; };
 		FA9AE0132DF7923F0011B599 /* OrdersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrdersView.swift; sourceTree = "<group>"; };
 		FA9AE0152DF797370011B599 /* OrderDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailsView.swift; sourceTree = "<group>"; };
@@ -378,7 +376,6 @@
 				E191DFA92DF85D0400ADB394 /* Config.swift */,
 				E13937C22DF968B5004983BB /* PaypalModels.swift */,
 				E17102E42DE4EA5600C511CC /* CartItem.swift */,
-				FA91A34E2DFA378A00E7AB7D /* OrderItem.swift */,
 				FA91A3502DFA3BBD00E7AB7D /* OrderModel.swift */,
 				FABDC4162DFC7FDB006E8A5B /* OrderPayload.swift */,
 			);
@@ -894,7 +891,6 @@
 				22790BB12E01B763006B0BA5 /* temp.swift in Sources */,
 				FA7356332E0449800013A7D7 /* ProductDetailsService.swift in Sources */,
 				FA9C0D2F2DEB852B00618379 /* BrandProductService.swift in Sources */,
-				FA91A34F2DFA378A00E7AB7D /* OrderItem.swift in Sources */,
 				22FC15CB2DF0F632000FD95C /* FavoriteItemView.swift in Sources */,
 				E17102EA2DE4EAC800C511CC /* CheckoutViewModel.swift in Sources */,
 				FAC889602DE8BCD00041EF40 /* BrandViewModel.swift in Sources */,

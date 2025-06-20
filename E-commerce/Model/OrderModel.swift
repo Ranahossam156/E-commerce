@@ -116,6 +116,7 @@ typealias LastName = String
 
 enum CountryCode: String, Codable {
     case cd = "CD"
+    case eg = "EG"
 }
 
 enum FinancialStatus: String, Codable {

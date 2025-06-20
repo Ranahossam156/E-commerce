@@ -405,7 +405,7 @@ struct CheckoutView: View {
                 address1: userModel.defaultAddress,
                 city: city,
                 zip: zip,
-                countryCode: .cd
+                countryCode: .eg
             )
         )
 
