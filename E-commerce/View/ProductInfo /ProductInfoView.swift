@@ -18,6 +18,8 @@ struct ProductInfoView: View {
     @State private var showAddedToCartAlert = false
     @State private var showSelectOptionsAlert = false
     @State private var navigateToCart = false
+    @EnvironmentObject var currencyService: CurrencyService
+
 
     let productID: Int
 
@@ -176,12 +178,12 @@ struct ProductInfoView: View {
                     Divider()
                     HStack {
                         HStack(spacing: 0) {
-                            Text("$")
-                                .font(.title.bold())
+                            Text("\(currencyService.getCurrencySymbol(for: currencyService.selectedCurrency) )")
+                                .font(.title3.bold())
                                 .foregroundColor(Color("primaryColor"))
                             if let priceString = product.variants.first?.price,
                                let price = Double(priceString) {
-                                Text(String(format: "%.2f", price))
+                                Text(" \(String(format: "%.2f", currencyService.convert(price: price)))")
                                     .font(.title2.weight(.bold))
                                     .foregroundColor(.black)
                             }

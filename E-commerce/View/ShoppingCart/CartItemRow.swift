@@ -1,12 +1,3 @@
-//
-//  CartItemRow.swift
-//  E-commerce
-//
-//  Created by Kerolos on 26/05/2025.
-//
-
-import Foundation
-
 import SwiftUI
 import Kingfisher
 
@@ -14,6 +5,7 @@ struct CartItemRow: View {
     let item: CartItem
     let updateQuantity: (Int) -> Void
     let removeItem: () -> Void
+    @EnvironmentObject var currencyService: CurrencyService
     
     var body: some View {
         HStack(spacing: 12) {
@@ -90,7 +82,10 @@ struct CartItemRow: View {
             
             VStack(alignment: .trailing, spacing: 4) {
                 // Price
-                Text("$\(item.selectedVariant.price)")
+                let convertedPrice = currencyService.convert(price: Double(item.selectedVariant.price) ?? 0.0)
+                let symbolCurrency = currencyService.getCurrencySymbol(for: currencyService.selectedCurrency)
+                
+                Text("\(symbolCurrency) \(String(format: "%.2f", convertedPrice))")
                     .font(.system(size: 16, weight: .semibold))
                 
                 // Delete button

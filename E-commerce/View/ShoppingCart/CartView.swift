@@ -30,6 +30,7 @@ struct CartView: View {
     @SwiftUI.State private var isLoadingOrder = false
     @SwiftUI.State private var showOrderSuccessAlert = false
     @SwiftUI.State private var navigateToCheckout = false
+    @EnvironmentObject var currencyService: CurrencyService
 
 
     private var paymentRequest: PKPaymentRequest {
@@ -119,8 +120,9 @@ struct CartView: View {
             NavigationLink(destination: CheckoutView(), isActive: $navigateToCheckout) {
                         EmptyView()
                     }
+            var convertedTotal = currencyService.convert(price: viewModel.total)
             CartFooterView(
-                total: viewModel.total,
+                total: convertedTotal,
                 checkoutAction: {
                     navigateToCheckout = true
                 }

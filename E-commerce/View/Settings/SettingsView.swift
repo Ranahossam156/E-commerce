@@ -7,24 +7,84 @@ import MapKit
 import Combine
 import CoreLocation
 import FirebaseAuth
+import SwiftUI
+import MapKit
+import Combine
+import CoreLocation
+import FirebaseAuth
 
 struct SettingsView: View {
     @StateObject private var viewModel = SettingsViewModel()
-    @EnvironmentObject var userModel: UserModel // Use shared UserModel instance
+    @EnvironmentObject var userModel: UserModel
     @EnvironmentObject var currencyService: CurrencyService
     @EnvironmentObject var authViewModel: AuthViewModel
     @State private var isDataLoaded = false
     
     var body: some View {
         NavigationView {
-            List {
-                UserInfoHeader()
-                SettingsSection(viewModel: viewModel, currencyService: currencyService)
-                VersionSection()
-                LogoutSection(viewModel: viewModel).environmentObject(authViewModel)
+            ZStack {
+                Color(.systemBackground)
+                    .ignoresSafeArea()
+                
+                List {
+                    UserInfoHeader()
+                        .listRowBackground(
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(Color.white)
+                                .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+                        )
+                        .padding(.vertical, 4)
+                    
+                    SettingsSection(viewModel: viewModel, currencyService: currencyService)
+                        .listRowBackground(
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(Color.white)
+                                .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+                        )
+                        .padding(.vertical, 4)
+                    
+                    VersionSection()
+                        .listRowBackground(
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(Color.white)
+                                .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+                        )
+                        .padding(.vertical, 4)
+                    
+                    LogoutSection(viewModel: viewModel)
+                        .environmentObject(authViewModel)
+                        .environmentObject(userModel)
+                        .listRowBackground(
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(Color.white)
+                                .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+                        )
+                        .padding(.vertical, 4)
+                }
+                .listStyle(.plain)
+                .padding(.top, 20)
+                .opacity(isDataLoaded ? 1 : 0)
+                .animation(.easeInOut(duration: 0.3), value: isDataLoaded)
+                
+                if !isDataLoaded {
+                    ProgressView()
+                        .scaleEffect(1.5)
+                        .tint(Color("primaryColor"))
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(Color.black.opacity(0.2))
+                        .ignoresSafeArea()
+                }
             }
             .navigationTitle("Settings")
-            .navigationBarHidden(true)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("Settings")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(Color("primaryColor"))
+                }
+            }
             .onAppear {
                 print("SettingsView onAppear called")
                 viewModel.loadSettings()
@@ -42,7 +102,8 @@ struct SettingsView: View {
     
     private func loadUserDataIfNeeded() {
         print("Checking user data load condition")
-        if userModel.addresses.isEmpty, let userId = Auth.auth().currentUser?.uid {
+        if (userModel.addresses.isEmpty || userModel.name.isEmpty || userModel.email.isEmpty || userModel.phoneNumber.isEmpty) && Auth.auth().currentUser?.uid != nil {
+            let userId = Auth.auth().currentUser!.uid
             print("Loading user data for userId: \(userId)")
             Task {
                 do {
@@ -58,38 +119,45 @@ struct SettingsView: View {
     }
 }
 
-// Subview for User Info Header
 struct UserInfoHeader: View {
     @EnvironmentObject var userModel: UserModel
     
     var body: some View {
         Section {
-            HStack(alignment: .center, spacing: 6) {
+            HStack(alignment: .center, spacing: 12) {
                 Image(systemName: "person.circle.fill")
                     .resizable()
-                    .frame(width: 60, height: 60)
-                    .foregroundColor(.gray)
+                    .frame(width: 64, height: 64)
+                    .foregroundColor(.white)
+                    .background(
+                        LinearGradient(
+                            colors: [Color("primaryColor"), Color("primaryColor").opacity(0.8)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .clipShape(Circle())
+                    .padding(8)
                     .accessibilityHidden(true)
-                    .padding(6)
                 
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: 8) {
                     Text(userModel.name.isEmpty ? "Guest" : userModel.name)
                         .font(.title3)
-                        .fontWeight(.semibold)
+                        .fontWeight(.bold)
                         .foregroundColor(.primary)
                         .accessibilityLabel("Username: \(userModel.name.isEmpty ? "Not set" : userModel.name)")
                     
                     Text(userModel.email.isEmpty ? "Email: email@example.com" : "Email: \(userModel.email)")
-                        .lineLimit(2)
                         .font(.subheadline)
                         .foregroundColor(.gray)
+                        .lineLimit(2)
                         .accessibilityLabel("Email: \(userModel.email.isEmpty ? "Not set" : userModel.email)")
                     
                     Text("Address: \(userModel.defaultAddress)")
                         .font(.subheadline)
                         .foregroundColor(.gray)
+                        .lineLimit(3)
                         .accessibilityLabel("Current address: \(userModel.defaultAddress)")
-                        .lineLimit(6)
                     
                     Text("Phone: \(userModel.phoneNumber.isEmpty ? "Not Set" : userModel.phoneNumber)")
                         .font(.subheadline)
@@ -100,137 +168,208 @@ struct UserInfoHeader: View {
                 Spacer()
                 
                 NavigationLink(destination: EditProfileView()) {
-                   
+                  
                 }
+                .accessibilityLabel("Edit profile")
                 .frame(width: 1)
-
             }
-            .padding(.vertical, 12)
+            .padding(.vertical, 16)
+            .padding(.horizontal, 12)
         }
     }
 }
 
-// Subview for Editing Profile
 struct EditProfileView: View {
     @EnvironmentObject var userModel: UserModel
     @Environment(\.dismiss) var dismiss
     @State private var editedName: String
     @State private var editedPhoneNumber: String
     @State private var editedEmail: String
+    @State private var errorMessage: String?
     
     init() {
-        _editedName = State(initialValue: "")
+        let currentUser = Auth.auth().currentUser
+        _editedName = State(initialValue: currentUser?.displayName ?? "")
         _editedPhoneNumber = State(initialValue: "")
-        _editedEmail = State(initialValue: "")
+        _editedEmail = State(initialValue: currentUser?.email ?? "")
+        print("EditProfileView init: name=\(_editedName.wrappedValue), email=\(_editedEmail.wrappedValue), phoneNumber=\(_editedPhoneNumber.wrappedValue)")
     }
     
     var body: some View {
-        Form {
-            Section(header: Text("Edit Profile").font(.headline)) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Name")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                    TextField("Enter name", text: $editedName)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                        .accessibilityLabel("Enter name")
-                }
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Email")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                    TextField("Enter Email", text: $editedEmail)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                        .accessibilityLabel("Enter Email")
-                }
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Phone Number")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                    TextField("Enter phone number", text: $editedPhoneNumber)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                        .keyboardType(.phonePad)
-                        .accessibilityLabel("Enter phone number")
-                }
-            }
+        ZStack {
+            Color(.systemBackground)
+                .ignoresSafeArea()
             
-            Button(action: {
-                userModel.name = editedName
-                userModel.phoneNumber = editedPhoneNumber
-                userModel.email = editedEmail
-                userModel.saveUserData()
-                dismiss()
-            }) {
-                Text("Save Changes")
-                    .foregroundColor(.white)
-                    .fontWeight(.semibold)
-                    .frame(maxWidth: .infinity)
-                    .padding()
+            VStack(spacing: 20) {
+                if userModel.isLoading {
+                    ProgressView("Loading profile...")
+                        .tint(Color("primaryColor"))
+                        .scaleEffect(1.2)
+                } else {
+                    VStack(spacing: 16) {
+                        if let error = errorMessage {
+                            Text(error)
+                                .font(.caption)
+                                .foregroundColor(.red)
+                                .padding(.horizontal)
+                        }
+                        
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Name")
+                                .font(.subheadline)
+                                .foregroundColor(.gray)
+                            TextField("Enter name", text: $editedName)
+                                .padding()
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color(.systemGray6))
+                                        .shadow(color: .black.opacity(0.05), radius: 2)
+                                )
+                                .accessibilityLabel("Enter name")
+                        }
+                        .padding(.horizontal)
+                        
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Email")
+                                .font(.subheadline)
+                                .foregroundColor(.gray)
+                            TextField("Enter Email", text: $editedEmail)
+                                .padding()
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color(.systemGray6))
+                                        .shadow(color: .black.opacity(0.05), radius: 2)
+                                )
+                                .accessibilityLabel("Enter Email")
+                        }
+                        .padding(.horizontal)
+                        
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Phone Number")
+                                .font(.subheadline)
+                                .foregroundColor(.gray)
+                            TextField("Enter phone number", text: $editedPhoneNumber)
+                                .padding()
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color(.systemGray6))
+                                        .shadow(color: .black.opacity(0.05), radius: 2)
+                                )
+                                .keyboardType(.phonePad)
+                                .accessibilityLabel("Enter phone number")
+                        }
+                        .padding(.horizontal)
+                        
+                        Button(action: {
+                            userModel.name = editedName
+                            userModel.phoneNumber = editedPhoneNumber
+                            userModel.email = editedEmail
+                            userModel.saveUserData()
+                        }) {
+                            Text("Save Changes")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(
+                                    LinearGradient(
+                                        colors: [Color("primaryColor"), Color("primaryColor").opacity(0.8)],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .clipShape(Capsule())
+                                .shadow(color: .black.opacity(0.1), radius: 4)
+                        }
+                        .padding(.horizontal)
+                        .disabled(editedName.isEmpty)
+                    }
+                    .padding(.top, 20)
+                }
+                
+                Spacer()
             }
-            .background(Color("primary"))
-            .clipShape(Capsule())
-            .padding(.horizontal)
-            .disabled(editedName.isEmpty)
-        }
-        .navigationTitle("Edit Profile")
-        .onAppear {
-            print("EditProfileView onAppear, userModel: \(userModel.name), \(userModel.email), \(userModel.phoneNumber)")
-            editedName = userModel.name
-            editedPhoneNumber = userModel.phoneNumber
-            editedEmail = userModel.email
+            .navigationTitle("Edit Profile")
+            .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                print("Auth email: \(Auth.auth().currentUser?.email ?? "None"), UserModel email: \(userModel.email)")
+                
+                editedName = userModel.name.isEmpty ? editedName : userModel.name
+                editedPhoneNumber = userModel.phoneNumber.isEmpty ? editedPhoneNumber : userModel.phoneNumber
+                editedEmail = userModel.email.isEmpty ? editedEmail : userModel.email
+                
+                print("EditProfileView onAppear: name=\(editedName), email=\(editedEmail), phoneNumber=\(editedPhoneNumber)")
+            }
         }
     }
 }
 
-// Subview for Settings Section
 struct SettingsSection: View {
     @ObservedObject var viewModel: SettingsViewModel
     @ObservedObject var currencyService: CurrencyService
     @EnvironmentObject var userModel: UserModel
     
     var body: some View {
-        Section(header: Text("Settings").font(.caption).foregroundColor(.gray)) {
+        Section(header: Text("Settings").font(.subheadline).foregroundColor(.gray).padding(.leading, 12)) {
             NavigationLink(destination: OrdersView()) {
-                Text("Orders")
-                    .font(.body)
-                    .foregroundColor(.primary)
+                HStack {
+                    Image(systemName: "list.bullet.rectangle")
+                        .foregroundColor(Color("primaryColor"))
+                        .frame(width: 24, height: 24)
+                    Text("Orders")
+                        .font(.body)
+                        .foregroundColor(.primary)
+                    Spacer()
+           
+                }
+                .padding(.vertical, 8)
             }
             .accessibilityLabel("Go to orders")
             
             NavigationLink(destination: AddressesView(userModel: userModel)) {
-                Text("Addresses")
-                    .font(.body)
-                    .foregroundColor(.primary)
+                HStack {
+                    Image(systemName: "mappin.and.ellipse")
+                        .foregroundColor(Color("primaryColor"))
+                        .frame(width: 24, height: 24)
+                    Text("Addresses")
+                        .font(.body)
+                        .foregroundColor(.primary)
+                    Spacer()
+                }
+                .padding(.vertical, 8)
             }
             .accessibilityLabel("Go to addresses")
             
-            Picker("Currency", selection: $currencyService.selectedCurrency) {
-                ForEach(currencyService.supportedCurrencies, id: \.self) { currency in
-                    Text(currency)
-                        .tag(currency)
+            HStack {
+                Image(systemName: "dollarsign.circle")
+                    .foregroundColor(Color("primaryColor"))
+                    .frame(width: 24, height: 24)
+                Picker("Currency", selection: $currencyService.selectedCurrency) {
+                    ForEach(currencyService.supportedCurrencies, id: \.self) { currency in
+                        Text(currency)
+                            .tag(currency)
+                    }
+                }
+                .pickerStyle(.menu)
+                .accentColor(Color("primaryColor"))
+                .accessibilityLabel("Select currency")
+                .onChange(of: currencyService.selectedCurrency) { _ in
+                    viewModel.saveSettings()
                 }
             }
-            .pickerStyle(.menu)
-            .accessibilityLabel("Select currency")
-            .onChange(of: currencyService.selectedCurrency) { _ in
-                viewModel.saveSettings()
-            }
+            .padding(.vertical, 8)
         }
+        .padding(.horizontal, 12)
     }
 }
 
 struct VersionSection: View {
     var body: some View {
-        Section(header: Text("POLICY").font(.caption).foregroundColor(.gray)) {
+        Section(header: Text("Policy").font(.subheadline).foregroundColor(.gray).padding(.leading, 12)) {
             HStack {
+                Image(systemName: "info.circle")
+                    .foregroundColor(Color("primaryColor"))
+                    .frame(width: 24, height: 24)
                 Text("Version")
                     .font(.body)
                     .foregroundColor(.primary)
@@ -239,22 +378,26 @@ struct VersionSection: View {
                     .font(.body)
                     .foregroundColor(.gray)
             }
+            .padding(.vertical, 8)
+            .padding(.horizontal, 12)
             .accessibilityLabel("App version 1.0.0")
         }
     }
 }
 
+
 struct MapSubView: View {
     @ObservedObject var mapViewModel: MapViewModel
-    private let mapSize = CGSize(width: 270, height: 250)
+    @EnvironmentObject var userModel: UserModel
+    private let mapSize = CGSize(width: 300, height: 300)
     
     var body: some View {
-        ZStack(alignment: .bottomTrailing) {
+        ZStack(alignment: .topTrailing) {
             Map(coordinateRegion: $mapViewModel.region,
                 interactionModes: .all,
                 showsUserLocation: true,
                 annotationItems: mapViewModel.selectedLocation != nil ? [mapViewModel.selectedLocation!] : []) { location in
-                MapMarker(coordinate: location.coordinate, tint: .red)
+                MapMarker(coordinate: location.coordinate, tint: Color("primaryColor"))
             }
             .gesture(
                 DragGesture(minimumDistance: 0)
@@ -263,11 +406,22 @@ struct MapSubView: View {
                         mapViewModel.handleMapTap(at: tapPoint, in: mapViewModel.region, mapSize: mapSize)
                     }
             )
-            .frame(width: 300, height: 300)
-            .cornerRadius(8)
+            .frame(width: mapSize.width, height: mapSize.height)
+            .cornerRadius(16)
+            .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+            )
+            
+        
+        }
+        .onAppear {
+            print("MapSubView appeared, setting region to Egypt")
         }
     }
 }
+
 
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
