@@ -22,8 +22,8 @@ struct PromoCarousel: View {
             TabView(selection: $currentIndex) {
                 ForEach(Array(viewModel.priceRules.enumerated()), id: \.element.id) { index, priceRule in
                     PromoCardView(
-                        title: priceRule.title,
-                        subtitle: "Tap to copy code",
+                        title: priceRule.couponCode,
+                        subtitle: "Tap to Copy Discount Code",
                         image: "promo1"
                     )
                     .tag(index)
