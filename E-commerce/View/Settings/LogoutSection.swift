@@ -58,7 +58,6 @@ struct LogoutSection: View {
             Button("Log Out", role: .destructive) {
                 Task {
                     guard let userId = Auth.auth().currentUser?.uid else { return }
-                    await FavoriteManager.shared.syncFavoritesToFirestore(for: userId)
                     do {
                         print("Before sign out")
                         try Auth.auth().signOut()
