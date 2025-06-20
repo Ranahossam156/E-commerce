@@ -12,7 +12,7 @@ struct OrderPayload: Encodable {
 
     init(cartItems: [CartItem], customer: Customer, discountCode: String? = nil,
          discountAmount: Double? = nil,
-         discountType: String) {
+         discountType: String, currency: String) {
         let lineItems = cartItems.map {
             LineItemPayload(variantId: $0.selectedVariant.id, quantity: $0.quantity)
         }

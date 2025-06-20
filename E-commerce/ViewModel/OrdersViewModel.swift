@@ -9,13 +9,13 @@ final class OrderViewModel: ObservableObject {
     private let orderService = OrderService()
 
     func checkout(cartItems: [CartItem], customer: Customer, discountCode: String?,
-                  discountAmount: Double?, discountType: String) {
+                  discountAmount: Double?, discountType: String, currency: String) {
         isLoading = true
         errorMessage = nil
         order = nil
 
         orderService.createOrder(cartItems: cartItems, customer: customer, discountCode: discountCode,
-                                 discountAmount: discountAmount, discountType: discountType) { [weak self] result in
+                                 discountAmount: discountAmount, discountType: discountType, currency: currency) { [weak self] result in
             DispatchQueue.main.async { [self] in
                 self?.isLoading = false
                 switch result {

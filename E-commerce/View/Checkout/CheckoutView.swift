@@ -414,7 +414,8 @@ struct CheckoutView: View {
             customer: customer,
             discountCode: promoCode.isEmpty ? nil : promoCode,
             discountAmount: discountValue,
-            discountType: discountType
+            discountType: discountType,
+            currency: currencyService.selectedCurrency
         )
 
         paymentStatus = "Order placed successfully!"
