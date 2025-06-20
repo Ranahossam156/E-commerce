@@ -33,7 +33,8 @@ struct Product: Codable, Identifiable {
     let image: ProductImage
 
     enum CodingKeys: String, CodingKey {
-        case id, title, vendor, handle, tags, status, variants, options, images, image
+        case id, title, vendor, handle, tags, status, variants, options, images,
+            image
         case bodyHTML = "body_html"
         case productType = "product_type"
         case createdAt = "created_at"
@@ -43,7 +44,7 @@ struct Product: Codable, Identifiable {
         case publishedScope = "published_scope"
         case adminGraphqlAPIID = "admin_graphql_api_id"
     }
-    
+
     init() {
         id = 0
         title = ""
@@ -64,7 +65,7 @@ struct Product: Codable, Identifiable {
         images = []
         image = ProductImage()
     }
-    
+
     init(
         id: Int,
         title: String,
@@ -104,7 +105,6 @@ struct Product: Codable, Identifiable {
         self.images = images
         self.image = image
     }
-
 
 }
 
@@ -155,7 +155,7 @@ struct Variant: Codable {
         case adminGraphqlAPIID = "admin_graphql_api_id"
         case imageID = "image_id"
     }
-    
+
     init() {
         id = 0
         productID = 0
@@ -184,7 +184,63 @@ struct Variant: Codable {
         adminGraphqlAPIID = ""
         imageID = nil
     }
-    
+
+    init(
+        id: Int,
+        productID: Int,
+        title: String,
+        price: String,
+        position: Int,
+        inventoryPolicy: String,
+        compareAtPrice: String?,
+        option1: String?,
+        option2: String?,
+        option3: String?,
+        createdAt: String,
+        updatedAt: String,
+        taxable: Bool,
+        barcode: String?,
+        fulfillmentService: String,
+        grams: Int,
+        inventoryManagement: String?,
+        requiresShipping: Bool,
+        sku: String,
+        weight: Double,
+        weightUnit: String,
+        inventoryItemID: Int,
+        inventoryQuantity: Int,
+        oldInventoryQuantity: Int,
+        adminGraphqlAPIID: String,
+        imageID: Int?
+    ) {
+        self.id = id
+        self.productID = productID
+        self.title = title
+        self.price = price
+        self.position = position
+        self.inventoryPolicy = inventoryPolicy
+        self.compareAtPrice = compareAtPrice
+        self.option1 = option1
+        self.option2 = option2
+        self.option3 = option3
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.taxable = taxable
+        self.barcode = barcode
+        self.fulfillmentService = fulfillmentService
+        self.grams = grams
+        self.inventoryManagement = inventoryManagement
+        self.requiresShipping = requiresShipping
+        self.sku = sku
+        self.weight = weight
+        self.weightUnit = weightUnit
+        self.inventoryItemID = inventoryItemID
+        self.inventoryQuantity = inventoryQuantity
+        self.oldInventoryQuantity = oldInventoryQuantity
+        self.adminGraphqlAPIID = adminGraphqlAPIID
+        self.imageID = imageID
+    }
+
 }
 
 // MARK: - Product Option
@@ -199,7 +255,7 @@ struct ProductOption: Codable {
         case id, name, position, values
         case productID = "product_id"
     }
-    
+
     init() {
         id = 0
         productID = 0
@@ -231,8 +287,20 @@ struct ProductImage: Codable {
         case adminGraphqlAPIID = "admin_graphql_api_id"
         case variantIDs = "variant_ids"
     }
-    
-    init(id: Int, alt: String, position: Int, productID: Int, createdAt: String, updatedAt: String, adminGraphqlAPIID: String, width: Int, height: Int, src: String, variantIDs: [Int]) {
+
+    init(
+        id: Int,
+        alt: String,
+        position: Int,
+        productID: Int,
+        createdAt: String,
+        updatedAt: String,
+        adminGraphqlAPIID: String,
+        width: Int,
+        height: Int,
+        src: String,
+        variantIDs: [Int]
+    ) {
         self.id = id
         self.alt = alt
         self.position = position
@@ -244,9 +312,9 @@ struct ProductImage: Codable {
         self.height = height
         self.src = src
         self.variantIDs = variantIDs
-    
+
     }
-    
+
     init() {
         id = 0
         alt = ""
