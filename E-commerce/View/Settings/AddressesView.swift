@@ -55,8 +55,8 @@ struct AddressesView: View {
                         .padding()
                         .frame(maxWidth: .infinity, alignment: .leading) // Fixed width
                         .fixedSize(horizontal: false, vertical: true) // Allow vertical expansion
-                        .background(Color(.systemGray6))
                         .cornerRadius(8)
+                    
                         .multilineTextAlignment(.leading) // Align text to leading edge
                 }
                 
@@ -67,11 +67,12 @@ struct AddressesView: View {
                     }
                 }) {
                     Text("Add Address")
-                        .font(.body)
+                        .font(.headline)
                         .foregroundColor(.white)
-                        .padding()
                         .frame(maxWidth: .infinity)
-                        .background(mapViewModel.selectedAddress == nil ? Color.gray : Color.blue)
+                        .padding()
+                        .clipShape(Capsule())
+                        .background(mapViewModel.selectedAddress == nil ? Color.gray : Color("primary"))
                         .cornerRadius(8)
                 }
                 .disabled(mapViewModel.selectedAddress == nil)
