@@ -63,6 +63,7 @@ struct SettingsView: View {
                 }
                 .listStyle(.plain)
                 .padding(.top, 20)
+                .padding(.bottom, 10)
                 .opacity(isDataLoaded ? 1 : 0)
                 .animation(.easeInOut(duration: 0.3), value: isDataLoaded)
                 

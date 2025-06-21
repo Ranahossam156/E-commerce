@@ -1,8 +1,9 @@
 import SwiftUI
-
+import FirebaseAuth
 struct LoginScreen: View {
    // @StateObject private var viewModel = AuthViewModel()
     @EnvironmentObject var viewModel: AuthViewModel
+    @State private var skipTapped = false
 
     var body: some View {
         NavigationStack {
@@ -27,13 +28,30 @@ struct LoginScreen: View {
                     .foregroundColor(Color("myBlack"))
                     .padding(.top, 14)
                 Spacer()
-                NavigationLink {
-                    MainTabView().navigationBarBackButtonHidden()
+                Button {
+                    Task {
+                        do {
+                            if Auth.auth().currentUser != nil {
+                                try Auth.auth().signOut()
+                                viewModel.isAuthenticated = false
+
+                            }
+                            skipTapped = true
+                        } catch {
+                            print("Error logging out: \(error.localizedDescription)")
+                        }
+                    }
                 } label: {
                     Text("Skip")
                         .foregroundColor(Color.black)
                         .fontWeight(.medium)
                 }
+
+                .navigationDestination(isPresented: $skipTapped) {
+                    MainTabView()
+                        .navigationBarBackButtonHidden(true)
+                }
+
             }
             Spacer().frame(height: 12)
 

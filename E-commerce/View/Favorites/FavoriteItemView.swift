@@ -22,18 +22,18 @@ struct FavoriteItemView: View {
                         .frame(height: 120)
                 }
 
-                Button(action: onRemove) {
-                    Image(systemName: "heart.fill")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 16, height: 16)
-                        .padding(10)
-                        .background(Color.white)
-                        .clipShape(Circle())
-                        .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
-                        .foregroundColor(.red)
-                }
-                .padding([.top, .trailing], 8)
+//                Button(action: onRemove) {
+//                    Image(systemName: "heart.fill")
+//                        .resizable()
+//                        .scaledToFit()
+//                        .frame(width: 16, height: 16)
+//                        .padding(10)
+//                        .background(Color.white)
+//                        .clipShape(Circle())
+//                        .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
+//                        .foregroundColor(.red)
+//                }
+//                .padding([.top, .trailing], 8)
             }
 
             Text(productModel.title)

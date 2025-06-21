@@ -215,9 +215,12 @@ struct ProductInfoView: View {
                             }
                             .padding()
                             .foregroundColor(.white)
-                            .background(Color("primaryColor"))
+                            .background(Auth.auth().currentUser == nil ? Color.gray : Color("primaryColor"))
                             .cornerRadius(30)
+                            .opacity(Auth.auth().currentUser == nil ? 0.5 : 1.0)
                         }
+                        .disabled(Auth.auth().currentUser == nil)
+
                     }
                     .padding()
                     .background(Color.white.ignoresSafeArea(edges: .bottom))
@@ -266,11 +269,19 @@ struct ProductInfoView: View {
                 }
             }
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button { toggleFavorite() } label: {
+                let isDisabled = Auth.auth().currentUser == nil
+
+                Button(action: {
+                    toggleFavorite()
+                }) {
                     Image(systemName: isFavorited ? "heart.fill" : "heart")
-                        .foregroundColor(isFavorited ? .red : .black)
+                        .foregroundColor(isDisabled
+                                         ? .gray.opacity(0.4)
+                                         : (isFavorited ? .red : .black))
                 }
+                .disabled(isDisabled)
             }
+
         }
     }
 
@@ -296,6 +307,7 @@ struct ProductInfoView: View {
                 imageURLs: imageURLs
             )
             Task {
+              isFavorited = true
               await FavoriteManager.shared.addToFavorites(product: model)
               guard let userId = Auth.auth().currentUser?.uid else { return }
               do {
@@ -304,7 +316,6 @@ struct ProductInfoView: View {
               } catch {
                 print("Failed to upload favorite:", error)
               }
-              isFavorited = true
               //NotificationCenter.default.post(name: .favoritesChanged, object: nil)
             }
 

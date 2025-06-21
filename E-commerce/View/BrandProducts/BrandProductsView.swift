@@ -132,20 +132,20 @@ struct ProductCardView: View {
                         .frame(height: 120)
                 }
 
-                Button {
-                    onHeartTap()
-                } label: {
-                    Image(systemName: isFavorited ? "heart.fill" : "heart")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 16, height: 16)
-                        .padding(10)
-                        .background(Color.white)
-                        .clipShape(Circle())
-                        .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
-                        .foregroundColor(isFavorited ? .red : .gray)
-                }
-                .padding([.top, .trailing], 8)
+//                Button {
+//                    onHeartTap()
+//                } label: {
+//                    Image(systemName: isFavorited ? "heart.fill" : "heart")
+//                        .resizable()
+//                        .scaledToFit()
+//                        .frame(width: 16, height: 16)
+//                        .padding(10)
+//                        .background(Color.white)
+//                        .clipShape(Circle())
+//                        .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
+//                        .foregroundColor(isFavorited ? .red : .gray)
+//                }
+//                .padding([.top, .trailing], 8)
             }
 
             Text(product.title?.uppercased() ?? "")
