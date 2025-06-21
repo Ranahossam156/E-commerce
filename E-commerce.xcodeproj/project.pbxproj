@@ -93,6 +93,7 @@
 		E198F4272DED8000001656DE /* PriceRuleService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E198F4262DED8000001656DE /* PriceRuleService.swift */; };
 		E198F4292DED806B001656DE /* Coupons.swift in Sources */ = {isa = PBXBuildFile; fileRef = E198F4282DED806B001656DE /* Coupons.swift */; };
 		E198F42B2DED80C6001656DE /* CouponViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E198F42A2DED80C6001656DE /* CouponViewModel.swift */; };
+		E1A19C4B2E06D2C300EF973A /* CurrencyServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A19C4A2E06D2C300EF973A /* CurrencyServiceTests.swift */; };
 		E1BF8A7B2DF0B3E10021E458 /* FavoritesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BF8A792DF0B3E10021E458 /* FavoritesScreen.swift */; };
 		E1FFCD5E2DFFFDB4007B3641 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = E1E6A9082DFC3B4100026EE1 /* GoogleSignIn */; };
 		E1FFCD5F2DFFFDB4007B3641 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E1E6A90A2DFC3B4100026EE1 /* GoogleSignInSwift */; };
@@ -235,6 +236,7 @@
 		E198F4262DED8000001656DE /* PriceRuleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceRuleService.swift; sourceTree = "<group>"; };
 		E198F4282DED806B001656DE /* Coupons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coupons.swift; sourceTree = "<group>"; };
 		E198F42A2DED80C6001656DE /* CouponViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouponViewModel.swift; sourceTree = "<group>"; };
+		E1A19C4A2E06D2C300EF973A /* CurrencyServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyServiceTests.swift; sourceTree = "<group>"; };
 		E1BF8A792DF0B3E10021E458 /* FavoritesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesScreen.swift; sourceTree = "<group>"; };
 		E1FFCD612DFFFE07007B3641 /* CartFireStoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartFireStoreService.swift; sourceTree = "<group>"; };
 		E1FFCD622DFFFE07007B3641 /* FirestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreService.swift; sourceTree = "<group>"; };
@@ -524,6 +526,7 @@
 				E1586CAD2E0450E80096A155 /* Models */,
 				E17E32452E03F56A00BC935E /* CartFireStoreService */,
 				E17E323C2E03F0B400BC935E /* PriceRulesServiceTest */,
+				E1A19C4C2E06D82D00EF973A /* CurrencyServiceTest */,
 			);
 			path = "E-commerceTests";
 			sourceTree = "<group>";
@@ -641,6 +644,14 @@
 				E19745142DF044E700F0AA4C /* ProductInfoView.swift */,
 			);
 			path = "ProductInfo ";
+			sourceTree = "<group>";
+		};
+		E1A19C4C2E06D82D00EF973A /* CurrencyServiceTest */ = {
+			isa = PBXGroup;
+			children = (
+				E1A19C4A2E06D2C300EF973A /* CurrencyServiceTests.swift */,
+			);
+			path = CurrencyServiceTest;
 			sourceTree = "<group>";
 		};
 		E1BF34542DE619CB00F8DCCC /* ShoppingCart */ = {
@@ -1035,6 +1046,7 @@
 				FAD4C5CD2E0611ED00163A55 /* MockCategoryService.swift in Sources */,
 				FAD4C5D42E06147500163A55 /* OrderServiceTest.swift in Sources */,
 				FA7356312E0448720013A7D7 /* ProductDetailsServiceTest.swift in Sources */,
+				E1A19C4B2E06D2C300EF973A /* CurrencyServiceTests.swift in Sources */,
 				E17E32372E03DEFD00BC935E /* PriceRulesTest.swift in Sources */,
 				FAD4C5CA2E060F4600163A55 /* MockBrandService.swift in Sources */,
 				E18540E32E04339800FAB1D7 /* CartServiceProtocol.swift in Sources */,
