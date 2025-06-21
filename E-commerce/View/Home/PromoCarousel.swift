@@ -23,7 +23,7 @@ struct PromoCarousel: View {
                 ForEach(Array(viewModel.priceRules.enumerated()), id: \.element.id) { index, priceRule in
                     PromoCardView(
                         title: priceRule.couponCode,
-                        subtitle: "Tap to Copy Discount Code",
+                        subtitle: " Tap to Copy Code",
                         image: "promo1"
                     )
                     .tag(index)

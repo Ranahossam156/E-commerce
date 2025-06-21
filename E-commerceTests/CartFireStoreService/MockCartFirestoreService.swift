@@ -25,17 +25,16 @@ class MockCartFirestoreService: CartServiceProtocol {
     }
     
     func saveCartItem(_ cartItem: CartItem, for userId: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        let strongSelf = self
         
-        DispatchQueue.global().asyncAfter(deadline: .now() + strongSelf.delay) {
-            if strongSelf.shouldFail {
+        DispatchQueue.global().asyncAfter(deadline: .now() + self.delay) {
+            if self.shouldFail {
                 DispatchQueue.main.async {
                     completion(.failure(NSError(domain: "MockError", code: -1, userInfo: nil)))
                 }
                 return
             }
             
-            var items = strongSelf.cartItems[userId] ?? []
+            var items = self.cartItems[userId] ?? []
             if let index = items.firstIndex(where: { $0.id == cartItem.id }) {
                 items[index] = cartItem
             } else {
@@ -43,7 +42,7 @@ class MockCartFirestoreService: CartServiceProtocol {
             }
             
             DispatchQueue.main.async {
-                strongSelf.cartItems[userId] = items
+                self.cartItems[userId] = items
                 completion(.success(()))
             }
         }

@@ -169,7 +169,7 @@ struct UserInfoHeader: View {
                 Spacer()
                 
                 NavigationLink(destination: EditProfileView()) {
-                  
+                    
                 }
                 .accessibilityLabel("Edit profile")
                 .frame(width: 1)
@@ -266,6 +266,7 @@ struct EditProfileView: View {
                             userModel.phoneNumber = editedPhoneNumber
                             userModel.email = editedEmail
                             userModel.saveUserData()
+                            dismiss()
                         }) {
                             Text("Save Changes")
                                 .font(.headline)
@@ -274,7 +275,9 @@ struct EditProfileView: View {
                                 .padding()
                                 .background(
                                     LinearGradient(
-                                        colors: [Color("primaryColor"), Color("primaryColor").opacity(0.8)],
+                                        colors: editedName.isEmpty && editedPhoneNumber.isEmpty && editedEmail.isEmpty ?
+                                        [Color(.systemGray4).opacity(0.5), Color(.systemGray4).opacity(0.5)] :
+                                            [Color("primaryColor"), Color("primaryColor").opacity(0.8)],
                                         startPoint: .leading,
                                         endPoint: .trailing
                                     )
@@ -283,7 +286,7 @@ struct EditProfileView: View {
                                 .shadow(color: .black.opacity(0.1), radius: 4)
                         }
                         .padding(.horizontal)
-                        .disabled(editedName.isEmpty)
+                        .disabled(editedName.isEmpty && editedPhoneNumber.isEmpty && editedEmail.isEmpty)
                     }
                     .padding(.top, 20)
                 }
@@ -321,7 +324,7 @@ struct SettingsSection: View {
                         .font(.body)
                         .foregroundColor(.primary)
                     Spacer()
-           
+                    
                 }
                 .padding(.vertical, 8)
             }
@@ -400,22 +403,22 @@ struct MapSubView: View {
                 annotationItems: mapViewModel.selectedLocation != nil ? [mapViewModel.selectedLocation!] : []) { location in
                 MapMarker(coordinate: location.coordinate, tint: Color("primaryColor"))
             }
-            .gesture(
-                DragGesture(minimumDistance: 0)
-                    .onEnded { value in
-                        let tapPoint = value.location
-                        mapViewModel.handleMapTap(at: tapPoint, in: mapViewModel.region, mapSize: mapSize)
-                    }
-            )
-            .frame(width: mapSize.width, height: mapSize.height)
-            .cornerRadius(16)
-            .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.gray.opacity(0.2), lineWidth: 1)
-            )
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onEnded { value in
+                            let tapPoint = value.location
+                            mapViewModel.handleMapTap(at: tapPoint, in: mapViewModel.region, mapSize: mapSize)
+                        }
+                )
+                .frame(width: mapSize.width, height: mapSize.height)
+                .cornerRadius(16)
+                .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                )
             
-        
+            
         }
         .onAppear {
             print("MapSubView appeared, setting region to Egypt")
