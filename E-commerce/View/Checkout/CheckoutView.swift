@@ -143,20 +143,6 @@ struct CheckoutView: View {
                                     .background(Color.white)
                                     .cornerRadius(12)
                                     .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
-                                    Text("Tap to Copy\nDiscount Code")
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
-                                        .multilineTextAlignment(.center)
-                                        .lineLimit(2)
-                                        .padding()
-                                        .frame(maxWidth: .infinity)
-                                        .background(Color(.systemGray6))
-                                        .cornerRadius(12)
-                                        .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
-                                        .onTapGesture {
-                                            UIPasteboard.general.string = promoCode
-                                            print("Copied promo code: \(promoCode)")
-                                        }
                                 }
                             }
                         }
