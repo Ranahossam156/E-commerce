@@ -17,15 +17,13 @@ class CurrencyService: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private let baseCurrency = "USD"
     
-    let supportedCurrencies: [String] = ["USD", "EUR", "EGP", "GBP", "JPY", "CAD", "AUD", "CHF", "CNY", "INR", "BRL"]
+    let supportedCurrencies: [String] = ["USD", "EUR", "EGP", "GBP", "JPY", "CHF", "CNY", "INR", "BRL"]
     
     private let currencySymbols: [String: String] = [
         "USD": "$",
         "EUR": "€",
         "GBP": "£",
         "JPY": "¥",
-        "CAD": "CA$",
-        "AUD": "AU$",
         "CHF": "CHF",
         "CNY": "CN¥",
         "INR": "Rs",
