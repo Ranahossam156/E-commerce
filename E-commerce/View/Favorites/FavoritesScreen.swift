@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct FavoriteScreen: View {
+    @EnvironmentObject var authViewModel: AuthViewModel // Inject AuthViewModel
     @StateObject private var viewModel = FavoritesViewModel()
     @State private var searchText: String = ""
 
@@ -19,43 +20,81 @@ struct FavoriteScreen: View {
                     .font(.title3.bold())
                     .padding(.top)
 
-                SearchBar(text: $searchText)
-
-                if viewModel.isLoading {
-                    ProgressView()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if let error = viewModel.errorMessage {
-                    Text("Error: \(error)")
-                        .foregroundColor(.red)
-                        .multilineTextAlignment(.center)
-                        .padding()
-                } else if filteredProducts.isEmpty {
-                    Text("No favorites found.")
-                        .foregroundColor(.gray)
-                        .padding()
-                } else {
-                    ScrollView {
-                        LazyVGrid(columns: columns, spacing: 20) {
-                          ForEach(filteredProducts, id: \.id) { product in
-                            NavigationLink(destination: ProductInfoView(productID: Int(product.id))) {
-                              FavoriteItemView(productModel: product) {
-                                Task { @MainActor in
-                                  await viewModel.removeFavorite(id: product.id)
-                                }
-                              }
-                            }
-                            .buttonStyle(PlainButtonStyle())
-                          }
-                        }
-                    }
+                if authViewModel.isAuthenticated {
+                    SearchBar(text: $searchText)
                 }
+
+                Group {
+                    if authViewModel.isAuthenticated {
+                        // MARK: - Authenticated User Content
+                        if viewModel.isLoading {
+                            ProgressView()
+                        } else if let error = viewModel.errorMessage {
+                            Text("Error: \(error)")
+                                .foregroundColor(.red)
+                                .multilineTextAlignment(.center)
+                                .padding()
+                        } else if filteredProducts.isEmpty {
+                            Text("No favorites found.")
+                                .foregroundColor(.gray)
+                                .padding()
+                        } else {
+                            ScrollView {
+                                LazyVGrid(columns: columns, spacing: 20) {
+                                    ForEach(filteredProducts, id: \.id) { product in
+                                        NavigationLink(destination: ProductInfoView(productID: Int(product.id))) {
+                                            FavoriteItemView(productModel: product) {
+                                                Task { @MainActor in
+                                                    await viewModel.removeFavorite(id: product.id)
+                                                }
+                                            }
+                                        }
+                                        .buttonStyle(PlainButtonStyle())
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        Spacer()
+                        VStack(spacing: 10) {
+                            Image("lock2")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 60, height: 60)
+                                .foregroundColor(Color("primaryColor"))
+
+                            Text("Please log in to view your favorite.")
+                                .font(.headline)
+                                .foregroundColor(.secondary)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal)
+
+
+                            NavigationLink(destination: LoginScreen()) {
+                                Text("Go to Login")
+                                    .font(.body)
+                                    .fontWeight(.medium)
+                                    .padding(.vertical, 8)
+                                    .padding(.horizontal, 15)
+                                    .background(Capsule().fill(Color("primaryColor")))
+                                    .foregroundColor(.white)
+                            }
+                            .padding(.top, 10)
+                        }
+                        Spacer()                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .navigationTitle("Favorites")
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {
+                // Only fetch favorites if authenticated
+                if authViewModel.isAuthenticated {
                     Task { @MainActor in
-                          await viewModel.fetchFavorites()
-                    }            }
+                        await viewModel.fetchFavorites()
+                    }
+                }
+            }
         }
     }
 }
@@ -75,4 +114,3 @@ struct SearchBar: View {
         .padding(.horizontal)
     }
 }
-

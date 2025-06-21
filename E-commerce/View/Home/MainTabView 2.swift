@@ -34,7 +34,7 @@ struct MainTabView: View {
             .tabItem {
                 Label("My Profile", systemImage: "person.fill")
             }
-        }
+        }        .accentColor(Color("primaryColor") )
     }
 }
 
