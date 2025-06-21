@@ -191,5 +191,13 @@ class AuthViewModel: ObservableObject {
         let passwordRegEx = #"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$"#
         return NSPredicate(format: "SELF MATCHES %@", passwordRegEx).evaluate(with: password)
     }
+    func checkIfUserIsAuthenticated() {
+        if let user = Auth.auth().currentUser {
+            isAuthenticated = user.isEmailVerified
+        } else {
+            isAuthenticated = false
+        }
+    }
+
 
 }
