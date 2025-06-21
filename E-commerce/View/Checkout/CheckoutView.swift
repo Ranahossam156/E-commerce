@@ -372,13 +372,10 @@ struct CheckoutView: View {
     private func showCODConfirmation() {
         isLoadingOrder = true
         checkoutViewModel.processPayment(for: cartVM.cartItems, total: discountedTotal) {
-            if checkoutViewModel.showPaymentSuccess {
                 paymentStatus = "Cash on Delivery confirmed"
                 createOrder()
                 cartVM.clearCart()
-            } else {
-                paymentStatus = "Cash on Delivery failed"
-            }
+            
             isLoadingOrder = false
         }
     }
