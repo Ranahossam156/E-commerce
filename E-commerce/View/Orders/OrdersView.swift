@@ -17,7 +17,7 @@ struct OrdersView: View {
                 if ordersViewModel.isLoading {
                     ProgressView("Loading Orders...")
                 } else if ordersViewModel.userOrders.isEmpty {
-                    Text("No orders found.")
+                    EmptyOrdersView()
                 } else {
                     List(ordersViewModel.userOrders) { order in
                         NavigationLink(destination: OrderDetailView(order: order)) {

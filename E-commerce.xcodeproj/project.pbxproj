@@ -99,6 +99,7 @@
 		E1FFCD642DFFFE07007B3641 /* FirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FFCD622DFFFE07007B3641 /* FirestoreService.swift */; };
 		E1FFCD652DFFFE07007B3641 /* CartFireStoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FFCD612DFFFE07007B3641 /* CartFireStoreService.swift */; };
 		E1FFCD6C2E00011A007B3641 /* MainTabView 2.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FFCD6B2E00011A007B3641 /* MainTabView 2.swift */; };
+		FA1D4E002E06DE8100719988 /* EmptyOrdersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1D4DFF2E06DE8100719988 /* EmptyOrdersView.swift */; };
 		FA288BA42DF5D10B00EABD17 /* HelperExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA288BA32DF5D10B00EABD17 /* HelperExtension.swift */; };
 		FA524F372DEB17FB008FEA88 /* CategoryResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA524F362DEB17FB008FEA88 /* CategoryResponse.swift */; };
 		FA524F3B2DEB1920008FEA88 /* CategoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA524F3A2DEB1920008FEA88 /* CategoryService.swift */; };
@@ -238,6 +239,7 @@
 		E1FFCD612DFFFE07007B3641 /* CartFireStoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartFireStoreService.swift; sourceTree = "<group>"; };
 		E1FFCD622DFFFE07007B3641 /* FirestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreService.swift; sourceTree = "<group>"; };
 		E1FFCD6B2E00011A007B3641 /* MainTabView 2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainTabView 2.swift"; sourceTree = "<group>"; };
+		FA1D4DFF2E06DE8100719988 /* EmptyOrdersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyOrdersView.swift; sourceTree = "<group>"; };
 		FA288BA32DF5D10B00EABD17 /* HelperExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelperExtension.swift; sourceTree = "<group>"; };
 		FA524F362DEB17FB008FEA88 /* CategoryResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryResponse.swift; sourceTree = "<group>"; };
 		FA524F3A2DEB1920008FEA88 /* CategoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryService.swift; sourceTree = "<group>"; };
@@ -688,6 +690,7 @@
 				FA5CA25D2DF78BAC00468F98 /* OrderCard.swift */,
 				FA9AE0132DF7923F0011B599 /* OrdersView.swift */,
 				FA9AE0152DF797370011B599 /* OrderDetailsView.swift */,
+				FA1D4DFF2E06DE8100719988 /* EmptyOrdersView.swift */,
 			);
 			path = Orders;
 			sourceTree = "<group>";
@@ -982,6 +985,7 @@
 				FAD4C5072E05ED3400163A55 /* CheckoutItemRow.swift in Sources */,
 				FA9AE0142DF7923F0011B599 /* OrdersView.swift in Sources */,
 				227C3BC72DE60518006B0E52 /* VariantsResponse.swift in Sources */,
+				FA1D4E002E06DE8100719988 /* EmptyOrdersView.swift in Sources */,
 				E19745162DF044E700F0AA4C /* ProductInfoView.swift in Sources */,
 				FA91A34B2DFA2B2A00E7AB7D /* OrderService.swift in Sources */,
 				22FC15C92DF0F585000FD95C /* FavoritesViewModel.swift in Sources */,
