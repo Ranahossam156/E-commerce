@@ -180,7 +180,7 @@ struct ProductInfoView: View {
                         HStack(spacing: 0) {
                             Text("\(currencyService.getCurrencySymbol(for: currencyService.selectedCurrency) )")
                                 .font(.title3.bold())
-                                .foregroundColor(Color("primaryColor"))
+                                .foregroundColor(.black)
                             if let priceString = product.variants.first?.price,
                                let price = Double(priceString) {
                                 Text(" \(String(format: "%.2f", currencyService.convert(price: price)))")
