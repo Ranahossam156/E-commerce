@@ -3,14 +3,17 @@ import PayPalCheckout
 import SwiftUI
 
 struct CheckoutView: View {
+
     @ObservedObject var cartVM = CartViewModel.shared
     @SwiftUI.State private var selectedMethod: PaymentMethod? = nil
     @SwiftUI.State private var pendingPaymentMethod: PaymentMethod? = nil
     @SwiftUI.State private var paymentStatus: String? = nil
     @SwiftUI.State private var promoStatus: String? = nil
     @SwiftUI.State private var showAddressScreen = false
+
     @SwiftUI.State private var promoCode: String = ""
     @SwiftUI.State private var discount: Double = 0.0
+
     @SwiftUI.Environment(\.dismiss) var dismiss
     @SwiftUI.StateObject private var checkoutViewModel = CheckoutViewModel()
     @SwiftUI.StateObject private var orderViewModel = OrderViewModel()
@@ -32,10 +35,12 @@ struct CheckoutView: View {
             ZStack {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
+
                         // Address
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Shipping address")
                                 .font(.title3.bold())
+
                             VStack(alignment: .leading, spacing: 8) {
                                 HStack {
                                     Text(authViewModel.username)
@@ -53,6 +58,7 @@ struct CheckoutView: View {
                                         .buttonStyle(PlainButtonStyle())
                                     }
                                 }
+
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text("\(userModel.defaultAddress)")
                                 }
@@ -68,11 +74,13 @@ struct CheckoutView: View {
                         // Products
                         Text("Products (\(cartVM.cartItems.count))")
                             .font(.title3.bold())
+
                         VStack(spacing: 16) {
                             ForEach(cartVM.cartItems) { item in
                                 CheckoutItemRow(item: item, updateQuantity: { newQty in
                                     cartVM.updateQuantity(for: item, quantity: newQty)
-                                }, currencyService: currencyService)
+                                },
+                                currencyService: currencyService)
                             }
                         }
 
@@ -81,6 +89,7 @@ struct CheckoutView: View {
                             Text("Coupon")
                                 .font(.title3.bold())
                                 .foregroundColor(.black)
+
                             if discountValue == 0 {
                                 HStack {
                                     TextField("Enter Coupon Code", text: $promoCode)
@@ -110,6 +119,7 @@ struct CheckoutView: View {
                                 .background(Color(.systemGray6))
                                 .cornerRadius(12)
                                 .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+
                                 if let promo = promoStatus, !promo.isEmpty {
                                     Text(promo)
                                         .font(.subheadline)
@@ -117,53 +127,41 @@ struct CheckoutView: View {
                                         .padding(.top, 4)
                                 }
                             } else {
-                                VStack(spacing: 8) {
-                                    HStack {
-                                        HStack(spacing: 6) {
-                                            Text(promoCode.uppercased())
-                                                .font(.subheadline.bold())
-                                                .foregroundColor(.gray)
-                                            Image(systemName: "checkmark.circle.fill")
-                                                .foregroundColor(.green)
-                                        }
-                                        Spacer()
-                                        Button(action: {
-                                            withAnimation {
-                                                promoCode = ""
-                                                discountValue = 0
-                                                promoStatus = nil
-                                            }
-                                        }) {
-                                            Text("Remove")
-                                                .font(.subheadline.bold())
-                                                .foregroundColor(.red)
-                                        }
+                                HStack {
+                                    HStack(spacing: 6) {
+                                        Text(promoCode.uppercased())
+                                            .font(.subheadline.bold())
+                                            .foregroundColor(.gray)
+
+                                        Image(systemName: "checkmark.circle.fill")
+                                            .foregroundColor(.green)
                                     }
-                                    .padding()
-                                    .background(Color.white)
-                                    .cornerRadius(12)
-                                    .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
-                                    Text("Tap to Copy\nDiscount Code")
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
-                                        .multilineTextAlignment(.center)
-                                        .lineLimit(2)
-                                        .padding()
-                                        .frame(maxWidth: .infinity)
-                                        .background(Color(.systemGray6))
-                                        .cornerRadius(12)
-                                        .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
-                                        .onTapGesture {
-                                            UIPasteboard.general.string = promoCode
-                                            print("Copied promo code: \(promoCode)")
+
+                                    Spacer()
+
+                                    Button(action: {
+                                        withAnimation {
+                                            promoCode = ""
+                                            discountValue = 0
+                                            promoStatus = nil
                                         }
+                                    }) {
+                                        Text("Remove")
+                                            .font(.subheadline.bold())
+                                            .foregroundColor(.red)
+                                    }
                                 }
+                                .padding()
+                                .background(Color.white)
+                                .cornerRadius(12)
+                                .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
                             }
                         }
 
                         // Payment Method
                         Text("Payment Method")
                             .font(.title3.bold())
+
                         VStack(spacing: 12) {
                             let firebaseUser = Auth.auth().currentUser
                             paymentMethodCard(
@@ -173,6 +171,7 @@ struct CheckoutView: View {
                                 icon: "paypal",
                                 color: .blue
                             )
+
                             paymentMethodCard(
                                 method: .cod,
                                 label: "Cash on Delivery",
@@ -191,6 +190,7 @@ struct CheckoutView: View {
                                     Spacer()
                                     Text("\(currencyService.getCurrencySymbol(for: currencyService.selectedCurrency)) \(String(format: "%.2f", currencyService.convert(price: cartVM.total)))")
                                 }
+
                                 HStack {
                                     Text("Discount")
                                         .foregroundColor(.gray)
@@ -199,6 +199,7 @@ struct CheckoutView: View {
                                         .foregroundColor(.green)
                                 }
                             }
+
                             HStack {
                                 Text("Total")
                                     .font(.headline)
@@ -227,6 +228,7 @@ struct CheckoutView: View {
                         .background(Color("primaryColor"))
                         .clipShape(Capsule())
                         .padding(.horizontal)
+
                         if let status = paymentStatus {
                             Text(status)
                                 .foregroundColor(status.contains("Success") ? .green : .red)
@@ -235,6 +237,7 @@ struct CheckoutView: View {
                     }
                     .padding()
                 }
+
                 if showSuccessAlert {
                     VStack {
                         Spacer()
@@ -272,10 +275,12 @@ struct CheckoutView: View {
                 .padding(8)
                 .background(Color.white)
                 .cornerRadius(8)
+
                 VStack(alignment: .leading, spacing: 4) {
                     Text(label).font(.headline)
                     Text(details).font(.subheadline).foregroundColor(.gray)
                 }
+
                 Spacer()
                 Image(systemName: selectedMethod == method ? "checkmark.circle.fill" : "circle")
                     .foregroundColor(selectedMethod == method ? .green : .gray)
@@ -290,13 +295,14 @@ struct CheckoutView: View {
 
     private func applyPromoCode() {
         let sanitizedCode = promoCode.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+
         guard !sanitizedCode.isEmpty else {
             withAnimation {
                 promoStatus = "Oops! Coupon code invalid"
             }
             return
         }
-        
+
         PriceRuleNetworkService.fetchDataFromAPI { rulesResponse, error in
             guard let rules = rulesResponse?.priceRules else {
                 DispatchQueue.main.async {
@@ -304,39 +310,21 @@ struct CheckoutView: View {
                 }
                 return
             }
-            
+
             var matchFound = false
             let group = DispatchGroup()
-            
+
             for rule in rules {
                 group.enter()
-                // First, check hardcoded couponCode
-                if rule.couponCode.lowercased() == sanitizedCode {
-                    DispatchQueue.main.async {
-                        matchFound = true
-                        if rule.valueType == "percentage" {
-                            discountValue = cartVM.total * abs(Double(rule.value) ?? 0) / 100.0
-                            discountType = "percentage"
-                        } else {
-                            discountValue = abs(Double(rule.value) ?? 0)
-                            discountType = "fixed_amount"
-                        }
-                        promoStatus = "Promo applied successfully."
-                    }
-                    group.leave()
-                    continue
-                }
-                
-                // Then, check API-fetched discount codes
                 PriceRuleNetworkService.fetchDiscountCodes(for: rule.id) { codes, error in
                     if let matchedCode = codes?.first(where: { $0.code.lowercased() == sanitizedCode }) {
+                        let rawValue = Double(rule.value) ?? 0
                         DispatchQueue.main.async {
                             matchFound = true
                             if rule.valueType == "percentage" {
-                                discountValue = cartVM.total * abs(Double(rule.value) ?? 0) / 100.0
-                                discountType = "percentage"
+                                discountValue = cartVM.total * abs(rawValue) / 100.0
                             } else {
-                                discountValue = abs(Double(rule.value) ?? 0)
+                                discountValue = abs(rawValue)
                                 discountType = "fixed_amount"
                             }
                             promoStatus = "Promo applied successfully."
@@ -345,7 +333,7 @@ struct CheckoutView: View {
                     group.leave()
                 }
             }
-            
+
             group.notify(queue: .main) {
                 if !matchFound {
                     withAnimation {
@@ -402,9 +390,11 @@ struct CheckoutView: View {
             paymentStatus = "User not logged in."
             return
         }
+
         let addressComponents = userModel.defaultAddress.components(separatedBy: ", ")
         let city = addressComponents.count > 1 ? addressComponents[1] : "Unknown City"
         let zip = addressComponents.count > 2 ? addressComponents[2] : "00000"
+
         let customer = Customer(
             id: firebaseUser.uid.hashValue,
             email: firebaseUser.email ?? "",
@@ -418,6 +408,7 @@ struct CheckoutView: View {
                 countryCode: .eg
             )
         )
+
         orderViewModel.checkout(
             cartItems: cartVM.cartItems,
             customer: customer,
@@ -426,14 +417,17 @@ struct CheckoutView: View {
             discountType: discountType,
             currency: currencyService.selectedCurrency
         )
+
         paymentStatus = "Order placed successfully!"
         showSuccessAlert = true
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             showSuccessAlert = false
             dismiss()
         }
     }
 }
+
 
 struct CheckoutView_Previews: PreviewProvider {
     static var previews: some View {

@@ -31,6 +31,7 @@ struct OrdersView: View {
         }
         .onAppear {
             if let email = Auth.auth().currentUser?.email {
+                print(email)
                 ordersViewModel.fetchOrders(forEmail: email)
             }
         }
