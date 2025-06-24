@@ -4,273 +4,285 @@ import SwiftUI
 
 struct CheckoutView: View {
 
-    @ObservedObject var cartVM = CartViewModel.shared
+    @SwiftUI.ObservedObject var cartVM = CartViewModel.shared
     @SwiftUI.State private var selectedMethod: PaymentMethod? = nil
     @SwiftUI.State private var pendingPaymentMethod: PaymentMethod? = nil
     @SwiftUI.State private var paymentStatus: String? = nil
     @SwiftUI.State private var promoStatus: String? = nil
     @SwiftUI.State private var showAddressScreen = false
-
     @SwiftUI.State private var promoCode: String = ""
     @SwiftUI.State private var discount: Double = 0.0
-
     @SwiftUI.Environment(\.dismiss) var dismiss
     @SwiftUI.StateObject private var checkoutViewModel = CheckoutViewModel()
     @SwiftUI.StateObject private var orderViewModel = OrderViewModel()
     @SwiftUI.StateObject private var authViewModel = AuthViewModel()
     @SwiftUI.StateObject private var settingsViewModel = SettingsViewModel()
-    @EnvironmentObject var userModel: UserModel
-    @EnvironmentObject var currencyService: CurrencyService
+    @SwiftUI.EnvironmentObject var userModel: UserModel
+    @SwiftUI.EnvironmentObject var currencyService: CurrencyService
     @SwiftUI.State private var isLoadingOrder = false
     @SwiftUI.State private var showSuccessAlert = false
     @SwiftUI.State private var discountType: String = "fixed_amount"
     @SwiftUI.State private var discountValue: Double = 0.0
-    @SwiftUI.State private var navigateToHome = false // State to trigger navigation
+    @SwiftUI.State private var navigateToHome = false
+    @SwiftUI.State private var showMissingAddressAlert = false
 
     private var discountedTotal: Double {
         currencyService.convert(price: max(0, cartVM.total - discountValue))
     }
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 20) {
-
-                        // Address
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Shipping address")
-                                .font(.title3.bold())
-
+            NavigationStack {
+                ZStack {
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 20) {
+                            // Address
                             VStack(alignment: .leading, spacing: 8) {
-                                HStack {
-                                    Text(authViewModel.username)
-                                        .font(.body)
-                                        .bold()
-                                    Spacer()
-                                    Button(action: {
-                                        showAddressScreen = true
-                                    }) {
-                                        Text("Change")
-                                            .font(.subheadline)
-                                            .foregroundColor(Color("primaryColor"))
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                }
+                                Text("Shipping address")
+                                    .font(.title3.bold())
 
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text("\(userModel.defaultAddress)")
-                                }
-                                .font(.subheadline)
-                            }
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.white)
-                            .cornerRadius(12)
-                            .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 4)
-                        }
-                        .background(
-                            NavigationLink(
-                                destination: AddressesView(userModel: userModel),
-                                isActive: $showAddressScreen,
-                                label: { EmptyView() }
-                            )
-                        )
-
-                        // Products
-                        Text("Products (\(cartVM.cartItems.count))")
-                            .font(.title3.bold())
-
-                        VStack(spacing: 16) {
-                            ForEach(cartVM.cartItems) { item in
-                                CheckoutItemRow(item: item, updateQuantity: { newQty in
-                                    cartVM.updateQuantity(for: item, quantity: newQty)
-                                },
-                                currencyService: currencyService)
-                            }
-                        }
-
-                        // Coupon
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Coupon")
-                                .font(.title3.bold())
-                                .foregroundColor(.black)
-
-                            if discountValue == 0 {
-                                HStack {
-                                    TextField("Enter Coupon Code", text: $promoCode)
-                                        .padding()
-                                        .foregroundColor(.gray)
-                                        .background(Color.white)
-                                        .cornerRadius(12)
-                                        .overlay(
-                                            HStack {
-                                                Spacer()
-                                                Button(action: {
-                                                    applyPromoCode()
-                                                }) {
-                                                    Text("Apply")
-                                                        .font(.subheadline)
-                                                        .bold()
-                                                        .foregroundColor(Color("primaryColor"))
-                                                }
-                                                .padding(.horizontal)
-                                                .disabled(promoCode.isEmpty)
-                                            }
-                                        )
-                                        .onChange(of: promoCode) { _ in
-                                            promoStatus = nil
+                                VStack(alignment: .leading, spacing: 8) {
+                                    HStack {
+                                        Text(authViewModel.username)
+                                            .font(.body)
+                                            .bold()
+                                        Spacer()
+                                        Button(action: {
+                                            showAddressScreen = true
+                                        }) {
+                                            Text("Change")
+                                                .font(.subheadline)
+                                                .foregroundColor(Color("primaryColor"))
                                         }
-                                }
-                                .background(Color(.systemGray6))
-                                .cornerRadius(12)
-                                .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
-
-                                if let promo = promoStatus, !promo.isEmpty {
-                                    Text(promo)
-                                        .font(.subheadline)
-                                        .foregroundColor(promo.contains("success") ? .green : .red)
-                                        .padding(.top, 4)
-                                }
-                            } else {
-                                HStack {
-                                    HStack(spacing: 6) {
-                                        Text(promoCode.uppercased())
-                                            .font(.subheadline.bold())
-                                            .foregroundColor(.gray)
-
-                                        Image(systemName: "checkmark.circle.fill")
-                                            .foregroundColor(.green)
+                                        .buttonStyle(PlainButtonStyle())
                                     }
 
-                                    Spacer()
-
-                                    Button(action: {
-                                        withAnimation {
-                                            promoCode = ""
-                                            discountValue = 0
-                                            promoStatus = nil
-                                        }
-                                    }) {
-                                        Text("Remove")
-                                            .font(.subheadline.bold())
-                                            .foregroundColor(.red)
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("\(userModel.defaultAddress)")
                                     }
+                                    .font(.subheadline)
                                 }
                                 .padding()
+                                .frame(maxWidth: .infinity)
                                 .background(Color.white)
                                 .cornerRadius(12)
-                                .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+                                .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 4)
                             }
-                        }
-
-                        // Payment Method
-                        Text("Payment Method")
-                            .font(.title3.bold())
-
-                        VStack(spacing: 12) {
-                            let firebaseUser = Auth.auth().currentUser
-                            paymentMethodCard(
-                                method: .payPal,
-                                label: "PayPal",
-                                details: maskedEmail(firebaseUser?.email ?? "unknown@mail.com"),
-                                icon: "paypal",
-                                color: .blue
+                            .background(
+                                NavigationLink(
+                                    destination: AddressesView(userModel: userModel),
+                                    isActive: $showAddressScreen,
+                                    label: { EmptyView() }
+                                )
                             )
 
-                            paymentMethodCard(
-                                method: .cod,
-                                label: "Cash on Delivery",
-                                details: "Pay with cash upon delivery",
-                                icon: "cod",
-                                color: .green
-                            )
-                        }
+                            // Products
+                            Text("Products (\(cartVM.cartItems.count))")
+                                .font(.title3.bold())
 
-                        // Totals
-                        VStack(alignment: .leading, spacing: 8) {
-                            if discountValue > 0 {
-                                HStack {
-                                    Text("Subtotal")
-                                        .foregroundColor(.gray)
-                                    Spacer()
-                                    Text("\(currencyService.getCurrencySymbol(for: currencyService.selectedCurrency)) \(String(format: "%.2f", currencyService.convert(price: cartVM.total)))")
-                                }
-
-                                HStack {
-                                    Text("Discount")
-                                        .foregroundColor(.gray)
-                                    Spacer()
-                                    Text("-\(currencyService.getCurrencySymbol(for: currencyService.selectedCurrency)) \(String(format: "%.2f", currencyService.convert(price: discountValue)))")
-                                        .foregroundColor(.green)
+                            VStack(spacing: 16) {
+                                ForEach(cartVM.cartItems) { item in
+                                    CheckoutItemRow(item: item, updateQuantity: { newQty in
+                                        cartVM.updateQuantity(for: item, quantity: newQty)
+                                    },
+                                    currencyService: currencyService)
                                 }
                             }
 
-                            HStack {
-                                Text("Total")
-                                    .font(.headline)
-                                Spacer()
-                                Text("\(currencyService.getCurrencySymbol(for: currencyService.selectedCurrency)) \(String(format: "%.2f", discountedTotal))")
-                                    .font(.headline)
-                                    .bold()
+                            // Coupon
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Coupon")
+                                    .font(.title3.bold())
+                                    .foregroundColor(.black)
+
+                                if discountValue == 0 {
+                                    HStack {
+                                        TextField("Enter Coupon Code", text: $promoCode)
+                                            .padding()
+                                            .foregroundColor(.gray)
+                                            .background(Color.white)
+                                            .cornerRadius(12)
+                                            .overlay(
+                                                HStack {
+                                                    Spacer()
+                                                    Button(action: {
+                                                        applyPromoCode()
+                                                    }) {
+                                                        Text("Apply")
+                                                            .font(.subheadline)
+                                                            .bold()
+                                                            .foregroundColor(Color("primaryColor"))
+                                                    }
+                                                    .padding(.horizontal)
+                                                    .disabled(promoCode.isEmpty)
+                                                }
+                                            )
+                                            .onChange(of: promoCode) { _ in
+                                                promoStatus = nil
+                                            }
+                                    }
+                                    .background(Color(.systemGray6))
+                                    .cornerRadius(12)
+                                    .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+
+                                    if let promo = promoStatus, !promo.isEmpty {
+                                        Text(promo)
+                                            .font(.subheadline)
+                                            .foregroundColor(promo.contains("success") ? .green : .red)
+                                            .padding(.top, 4)
+                                    }
+                                } else {
+                                    HStack {
+                                        HStack(spacing: 6) {
+                                            Text(promoCode.uppercased())
+                                                .font(.subheadline.bold())
+                                                .foregroundColor(.gray)
+
+                                            Image(systemName: "checkmark.circle.fill")
+                                                .foregroundColor(.green)
+                                        }
+
+                                        Spacer()
+
+                                        Button(action: {
+                                            withAnimation {
+                                                promoCode = ""
+                                                discountValue = 0
+                                                promoStatus = nil
+                                            }
+                                        }) {
+                                            Text("Remove")
+                                                .font(.subheadline.bold())
+                                                .foregroundColor(.red)
+                                        }
+                                    }
+                                    .padding()
+                                    .background(Color.white)
+                                    .cornerRadius(12)
+                                    .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+                                }
+                            }
+
+                            // Payment Method
+                            Text("Payment Method")
+                                .font(.title3.bold())
+
+                            VStack(spacing: 12) {
+                                let firebaseUser = Auth.auth().currentUser
+                                paymentMethodCard(
+                                    method: .payPal,
+                                    label: "PayPal",
+                                    details: maskedEmail(firebaseUser?.email ?? "unknown@mail.com"),
+                                    icon: "paypal",
+                                    color: .blue
+                                )
+
+                                paymentMethodCard(
+                                    method: .cod,
+                                    label: "Cash on Delivery",
+                                    details: "Pay with cash upon delivery",
+                                    icon: "cod",
+                                    color: .green
+                                )
+                            }
+
+                            // Totals
+                            VStack(alignment: .leading, spacing: 8) {
+                                if discountValue > 0 {
+                                    HStack {
+                                        Text("Subtotal")
+                                            .foregroundColor(.gray)
+                                        Spacer()
+                                        Text("\(currencyService.getCurrencySymbol(for: currencyService.selectedCurrency)) \(String(format: "%.2f", currencyService.convert(price: cartVM.total)))")
+                                    }
+
+                                    HStack {
+                                        Text("Discount")
+                                            .foregroundColor(.gray)
+                                        Spacer()
+                                        Text("-\(currencyService.getCurrencySymbol(for: currencyService.selectedCurrency)) \(String(format: "%.2f", currencyService.convert(price: discountValue)))")
+                                            .foregroundColor(.green)
+                                    }
+                                }
+
+                                HStack {
+                                    Text("Total")
+                                        .font(.headline)
+                                    Spacer()
+                                    Text("\(currencyService.getCurrencySymbol(for: currencyService.selectedCurrency)) \(String(format: "%.2f", discountedTotal))")
+                                        .font(.headline)
+                                        .bold()
+                                }
+                            }
+
+                            // Submit Order
+                            Button(action: {
+                                guard let selected = selectedMethod else {
+                                    paymentStatus = "Please select a payment method."
+                                    return
+                                }
+
+                                if userModel.defaultAddress.trimmingCharacters(in: .whitespacesAndNewlines) == "Not Set" {
+                                    showMissingAddressAlert = true
+                                    return
+                                }
+
+                                pendingPaymentMethod = selected
+                                isLoadingOrder = true
+                                handlePaymentOptionChange()
+                            }) {
+                                Text("Submit Order")
+                                    .foregroundColor(.white)
+                                    .fontWeight(.semibold)
+                                    .frame(maxWidth: .infinity)
+                                    .padding()
+                            }
+                            .background(Color("primaryColor"))
+                            .clipShape(Capsule())
+                            .padding(.horizontal)
+
+                            if let status = paymentStatus {
+                                Text(status)
+                                    .foregroundColor(status.contains("Success") ? .green : .red)
+                                    .padding(.top)
                             }
                         }
-
-                        // Checkout Button
-                        Button(action: {
-                            guard let selected = selectedMethod else {
-                                paymentStatus = "Please select a payment method."
-                                return
-                            }
-                            pendingPaymentMethod = selected
-                            handlePaymentOptionChange()
-                        }) {
-                            Text("Submit Order")
-                                .foregroundColor(.white)
-                                .fontWeight(.semibold)
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                        }
-                        .background(Color("primaryColor"))
-                        .clipShape(Capsule())
-                        .padding(.horizontal)
-
-                        if let status = paymentStatus {
-                            Text(status)
-                                .foregroundColor(status.contains("Success") ? .green : .red)
-                                .padding(.top)
-                        }
+                        .padding()
                     }
-                    .padding()
-                }
 
-                if showSuccessAlert {
-                    VStack {
-                        Spacer()
-                        Text("Order placed successfully!")
-                            .font(.headline)
+                    if showSuccessAlert {
+                        VStack {
+                            Spacer()
+                            Text("Order placed successfully!")
+                                .font(.headline)
+                                .padding()
+                                .background(Color.green.opacity(0.95))
+                                .foregroundColor(.white)
+                                .cornerRadius(12)
+                                .shadow(radius: 10)
+                                .transition(.move(edge: .bottom).combined(with: .opacity))
+                                .padding(.bottom, 32)
+                        }
+                        .animation(.easeInOut, value: showSuccessAlert)
+                    }
+
+                    if isLoadingOrder {
+                        Color.black.opacity(0.3).ignoresSafeArea()
+                        ProgressView("Placing your order...")
                             .padding()
-                            .background(Color.green.opacity(0.95))
-                            .foregroundColor(.white)
+                            .background(Color.white)
                             .cornerRadius(12)
                             .shadow(radius: 10)
-                            .transition(.move(edge: .bottom).combined(with: .opacity))
-                            .padding(.bottom, 32)
                     }
-                    .animation(.easeInOut, value: showSuccessAlert)
                 }
-//                // NavigationLink to HomeView
-//                NavigationLink(
-//                    destination: HomeView()
-//                        .navigationBarBackButtonHidden(true), // Hide back button
-//                    isActive: $navigateToHome,
-//                    label: { EmptyView() }
-//                )
+                .navigationTitle("Payment")
+                .navigationBarTitleDisplayMode(.inline)
+                .alert("Missing Shipping Address", isPresented: $showMissingAddressAlert) {
+                    Button("OK", role: .cancel) { }
+                } message: {
+                    Text("Please provide a valid shipping address before placing the order.")
+                }
             }
-            .navigationTitle("Payment")
-            .navigationBarTitleDisplayMode(.inline)
         }
-    }
 
     private func paymentMethodCard(method: PaymentMethod, label: String, details: String, icon: String, color: Color, isSystemImage: Bool = false) -> some View {
         Button(action: {
@@ -344,7 +356,7 @@ struct CheckoutView: View {
                     group.leave()
                     continue
                 }
-                
+
                 PriceRuleNetworkService.fetchDiscountCodes(for: rule.id) { codes, error in
                     if let matchedCode = codes?.first(where: { $0.code.lowercased() == sanitizedCode }) {
                         let rawValue = Double(rule.value) ?? 0
@@ -394,18 +406,17 @@ struct CheckoutView: View {
                     paymentStatus = message ?? "PayPal payment failed"
                     checkoutViewModel.showError = true
                     checkoutViewModel.errorMessage = message ?? "Unknown error"
+                    isLoadingOrder = false
                 }
             }
         }
     }
 
     private func showCODConfirmation() {
-        isLoadingOrder = true
         checkoutViewModel.processPayment(for: cartVM.cartItems, total: discountedTotal) {
-            DispatchQueue.main.async{
+            DispatchQueue.main.async {
                 paymentStatus = "Cash on Delivery confirmed"
-                createOrder()   
-                isLoadingOrder = false
+                createOrder()
             }
         }
     }
@@ -413,6 +424,7 @@ struct CheckoutView: View {
     private func createOrder() {
         guard let firebaseUser = Auth.auth().currentUser else {
             paymentStatus = "User not logged in."
+            isLoadingOrder = false
             return
         }
 
@@ -442,18 +454,19 @@ struct CheckoutView: View {
             discountType: discountType,
             currency: currencyService.selectedCurrency
         )
-        cartVM.clearCart() // Clear the cart
+
+        cartVM.clearCart()
         paymentStatus = "Order placed successfully!"
         showSuccessAlert = true
-        dismiss()
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            isLoadingOrder = false
             showSuccessAlert = false
-            navigateToHome = true // Trigger navigation to HomeView
+            navigateToHome = true
+            dismiss()
         }
     }
 }
-
 
 struct CheckoutView_Previews: PreviewProvider {
     static var previews: some View {
