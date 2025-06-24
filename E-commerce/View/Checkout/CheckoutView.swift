@@ -427,7 +427,7 @@ struct CheckoutView: View {
                 group.notify(queue: .main) {
                     if !matchFound {
                         discount = 0
-                        promoStatus = "Invalid or expired promo code."
+                        promoStatus = "Oops! Coupon code invalid"
                     }
                 }
             }
