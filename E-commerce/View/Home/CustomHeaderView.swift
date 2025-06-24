@@ -3,6 +3,7 @@ import FirebaseAuth
 
 struct CustomHeaderView: View {
     @EnvironmentObject var userModel: UserModel
+    @ObservedObject var cartModel = CartViewModel.shared
     @State private var hasLoadedData = false // Prevent multiple Task invocations
 
     var body: some View {
@@ -47,10 +48,12 @@ struct CustomHeaderView: View {
                                 .font(.system(size: 20))
                                 .foregroundColor(.black)
                             
-                            Circle()
-                                .fill(Color.red)
-                                .frame(width: 10, height: 10)
-                                .offset(x: 6, y: -6)
+                            if(!cartModel.cartItems.isEmpty){
+                                Circle()
+                                    .fill(Color.red)
+                                    .frame(width: 10, height: 10)
+                                    .offset(x: 6, y: -6)
+                            }
                         }
                     }
                 }
