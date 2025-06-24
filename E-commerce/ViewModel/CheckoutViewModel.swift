@@ -21,7 +21,7 @@ class CheckoutViewModel: ObservableObject {
         isProcessingPayment = true
         
         // Simulate payment processing - replace with real payment gateway later
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             self.isProcessingPayment = false
             
             // Simulate success for now

@@ -1,15 +1,7 @@
-//
-//  E_commerceApp.swift
-//  E-commerce
-//
-//  Created by Macos on 25/05/2025.
-
-
 import SwiftUI
 import Firebase
 import PayPalCheckout
 import CorePayments
-
 
 @main
 struct E_commerceApp: App {
@@ -17,16 +9,22 @@ struct E_commerceApp: App {
     @StateObject private var orderViewModel = OrderViewModel()
     @StateObject private var authViewModel = AuthViewModel()
     @StateObject private var userModel = UserModel()
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @StateObject private var settingsViewModel = SettingsViewModel()
+    
+    
     init() {
+        print("Initializing Firebase")
         FirebaseApp.configure()
-
+        print("Firebase initialized successfully")
+        
         let config = CheckoutConfig(
-                   clientID: Config.paypalClientId,
-                   environment: .sandbox // or .live for production
-               )
+            clientID: Config.paypalClientId,
+            environment: .sandbox // or .live for production
+        )
         Checkout.set(config: config)
-
+        
+        // Enable Firestore offline support
+        //Firestore.firestore().settings.isPersistenceEnabled = true
     }
 
     var body: some Scene {
@@ -36,8 +34,7 @@ struct E_commerceApp: App {
                 .environmentObject(userModel)
                 .environmentObject(orderViewModel)
                 .environmentObject(currencyService)
-
+                .environmentObject(settingsViewModel)
         }
     }
 }
-

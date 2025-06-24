@@ -1,10 +1,3 @@
-//
-//  MainTabView.swift
-//  E-commerce
-//
-//  Created by Macos on 12/06/2025.
-//
-
 import SwiftUI
 
 struct MainTabView: View {
@@ -13,13 +6,14 @@ struct MainTabView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     
     var body: some View {
-        TabView {
+        TabView() {
             NavigationStack {
                 HomeView()
             }
             .tabItem {
                 Label("Home", systemImage: "house.fill")
             }
+            .tag(0)
             
             NavigationStack {
                 FavoriteScreen()
@@ -27,6 +21,7 @@ struct MainTabView: View {
             .tabItem {
                 Label("Favorites", systemImage: "heart.fill")
             }
+            .tag(1)
             
             NavigationStack {
                 SettingsView()
@@ -34,7 +29,18 @@ struct MainTabView: View {
             .tabItem {
                 Label("My Profile", systemImage: "person.fill")
             }
-        }        .accentColor(Color("primaryColor") )
+            .tag(2)
+        }
+        .accentColor(Color("primaryColor"))
     }
 }
 
+struct MainTabView_Previews: PreviewProvider {
+    static var previews: some View {
+        MainTabView()
+            .environmentObject(CurrencyService())
+            .environmentObject(OrderViewModel())
+            .environmentObject(AuthViewModel())
+            .environmentObject(TabViewModel.shared)
+    }
+}

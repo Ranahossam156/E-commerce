@@ -25,6 +25,7 @@ struct CheckoutView: View {
     @SwiftUI.State private var showSuccessAlert = false
     @SwiftUI.State private var discountType: String = "fixed_amount"
     @SwiftUI.State private var discountValue: Double = 0.0
+    @SwiftUI.State private var navigateToHome = false // State to trigger navigation
 
     private var discountedTotal: Double {
         currencyService.convert(price: max(0, cartVM.total - discountValue))
@@ -47,16 +48,14 @@ struct CheckoutView: View {
                                         .font(.body)
                                         .bold()
                                     Spacer()
-                                    NavigationLink(destination: AddressesView(userModel: userModel), isActive: $showAddressScreen) {
-                                        Button(action: {
-                                            showAddressScreen = true
-                                        }) {
-                                            Text("Change")
-                                                .font(.subheadline)
-                                                .foregroundColor(Color("primaryColor"))
-                                        }
-                                        .buttonStyle(PlainButtonStyle())
+                                    Button(action: {
+                                        showAddressScreen = true
+                                    }) {
+                                        Text("Change")
+                                            .font(.subheadline)
+                                            .foregroundColor(Color("primaryColor"))
                                     }
+                                    .buttonStyle(PlainButtonStyle())
                                 }
 
                                 VStack(alignment: .leading, spacing: 4) {
@@ -70,6 +69,13 @@ struct CheckoutView: View {
                             .cornerRadius(12)
                             .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 4)
                         }
+                        .background(
+                            NavigationLink(
+                                destination: AddressesView(userModel: userModel),
+                                isActive: $showAddressScreen,
+                                label: { EmptyView() }
+                            )
+                        )
 
                         // Products
                         Text("Products (\(cartVM.cartItems.count))")
@@ -253,6 +259,13 @@ struct CheckoutView: View {
                     }
                     .animation(.easeInOut, value: showSuccessAlert)
                 }
+//                // NavigationLink to HomeView
+//                NavigationLink(
+//                    destination: HomeView()
+//                        .navigationBarBackButtonHidden(true), // Hide back button
+//                    isActive: $navigateToHome,
+//                    label: { EmptyView() }
+//                )
             }
             .navigationTitle("Payment")
             .navigationBarTitleDisplayMode(.inline)
@@ -316,6 +329,22 @@ struct CheckoutView: View {
 
             for rule in rules {
                 group.enter()
+                if rule.couponCode.lowercased() == sanitizedCode {
+                    DispatchQueue.main.async {
+                        matchFound = true
+                        if rule.valueType == "percentage" {
+                            discountValue = cartVM.total * abs(Double(rule.value) ?? 0) / 100.0
+                            discountType = "percentage"
+                        } else {
+                            discountValue = abs(Double(rule.value) ?? 0)
+                            discountType = "fixed_amount"
+                        }
+                        promoStatus = "Promo applied successfully."
+                    }
+                    group.leave()
+                    continue
+                }
+                
                 PriceRuleNetworkService.fetchDiscountCodes(for: rule.id) { codes, error in
                     if let matchedCode = codes?.first(where: { $0.code.lowercased() == sanitizedCode }) {
                         let rawValue = Double(rule.value) ?? 0
@@ -361,7 +390,6 @@ struct CheckoutView: View {
                 if success {
                     paymentStatus = "PayPal payment successful!"
                     createOrder()
-                    cartVM.clearCart()
                 } else {
                     paymentStatus = message ?? "PayPal payment failed"
                     checkoutViewModel.showError = true
@@ -374,14 +402,11 @@ struct CheckoutView: View {
     private func showCODConfirmation() {
         isLoadingOrder = true
         checkoutViewModel.processPayment(for: cartVM.cartItems, total: discountedTotal) {
-            if checkoutViewModel.showPaymentSuccess {
+            DispatchQueue.main.async{
                 paymentStatus = "Cash on Delivery confirmed"
-                createOrder()
-                cartVM.clearCart()
-            } else {
-                paymentStatus = "Cash on Delivery failed"
+                createOrder()   
+                isLoadingOrder = false
             }
-            isLoadingOrder = false
         }
     }
 
@@ -417,13 +442,14 @@ struct CheckoutView: View {
             discountType: discountType,
             currency: currencyService.selectedCurrency
         )
-
+        cartVM.clearCart() // Clear the cart
         paymentStatus = "Order placed successfully!"
         showSuccessAlert = true
+        dismiss()
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             showSuccessAlert = false
-            dismiss()
+            navigateToHome = true // Trigger navigation to HomeView
         }
     }
 }
