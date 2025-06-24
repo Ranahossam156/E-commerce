@@ -25,6 +25,7 @@ struct CheckoutView: View {
     @SwiftUI.State private var discountValue: Double = 0.0
     @SwiftUI.State private var navigateToHome = false
     @SwiftUI.State private var showMissingAddressAlert = false
+    @SwiftUI.State private var showMissingPaymentMethodAlert = false
     
     private var discountedTotal: Double {
         currencyService.convert(price: max(0, cartVM.total - discountValue))
@@ -259,9 +260,11 @@ struct CheckoutView: View {
                         
                         // Submit Order
                         Button(action: {
+
                             guard let selected = selectedMethod else {
                                 paymentStatus =
                                 "Please select a payment method."
+                                showMissingPaymentMethodAlert = true
                                 return
                             }
                             
@@ -331,6 +334,11 @@ struct CheckoutView: View {
                     "Please provide a valid shipping address before placing the order."
                 )
             }
+            .alert("Missing Payment Method", isPresented: $showMissingPaymentMethodAlert) {
+                            Button("OK", role: .cancel) {}
+                        } message: {
+                            Text("Please select a payment method before placing the order.")
+                        }
         }
     }
     
