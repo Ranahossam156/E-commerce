@@ -381,81 +381,49 @@ struct CheckoutView: View {
     
     
     private func applyPromoCode() {
-        let sanitizedCode = promoCode.trimmingCharacters(
-            in: .whitespacesAndNewlines
-        ).lowercased()
-        
-        guard !sanitizedCode.isEmpty else {
-            withAnimation {
-                promoStatus = "Oops! Coupon code invalid"
-            }
-            return
-        }
-        
-        PriceRuleNetworkService.fetchDataFromAPI { rulesResponse, error in
-            guard let rules = rulesResponse?.priceRules else {
-                DispatchQueue.main.async {
-                    promoStatus = "Failed to load discounts."
-                }
-                return
-            }
+            let sanitizedCode = promoCode.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
             
-            var matchFound = false
-            let group = DispatchGroup()
-            
-            for rule in rules {
-                group.enter()
-                if rule.couponCode.lowercased() == sanitizedCode {
+            PriceRuleNetworkService.fetchDataFromAPI { rulesResponse, error in
+                guard let rules = rulesResponse?.priceRules else {
                     DispatchQueue.main.async {
-                        matchFound = true
-                        if rule.valueType == "percentage" {
-                            discountValue =
-                            cartVM.total * abs(Double(rule.value) ?? 0)
-                            / 100.0
-                            discountType = "percentage"
-                        } else {
-                            discountValue = abs(Double(rule.value) ?? 0)
-                            discountType = "fixed_amount"
-                        }
-                        promoStatus = "Promo applied successfully."
+                        promoStatus = "Failed to load discounts."
                     }
-                    group.leave()
-                    continue
+                    return
                 }
                 
-                PriceRuleNetworkService.fetchDiscountCodes(for: rule.id) {
-                    codes,
-                    error in
-                    if let matchedCode = codes?.first(where: {
-                        $0.code.lowercased() == sanitizedCode
-                    }) {
-                        let rawValue = Double(rule.value) ?? 0
-                        DispatchQueue.main.async {
-                            matchFound = true
-                            if rule.valueType == "percentage" {
-                                discountValue =
-                                cartVM.total * abs(rawValue) / 100.0
-                            } else {
-                                discountValue = abs(rawValue)
-                                discountType = "fixed_amount"
+                var matchFound = false
+                let group = DispatchGroup()
+                
+                for rule in rules {
+                    group.enter()
+                    PriceRuleNetworkService.fetchDiscountCodes(for: rule.id) { codes, error in
+                        if let matchedCode = codes?.first(where: { $0.code.lowercased() == sanitizedCode }) {
+                            let rawValue = Double(rule.value) ?? 0
+                            print(rule.value)
+                            DispatchQueue.main.async {
+                                matchFound = true
+                                if rule.valueType == "percentage" {
+                                    discountValue = cartVM.total * abs(rawValue) / 100.0
+                                    print(discount)
+                                } else {
+                                    discountValue = abs(rawValue)
+                                    discountType = "fixed_amount"
+                                }
+                                promoStatus = "Promo applied successfully."
                             }
-                            promoStatus = "Promo applied successfully."
                         }
+                        group.leave()
                     }
-                    group.leave()
                 }
-            }
-            
-            group.notify(queue: .main) {
-                if !matchFound {
-                    withAnimation {
-                        discountValue = 0
-                        promoStatus = "Oops! Coupon code invalid"
+                
+                group.notify(queue: .main) {
+                    if !matchFound {
+                        discount = 0
+                        promoStatus = "Invalid or expired promo code."
                     }
                 }
             }
         }
-    }
     
     private func handlePaymentOptionChange() {
         guard let method = pendingPaymentMethod else { return }
