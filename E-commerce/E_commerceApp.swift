@@ -10,9 +10,7 @@ struct E_commerceApp: App {
     @StateObject private var authViewModel = AuthViewModel()
     @StateObject private var userModel = UserModel()
     @StateObject private var settingsViewModel = SettingsViewModel()
-    @StateObject private var tabViewModel = TabViewModel.shared // Inject TabViewModel
     
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
     init() {
         print("Initializing Firebase")
@@ -37,7 +35,6 @@ struct E_commerceApp: App {
                 .environmentObject(orderViewModel)
                 .environmentObject(currencyService)
                 .environmentObject(settingsViewModel)
-                .environmentObject(tabViewModel)
         }
     }
 }

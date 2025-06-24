@@ -4,10 +4,9 @@ struct MainTabView: View {
     @EnvironmentObject var currencyService: CurrencyService
     @EnvironmentObject var orderViewModel: OrderViewModel
     @EnvironmentObject var authViewModel: AuthViewModel
-    @EnvironmentObject var tabViewModel: TabViewModel // Use TabViewModel
     
     var body: some View {
-        TabView(selection: $tabViewModel.selectedTab) {
+        TabView() {
             NavigationStack {
                 HomeView()
             }
