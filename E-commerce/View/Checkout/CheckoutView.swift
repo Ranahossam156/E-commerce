@@ -242,13 +242,13 @@ struct CheckoutView: View {
                     }
                     .animation(.easeInOut, value: showSuccessAlert)
                 }
-                // NavigationLink to HomeView
-                NavigationLink(
-                    destination: HomeView()
-                        .navigationBarBackButtonHidden(true), // Hide back button
-                    isActive: $navigateToHome,
-                    label: { EmptyView() }
-                )
+//                // NavigationLink to HomeView
+//                NavigationLink(
+//                    destination: HomeView()
+//                        .navigationBarBackButtonHidden(true), // Hide back button
+//                    isActive: $navigateToHome,
+//                    label: { EmptyView() }
+//                )
             }
             .navigationTitle("Payment")
             .navigationBarTitleDisplayMode(.inline)
@@ -419,9 +419,11 @@ struct CheckoutView: View {
             discountType: discountType,
             currency: currencyService.selectedCurrency
         )
-        //cartVM.clearCart() // Clear the cart
+        cartVM.clearCart() // Clear the cart
         paymentStatus = "Order placed successfully!"
         showSuccessAlert = true
+        dismiss()
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             showSuccessAlert = false
             navigateToHome = true // Trigger navigation to HomeView
