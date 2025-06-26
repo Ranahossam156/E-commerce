@@ -74,26 +74,24 @@ struct CategoriesView: View {
                                 fetchProducts(for: cid)
                             }
                         } label: {
-                            Text((category.title ?? "Untitled")
-                                    .capitalizingFirstLetterOnly)
+                            Text((category.title ?? "Untitled").capitalizingFirstLetterOnly)
                                 .font(.system(size: 14, weight: .medium))
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
-                                .background(isSelected
-                                            ? Color("primaryColor").opacity(0.2)
-                                            : Color.white)
-                                .foregroundColor(isSelected
-                                                 ? Color("primaryColor")
-                                                 : Color.black)
-                                .overlay(RoundedRectangle(cornerRadius: 8)
-                                            .stroke(Color.gray.opacity(0.3)))
-                                .cornerRadius(8)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 8)
+                                .background(isSelected ? Color("primaryColor") : Color.white)
+                                .foregroundColor(isSelected ? .white : .gray)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+                                )
+                                .clipShape(RoundedRectangle(cornerRadius: 20))
                         }
                     }
                 }
-                .padding(.horizontal)
+                .padding(.horizontal, 16)
                 .padding(.vertical, 8)
             }
+
 
             // MARK: – Product grid
             ScrollView {
