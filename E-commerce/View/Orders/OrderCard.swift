@@ -30,13 +30,13 @@ struct OrderCard: View {
             }
             .font(.subheadline)
             
-            // Address
-            HStack(alignment: .top) {
-                Text("Address:")
-                    .foregroundColor(.secondary)
-                Text("\(order.shippingAddress?.address1 ?? "N/A")")
-            }
-            .font(.subheadline)
+//            // Address
+//            HStack(alignment: .top) {
+//                Text("Address:")
+//                    .foregroundColor(.secondary)
+//                Text("\(order.shippingAddress?.address1 ?? "N/A")")
+//            }
+//            .font(.subheadline)
             
             // Date
             HStack(alignment: .top) {
