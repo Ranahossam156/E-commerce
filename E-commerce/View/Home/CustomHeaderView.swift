@@ -4,7 +4,7 @@ import FirebaseAuth
 struct CustomHeaderView: View {
     @EnvironmentObject var userModel: UserModel
     @State private var hasLoadedData = false // Prevent multiple Task invocations
-
+    
     var body: some View {
         if userModel.isLoading && userModel.name.isEmpty {
             ProgressView()
@@ -64,6 +64,12 @@ struct CustomHeaderView: View {
                         do {
                             try await userModel.loadUserDataFromFirebase()
                             print("CustomHeaderView: loadUserDataFromFirebase completed")
+                            if userModel.name.isEmpty, let email = Auth.auth().currentUser?.email {
+                                userModel.name = email.components(separatedBy: "@").first ?? ""
+                                print("Setting username to email prefix: \(userModel.name)")
+                                userModel.saveUserData()
+                                print("Username saved to userModel")
+                            }
                             await MainActor.run {
                                 hasLoadedData = true
                             }
