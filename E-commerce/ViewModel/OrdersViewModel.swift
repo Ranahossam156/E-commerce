@@ -1,3 +1,4 @@
+import FirebaseAuth
 import Foundation
 
 final class OrderViewModel: ObservableObject {
@@ -6,21 +7,37 @@ final class OrderViewModel: ObservableObject {
     @Published var errorMessage: String? = nil
     @Published var userOrders: [OrderModel] = []
 
-    private let orderService = OrderService()
 
-    func checkout(cartItems: [CartItem], customer: Customer, discountCode: String?,
-                  discountAmount: Double?, discountType: String, currency: String) {
+    private let orderService = OrderService()
+    private let firestoreService = OrderFireStoreService()
+
+    func checkout(
+        cartItems: [CartItem],
+        customer: Customer,
+        discountCode: String?,
+        discountAmount: Double?,
+        discountType: String,
+        currency: String
+    ) {
         isLoading = true
         errorMessage = nil
         order = nil
 
-        orderService.createOrder(cartItems: cartItems, customer: customer, discountCode: discountCode,
-                                 discountAmount: discountAmount, discountType: discountType, currency: currency) { [weak self] result in
+        orderService.createOrder(
+            cartItems: cartItems,
+            customer: customer,
+            discountCode: discountCode,
+            discountAmount: discountAmount,
+            discountType: discountType,
+            currency: currency
+        ) { [weak self] result in
             DispatchQueue.main.async { [self] in
                 self?.isLoading = false
                 switch result {
                 case .success(let createdOrder):
                     self?.order = createdOrder
+                    self?.saveOrderToFirestore(createdOrder.order)
+            
                 case .failure(let error):
                     self?.errorMessage = error.localizedDescription
                     print("Shopify Error Body: \(self?.errorMessage)")
@@ -28,10 +45,26 @@ final class OrderViewModel: ObservableObject {
             }
         }
     }
+
+    private func saveOrderToFirestore(_ order: OrderModel) {
+        guard let userId = Auth.auth().currentUser?.uid else { return }
+
+        firestoreService.saveOrder(order, for: userId) { result in
+            switch result {
+            case .success:
+                print("Order saved to Firestore")
+            case .failure(let error):
+                print("Firestore save error: \(error.localizedDescription)")
+            }
+        }
+    }
+
     
     func fetchOrders(forEmail email: String) {
+            guard let userId = Auth.auth().currentUser?.uid else { return }
+            
             isLoading = true
-            orderService.getOrders(forEmail: email) { [weak self] result in
+            firestoreService.loadOrders(for: userId) { [weak self] result in
                 DispatchQueue.main.async {
                     self?.isLoading = false
                     switch result {
@@ -39,10 +72,27 @@ final class OrderViewModel: ObservableObject {
                         self?.userOrders = orders
                     case .failure(let error):
                         self?.errorMessage = error.localizedDescription
+                        // Fallback to Shopify if Firestore fails
+//                        self?.fetchOrdersFromShopify(forEmail: email)
                     }
                 }
             }
         }
+
+//    func fetchOrdersFromShopify(forEmail email: String) {
+//        isLoading = true
+//        orderService.getOrders(forEmail: email) { [weak self] result in
+//            DispatchQueue.main.async {
+//                self?.isLoading = false
+//                switch result {
+//                case .success(let orders):
+//                    self?.userOrders = orders
+//                case .failure(let error):
+//                    self?.errorMessage = error.localizedDescription
+//                }
+//            }
+//        }
+//    }
 
     // MARK: - Helpers for UI Binding
 
@@ -63,7 +113,7 @@ final class OrderViewModel: ObservableObject {
 
     var orderDateText: String {
         guard let dateString = order?.order.createdAt else { return "" }
-        return "\(dateString)"// "YYYY-MM-DD"
+        return "\(dateString)"  // "YYYY-MM-DD"
     }
 
     var shippingAddressText: String {
