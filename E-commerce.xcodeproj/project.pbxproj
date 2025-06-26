@@ -149,6 +149,7 @@
 		FAD4C5CF2E06124500163A55 /* CategoryServiceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD4C5CE2E06124500163A55 /* CategoryServiceTest.swift */; };
 		FAD4C5D22E0613CF00163A55 /* MockOrderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD4C5D12E0613CF00163A55 /* MockOrderService.swift */; };
 		FAD4C5D42E06147500163A55 /* OrderServiceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD4C5D32E06147500163A55 /* OrderServiceTest.swift */; };
+		FAD555732E0DD09C003DD67F /* CouponView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD555722E0DD09C003DD67F /* CouponView.swift */; };
 		FAE411262E0099E200EDB731 /* CheckoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE411252E0099E200EDB731 /* CheckoutView.swift */; };
 		FAE4112A2E00B5CD00EDB731 /* order-success.json in Resources */ = {isa = PBXBuildFile; fileRef = FAE411292E00B5CD00EDB731 /* order-success.json */; };
 		FAF0A1AC2E03473B0077708F /* BrandCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF0A1AB2E03473B0077708F /* BrandCardView.swift */; };
@@ -292,6 +293,7 @@
 		FAD4C5CE2E06124500163A55 /* CategoryServiceTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryServiceTest.swift; sourceTree = "<group>"; };
 		FAD4C5D12E0613CF00163A55 /* MockOrderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockOrderService.swift; sourceTree = "<group>"; };
 		FAD4C5D32E06147500163A55 /* OrderServiceTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderServiceTest.swift; sourceTree = "<group>"; };
+		FAD555722E0DD09C003DD67F /* CouponView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouponView.swift; sourceTree = "<group>"; };
 		FAE411252E0099E200EDB731 /* CheckoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckoutView.swift; sourceTree = "<group>"; };
 		FAE411292E00B5CD00EDB731 /* order-success.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "order-success.json"; sourceTree = "<group>"; };
 		FAF0A1AB2E03473B0077708F /* BrandCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrandCardView.swift; sourceTree = "<group>"; };
@@ -748,6 +750,7 @@
 				FAC88A222DE8DD350041EF40 /* PromoCarousel.swift */,
 				E1FFCD6B2E00011A007B3641 /* MainTabView 2.swift */,
 				FAF0A1AB2E03473B0077708F /* BrandCardView.swift */,
+				FAD555722E0DD09C003DD67F /* CouponView.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -1057,6 +1060,7 @@
 				FA5CA25E2DF78BAC00468F98 /* OrderCard.swift in Sources */,
 				E17102F42DE4EBCB00C511CC /* CartItemRow.swift in Sources */,
 				E18540E22E04339800FAB1D7 /* CartServiceProtocol.swift in Sources */,
+				FAD555732E0DD09C003DD67F /* CouponView.swift in Sources */,
 				22FC15C72DF0D4A1000FD95C /* FavoritesModel+CoreDataProperties.swift in Sources */,
 				FA805B7A2DE898BB00853AA4 /* TabView.swift in Sources */,
 				E13937C92DF96BAD004983BB /* PayPalCoordinator.swift in Sources */,
