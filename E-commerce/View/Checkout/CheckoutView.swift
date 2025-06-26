@@ -457,7 +457,7 @@ struct CheckoutView: View {
                     print("Calling createOrder()")
                     self.paymentStatus = "PayPal payment successful!"
                     self.createOrder()
-                    cartVM.clearCart()
+ 
                 } else {
                     print("PayPal Payment Failed: \(message ?? "Unknown error")")
                     self.paymentStatus = message ?? "PayPal payment failed"
@@ -517,7 +517,7 @@ struct CheckoutView: View {
         )
         
         
-                self.cartVM.clearCart()
+//                self.cartVM.clearCart()
                 self.paymentStatus = "Order placed successfully!"
                 self.showSuccessAlert = true
             
