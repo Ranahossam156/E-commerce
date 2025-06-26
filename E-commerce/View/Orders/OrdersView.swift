@@ -1,12 +1,5 @@
-//
-//  OrdersView.swift
-//  E-commerce
-//
-//  Created by MacBook on 10/06/2025.
-//
-
-import SwiftUI
 import FirebaseAuth
+import SwiftUI
 
 struct OrdersView: View {
     @EnvironmentObject var ordersViewModel: OrderViewModel
@@ -20,9 +13,11 @@ struct OrdersView: View {
                     EmptyOrdersView()
                 } else {
                     List(ordersViewModel.userOrders) { order in
-                        NavigationLink(destination: OrderDetailView(order: order)) {
+//                        NavigationLink(
+//                            destination: OrderDetailView(order: order)
+//                        ) {
                             OrderCard(order: order)
-                        }
+//                        }
                     }
                     .listStyle(.plain)
                 }
@@ -30,18 +25,16 @@ struct OrdersView: View {
             .navigationTitle("Orders")
         }
         .onAppear {
-            if let email = Auth.auth().currentUser?.email {
-                print(email)
-                ordersViewModel.fetchOrders(forEmail: email)
+            if let user = Auth.auth().currentUser {
+                ordersViewModel.fetchOrders(forEmail: user.email ?? "")
             }
         }
     }
 }
 
-
 struct OrdersView_Previews: PreviewProvider {
     static var previews: some View {
         OrdersView()
+            .environmentObject(OrderViewModel())
     }
 }
-
