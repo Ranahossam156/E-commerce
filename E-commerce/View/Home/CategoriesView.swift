@@ -1,43 +1,51 @@
-import SwiftUI
 import Kingfisher
+import SwiftUI
 
 struct CategoriesView: View {
-    // MARK: – Data sources & state
+    // MARK: - Data sources & state
     @State private var categories: [Category] = []
     @State private var selectedCategory: Category?
     @State private var products: [BrandProduct] = []
-    
+    @State private var allProducts: [BrandProduct] = []
+
     @StateObject private var favoritesVM = FavoritesViewModel()
-    
+
     @State private var searchText: String = ""
     @State private var selectedProductType: String = "All"
     @State private var availableProductTypes: [String] = []
-    
+
+    @State private var showPriceFilter: Bool = false
+    @State private var priceRange: ClosedRange<Double> = 0...1000
+    @State private var selectedMaxPrice: Double = 1000
+
     @State private var viewUpdater = false
-    
+
     private let categoryVM = CategoryViewModel()
     @EnvironmentObject var currencyService: CurrencyService
 
-    // grid layout
     private let gridItems = [
         GridItem(.flexible(), spacing: 16),
-        GridItem(.flexible())
+        GridItem(.flexible()),
     ]
 
-    // products filtered by search & type
     private var filteredProducts: [BrandProduct] {
         products.filter { p in
-            let matchesSearch = searchText.isEmpty
-                || (p.title?.lowercased().contains(searchText.lowercased()) ?? false)
-            let matchesType = selectedProductType == "All"
+            let matchesSearch =
+                searchText.isEmpty
+                || (p.title?.lowercased().contains(searchText.lowercased())
+                    ?? false)
+            let matchesType =
+                selectedProductType == "All"
                 || p.productType == selectedProductType
-            return matchesSearch && matchesType
+            let price = Double(p.variants?.first?.price ?? "0") ?? 0
+            let matchesPrice = !showPriceFilter || price <= selectedMaxPrice
+            return matchesSearch && matchesType && matchesPrice
         }
     }
 
     var body: some View {
         VStack(spacing: 0) {
-            // MARK: – Search & filter bar
+            // MARK: - Search & filter bar
             HStack {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.gray)
@@ -52,55 +60,101 @@ struct CategoriesView: View {
                             Text(type.capitalizingFirstLetterOnly).tag(type)
                         }
                     }
+                    Button(action: {
+                        showPriceFilter.toggle()
+                    }) {
+                        Label(
+                            "Filter by Price",
+                            systemImage: "slider.horizontal.below.rectangle"
+                        )
+                    }
                 } label: {
                     Image(systemName: "slider.horizontal.3")
                         .foregroundColor(.gray)
                 }
             }
             .padding(8)
-            .background(RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.gray.opacity(0.3), lineWidth: 1))
+            .background(
+                RoundedRectangle(cornerRadius: 12).stroke(
+                    Color.gray.opacity(0.3),
+                    lineWidth: 1
+                )
+            )
             .padding(.horizontal)
             .padding(.top)
 
-            // MARK: – Category picker
+            // MARK: - Category picker
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
                     ForEach(categories) { category in
-                        let isSelected = category.id == selectedCategory?.id
-                        Button {
-                            selectedCategory = category
-                            if let cid = category.id {
-                                fetchProducts(for: cid)
-                            }
-                        } label: {
-                            Text((category.title ?? "Untitled").capitalizingFirstLetterOnly)
+                        if category.title?.lowercased() != "home page" {
+                            let isSelected = category.id == selectedCategory?.id
+                            Button {
+                                selectedCategory = category
+                                showPriceFilter = false
+                                selectedMaxPrice = priceRange.upperBound
+                                if let cid = category.id {
+                                    fetchProducts(for: cid)
+                                }
+                            } label: {
+                                Text(
+                                    (category.title ?? "Untitled")
+                                        .capitalizingFirstLetterOnly
+                                )
                                 .font(.system(size: 14, weight: .medium))
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 8)
-                                .background(isSelected ? Color("primaryColor") : Color.white)
+                                .background(
+                                    isSelected
+                                        ? Color("primaryColor") : Color.white
+                                )
                                 .foregroundColor(isSelected ? .white : .gray)
                                 .overlay(
-                                    RoundedRectangle(cornerRadius: 20)
-                                        .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+                                    RoundedRectangle(cornerRadius: 20).stroke(
+                                        Color.gray.opacity(0.4),
+                                        lineWidth: 1
+                                    )
                                 )
                                 .clipShape(RoundedRectangle(cornerRadius: 20))
+                            }
                         }
                     }
+
                 }
                 .padding(.horizontal, 16)
-                .padding(.vertical, 8)
+                .padding(.vertical, 16)
             }
 
+            // MARK: - Price slider
+            if showPriceFilter && priceRange.upperBound > priceRange.lowerBound
+            {
+                HStack {
+                    let symbol = currencyService.getCurrencySymbol(
+                        for: currencyService.selectedCurrency
+                    )
+                    Text(
+                        "\(symbol) \(String(format: "%.0f", currencyService.convert(price: priceRange.lowerBound)))"
+                    )
+                    Slider(value: $selectedMaxPrice, in: priceRange)
+                    Text(
+                        "\(symbol) \(String(format: "%.0f", currencyService.convert(price: selectedMaxPrice)))"
+                    )
+                }
+                .padding(.horizontal)
+                .padding(.bottom, 8)
+            }
 
-            // MARK: – Product grid
+            // MARK: - Product grid
             ScrollView {
                 LazyVGrid(columns: gridItems, spacing: 16) {
                     ForEach(filteredProducts, id: \.id) { product in
                         let pid = Int64(product.id ?? 0)
-                        let isFav = favoritesVM.favorites.contains { $0.id == pid }
-
-                        NavigationLink(destination: ProductInfoView(productID: Int(pid))) {
+                        let isFav = favoritesVM.favorites.contains {
+                            $0.id == pid
+                        }
+                        NavigationLink(
+                            destination: ProductInfoView(productID: Int(pid))
+                        ) {
                             ProductCardView(
                                 product: product,
                                 isFavorited: isFav,
@@ -118,14 +172,11 @@ struct CategoriesView: View {
         .navigationTitle("Categories")
         .onAppear {
             loadCategories()
-            // fetch initial favorites
-            Task { @MainActor in
-                await favoritesVM.fetchFavorites()
-            }
+            Task { @MainActor in await favoritesVM.fetchFavorites() }
         }
     }
 
-    // MARK: – Category loading
+    // MARK: - Load categories
     private func loadCategories() {
         categoryVM.getCategories { result, error in
             if let err = error {
@@ -134,45 +185,85 @@ struct CategoriesView: View {
             }
             guard let collections = result?.customCollections else { return }
             DispatchQueue.main.async {
-                self.categories = collections.map { col in
-                    var c = col
-                    // rename “Home page” → “All”
-                    if c.title == "Home page" { c.title = "All" }
-                    return c
+                var modified = collections.filter {
+                    $0.title?.lowercased() != "home page"
                 }
-                // select first & load its products
-                if let first = categories.first, let fid = first.id {
-                    selectedCategory = first
-                    fetchProducts(for: fid)
-                }
+                let allCategory = Category(id: 0, title: "All")
+                modified.insert(allCategory, at: 0)
+                self.categories = modified
+                self.selectedCategory = allCategory
+                fetchAllProducts()
             }
         }
     }
 
-    // MARK: – Products loading
+    private func fetchAllProducts() {
+        let categoryIds = categories.compactMap { $0.id }.filter { $0 != 0 }
+        var combined: [BrandProduct] = []
+        let group = DispatchGroup()
+
+        for cid in categoryIds {
+            group.enter()
+            CategoryProductNetworkService.fetchProducts(for: cid) {
+                response,
+                _ in
+                if let fetched = response?.products {
+                    combined.append(contentsOf: fetched)
+                }
+                group.leave()
+            }
+        }
+
+        group.notify(queue: .main) {
+            let unique = Dictionary(grouping: combined, by: { $0.id })
+                .compactMap { $0.value.first }
+            self.allProducts = unique
+            self.products = self.allProducts
+            let types = Set(self.allProducts.compactMap { $0.productType })
+            self.availableProductTypes = Array(types).sorted()
+            self.selectedProductType = "All"
+            let prices = self.allProducts.compactMap {
+                Double($0.variants?.first?.price ?? "0")
+            }
+            let min = prices.min() ?? 0
+            let max = prices.max() ?? 1000
+            self.priceRange = min...max
+            self.selectedMaxPrice = max
+        }
+    }
+
     private func fetchProducts(for collectionId: Int) {
-        CategoryProductNetworkService.fetchProducts(for: collectionId) { response, error in
+        if collectionId == 0 {
+            self.products = self.allProducts
+            return
+        }
+        CategoryProductNetworkService.fetchProducts(for: collectionId) {
+            response,
+            error in
             if let err = error {
                 print("Products error:", err.localizedDescription)
                 return
             }
             guard let fetched = response?.products else { return }
             let types = Set(fetched.compactMap { $0.productType })
-
+            let prices = fetched.compactMap {
+                Double($0.variants?.first?.price ?? "0")
+            }
+            let min = prices.min() ?? 0
+            let max = prices.max() ?? 1000
             DispatchQueue.main.async {
                 self.products = fetched
                 self.availableProductTypes = Array(types).sorted()
                 self.selectedProductType = "All"
+                self.priceRange = min...max
+                self.selectedMaxPrice = max
             }
         }
     }
 
-    // MARK: – Favorite toggle
     private func toggleFavorite(for product: BrandProduct) {
         guard let id = product.id else { return }
         let pid = Int64(id)
-
-        // build Firestore model
         let model = FavoriteProductModel(
             id: pid,
             title: product.title ?? "",
@@ -182,18 +273,13 @@ struct CategoriesView: View {
             sizes: [],
             imageURLs: [product.imageReponse?.src ?? ""]
         )
-
         Task { @MainActor in
             if favoritesVM.favorites.contains(where: { $0.id == pid }) {
                 await favoritesVM.removeFavorite(id: pid)
             } else {
                 await favoritesVM.addFavorite(model)
             }
-            // force view update
             viewUpdater.toggle()
         }
     }
 }
-
-// MARK: – Helpers
-
