@@ -10,6 +10,7 @@ struct E_commerceApp: App {
     @StateObject private var authViewModel = AuthViewModel()
     @StateObject private var userModel = UserModel()
     @StateObject private var settingsViewModel = SettingsViewModel()
+    @StateObject private var cartViewModel = CartViewModel.shared // Add CartViewModel
     
     
     init() {
@@ -35,6 +36,7 @@ struct E_commerceApp: App {
                 .environmentObject(orderViewModel)
                 .environmentObject(currencyService)
                 .environmentObject(settingsViewModel)
+                .environmentObject(cartViewModel)
         }
     }
 }

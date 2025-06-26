@@ -4,7 +4,7 @@ import SwiftUI
 
 struct CheckoutView: View {
     
-    @SwiftUI.ObservedObject var cartVM = CartViewModel.shared
+    @SwiftUI.EnvironmentObject var cartVM : CartViewModel
     @SwiftUI.State private var selectedMethod: PaymentMethod? = nil
     @SwiftUI.State private var pendingPaymentMethod: PaymentMethod? = nil
     @SwiftUI.State private var paymentStatus: String? = nil
@@ -13,12 +13,14 @@ struct CheckoutView: View {
     @SwiftUI.State private var promoCode: String = ""
     @SwiftUI.State private var discount: Double = 0.0
     @SwiftUI.Environment(\.dismiss) var dismiss
-    @SwiftUI.StateObject private var checkoutViewModel = CheckoutViewModel()
-    @SwiftUI.StateObject private var orderViewModel = OrderViewModel()
-    @SwiftUI.StateObject private var authViewModel = AuthViewModel()
-    @SwiftUI.StateObject private var settingsViewModel = SettingsViewModel()
+    
+    @SwiftUI.StateObject  var checkoutViewModel = CheckoutViewModel ()
+    @SwiftUI.EnvironmentObject  var orderViewModel : OrderViewModel
+    @SwiftUI.EnvironmentObject  var authViewModel : AuthViewModel
+    @SwiftUI.EnvironmentObject  var settingsViewModel : SettingsViewModel
     @SwiftUI.EnvironmentObject var userModel: UserModel
     @SwiftUI.EnvironmentObject var currencyService: CurrencyService
+    
     @SwiftUI.State private var isLoadingOrder = false
     @SwiftUI.State private var showSuccessAlert = false
     @SwiftUI.State private var discountType: String = "fixed_amount"
@@ -449,13 +451,18 @@ struct CheckoutView: View {
             total: discountedTotal
         ) { success, message in
             DispatchQueue.main.async {
+                print("PayPal Payment Success: \(success), Message: \(message ?? "No message")")
                 if success {
-                    paymentStatus = "PayPal payment successful!"
+                    print("Calling createOrder()")
+                    self.paymentStatus = "PayPal payment successful!"
+                    self.createOrder()
+                    cartVM.clearCart()
                 } else {
-                    paymentStatus = message ?? "PayPal payment failed"
-                    checkoutViewModel.showError = true
-                    checkoutViewModel.errorMessage = message ?? "Unknown error"
-                    isLoadingOrder = false
+                    print("PayPal Payment Failed: \(message ?? "Unknown error")")
+                    self.paymentStatus = message ?? "PayPal payment failed"
+                    self.checkoutViewModel.showError = true
+                    self.checkoutViewModel.errorMessage = message ?? "Unknown error"
+                    self.isLoadingOrder = false
                 }
             }
         }
@@ -468,6 +475,8 @@ struct CheckoutView: View {
         ) {
             DispatchQueue.main.async {
                 paymentStatus = "Cash on Delivery confirmed"
+                createOrder()
+
             }
         }
     }
@@ -506,9 +515,12 @@ struct CheckoutView: View {
             currency: currencyService.selectedCurrency
         )
         
-        cartVM.clearCart()
-        paymentStatus = "Order placed successfully!"
-        showSuccessAlert = true
+        
+                self.cartVM.clearCart()
+                self.paymentStatus = "Order placed successfully!"
+                self.showSuccessAlert = true
+            
+
         
     }
 }

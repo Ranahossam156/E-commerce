@@ -1,54 +1,23 @@
 import Foundation
 import Kingfisher
 import PassKit
-import PayPalCheckout
 import SwiftUI
 import FirebaseAuth
 
 enum PaymentMethod {
-//    case applePay
     case payPal
     case cod
 }
 
 struct CartView: View {
-    @SwiftUI.Environment(\.presentationMode) var presentationMode
-    @ObservedObject private var viewModel = CartViewModel.shared
-    @StateObject private var checkoutViewModel = CheckoutViewModel()
-    @StateObject private var orderViewModel = OrderViewModel()
-    @StateObject private var authViewModel = AuthViewModel()
-    @StateObject private var userModel = UserModel()
-    @StateObject private var settingsViewModel = SettingsViewModel()
-
-    @SwiftUI.State private var showDeleteAlert = false
-    @SwiftUI.State private var itemToDelete: CartItem?
-    @SwiftUI.State private var paymentStatus: String? = nil
-    @SwiftUI.State private var paymentSheetPresented = false
-    @SwiftUI.State private var showPaymentOptions = false
-    @SwiftUI.State private var selectedPaymentMethod: String? = nil
-    @SwiftUI.State private var pendingPaymentMethod: PaymentMethod?
-    @SwiftUI.State private var isLoadingOrder = false
-    @SwiftUI.State private var showOrderSuccessAlert = false
-    @SwiftUI.State private var navigateToCheckout = false
-    @EnvironmentObject var currencyService: CurrencyService
-
-
-    private var paymentRequest: PKPaymentRequest {
-        let request = PKPaymentRequest()
-        request.merchantIdentifier = "merchant.ITI.E-commerce"
-        request.countryCode = "US"
-        request.currencyCode = "USD"
-        request.supportedNetworks = [.visa, .masterCard, .amex, .discover]
-        request.merchantCapabilities = [.capability3DS, .capabilityCredit, .capabilityDebit]
-
-        request.paymentSummaryItems = [
-            PKPaymentSummaryItem(label: "Subtotal", amount: NSDecimalNumber(value: viewModel.total)),
-            PKPaymentSummaryItem(label: "Shipping", amount: 0.0),
-            PKPaymentSummaryItem(label: "Total", amount: NSDecimalNumber(value: viewModel.total))
-        ]
-
-        return request
-    }
+    @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject private var viewModel: CartViewModel
+    @EnvironmentObject private var orderViewModel: OrderViewModel
+    @EnvironmentObject private var currencyService: CurrencyService
+    @State private var showDeleteAlert = false
+    @State private var itemToDelete: CartItem?
+    @State private var paymentStatus: String? = nil
+    @State private var navigateToCheckout = false
 
     // MARK: - Subviews
     private var backgroundLayer: some View {
@@ -118,9 +87,9 @@ struct CartView: View {
         VStack(spacing: 0) {
             Divider()
             NavigationLink(destination: CheckoutView(), isActive: $navigateToCheckout) {
-                        EmptyView()
-                    }
-            var convertedTotal = currencyService.convert(price: viewModel.total)
+                EmptyView()
+            }
+            let convertedTotal = currencyService.convert(price: viewModel.total)
             CartFooterView(
                 total: convertedTotal,
                 checkoutAction: {
@@ -150,24 +119,6 @@ struct CartView: View {
             .position(x: UIScreen.main.bounds.width / 2, y: 50)
     }
     
-    private var loadingOverlay: some View {
-        Group {
-            if isLoadingOrder {
-                loadingView
-            }
-        }
-    }
-    
-    private var loadingView: some View {
-        ZStack {
-            Color.black.opacity(0.3).ignoresSafeArea()
-            ProgressView("Processing your order...")
-                .padding()
-                .background(Color.white)
-                .cornerRadius(10)
-        }
-    }
-    
     // MARK: - Main Body
     var body: some View {
         ZStack {
@@ -175,7 +126,6 @@ struct CartView: View {
             cartContentView
             footerOverlay
             paymentStatusOverlay
-            loadingOverlay
         }
         .navigationBarHidden(true)
         .alert("Remove Item", isPresented: $showDeleteAlert) {
@@ -188,48 +138,15 @@ struct CartView: View {
         } message: {
             Text("Are you sure you want to remove \(itemToDelete?.product.title ?? "this item") from your cart?")
         }
-      
-        .onChange(of: orderViewModel.order?.order) { newOrder in
-            if newOrder != nil {
-                showOrderSuccessAlert = true
-            }
-        }
-//        .onChange(of: showPaymentOptions) { isShowing in
-//            handlePaymentOptionChange(isShowing: isShowing)
-//        }
-        .alert("Order Confirmed", isPresented: $showOrderSuccessAlert) {
-            Button("OK") {
-                handleOrderConfirmation()
-            }
-        } message: {
-            Text("Your order has been placed successfully and will be delivered soon.")
-        }
-        .alert("Order Failed", isPresented: .constant(orderViewModel.errorMessage != nil)) {
-            Button("OK", role: .cancel) {
-                orderViewModel.errorMessage = nil
-            }
-        } message: {
-            Text(orderViewModel.errorMessage ?? "Something went wrong.")
-        }
+     
     }
-    
-
-    
-    private func handleOrderConfirmation() {
-        if let order = orderViewModel.order {
-            paymentStatus = "Order #\(order.order.id) confirmed"
-            viewModel.clearCart()
-        }
-        orderViewModel.order = nil
-        presentationMode.wrappedValue.dismiss()
-    }
-
-
+}
 
 struct CartView_Previews: PreviewProvider {
     static var previews: some View {
         CartView()
+            .environmentObject(CartViewModel.shared)
+            .environmentObject(OrderViewModel())
+            .environmentObject(CurrencyService())
     }
-}
-
 }
