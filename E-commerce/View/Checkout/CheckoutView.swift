@@ -279,7 +279,8 @@ struct CheckoutView: View {
                             
                             pendingPaymentMethod = selected
                             isLoadingOrder = true
-                            createOrder()
+                            handlePaymentOptionChange()
+                            //createOrder()
                         }) {
                             Text("Submit Order")
                                 .foregroundColor(.white)
@@ -356,7 +357,7 @@ struct CheckoutView: View {
             if selectedMethod != method {
                 selectedMethod = method
                 pendingPaymentMethod = method
-                handlePaymentOptionChange()
+                //handlePaymentOptionChange()
             }
         }) {
             HStack {
