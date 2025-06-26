@@ -110,6 +110,12 @@ struct SettingsView: View {
                 do {
                     try await userModel.loadUserDataFromFirebase()
                     print("User data loaded successfully: \(userModel.name), \(userModel.email)")
+                    if userModel.name.isEmpty, let email = Auth.auth().currentUser?.email {
+                        userModel.name = email.components(separatedBy: "@").first ?? ""
+                        print("Setting username to email prefix: \(userModel.name)")
+                        userModel.saveUserData()
+                        print("Username saved to userModel")
+                    }
                 } catch {
                     print("Failed to load user data: \(error.localizedDescription)")
                 }
@@ -128,7 +134,7 @@ struct UserInfoHeader: View {
             HStack(alignment: .center, spacing: 12) {
                 Image(systemName: "person.circle.fill")
                     .resizable()
-                    .frame(width: 64, height: 64)
+                    .frame(width: 50, height: 50)
                     .foregroundColor(.white)
                     .background(
                         LinearGradient(
@@ -188,9 +194,13 @@ struct EditProfileView: View {
     @State private var editedEmail: String
     @State private var errorMessage: String?
     
+    
     init() {
         let currentUser = Auth.auth().currentUser
-        _editedName = State(initialValue: currentUser?.displayName ?? "")
+        let email = currentUser?.email ?? ""
+        let defaultName = email.components(separatedBy: "@").first ?? "Guest"
+        
+        _editedName = State(initialValue: defaultName )
         _editedPhoneNumber = State(initialValue: "")
         _editedEmail = State(initialValue: currentUser?.email ?? "")
         print("EditProfileView init: name=\(_editedName.wrappedValue), email=\(_editedEmail.wrappedValue), phoneNumber=\(_editedPhoneNumber.wrappedValue)")
