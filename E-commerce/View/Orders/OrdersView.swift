@@ -13,11 +13,11 @@ struct OrdersView: View {
                     EmptyOrdersView()
                 } else {
                     List(ordersViewModel.userOrders) { order in
-//                        NavigationLink(
-//                            destination: OrderDetailView(order: order)
-//                        ) {
+                        NavigationLink(
+                            destination: OrderDetailView(order: order)
+                        ) {
                             OrderCard(order: order)
-//                        }
+                        }
                     }
                     .listStyle(.plain)
                 }

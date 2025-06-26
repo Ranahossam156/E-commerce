@@ -47,8 +47,12 @@ struct OrderCard: View {
 
     private func formattedDate(from date: Date?) -> String {
         guard let date = date else { return "N/A" }
-        return date.formatted(.dateTime.month().day().year())
+
+        let formatter = DateFormatter()
+        formatter.dateFormat = "d MMM yyyy 'at' h:mm a" 
+        return formatter.string(from: date)
     }
+
 
     private func formattedAmount() -> String {
         guard let raw = order.totalPrice, let amount = Double(raw) else {

@@ -47,7 +47,7 @@ struct OrderDetailView: View {
                         .bold()
                         .foregroundColor(.green)
                 }
-                .padding(.top, 16)
+                .padding(.top, 4)
             }
             .padding(20)
         }
