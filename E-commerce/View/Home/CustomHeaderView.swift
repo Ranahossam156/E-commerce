@@ -15,13 +15,13 @@ struct CustomHeaderView: View {
             HStack {
                 // MARK: - User Info
                 HStack(spacing: 12) {
-                    Image("user_avatar")
+                    Image("logo")
                         .resizable()
-                        .frame(width: 50, height: 50)
-                        .clipShape(Circle())
+                        .frame(width: 60, height: 60)
+                       
                     
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Hi, \(userModel.name.isEmpty ? "User" : userModel.name)")
+                    VStack(alignment: .leading) {
+                        Text("Hi, \(userModel.name.isEmpty ? "Guest" : userModel.name)")
                             .font(.headline)
                             .fontWeight(.semibold)
                             .foregroundColor(.black)
