@@ -38,7 +38,7 @@ struct OrderCard: View {
                     .foregroundColor(.secondary)
                 Text(formattedAmount())
                     .bold()
-                    .foregroundColor(.green)
+                    .foregroundColor(Color("primaryColor"))
             }
             .font(.subheadline)
         }
