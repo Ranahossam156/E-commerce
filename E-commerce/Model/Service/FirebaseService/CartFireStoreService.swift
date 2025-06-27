@@ -32,8 +32,11 @@ class CartFireStoreService : CartServiceProtocol {
             try db.collection("carts").document(userId).collection("items").document(cartItem.id.uuidString).setData(from: cartItem) { error in
                 if let error = error {
                     completion(.failure(error))
+                    print("saved cart item")
+
                 } else {
                     completion(.success(()))
+                    print("saved cart item")
                 }
             }
         } catch {
