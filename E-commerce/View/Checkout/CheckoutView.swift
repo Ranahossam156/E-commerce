@@ -421,51 +421,102 @@ struct CheckoutView: View {
         .buttonStyle(PlainButtonStyle())
     }
     
-    
     private func applyPromoCode() {
         let sanitizedCode = promoCode.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         
+        // Reset previous discount
+        discountValue = 0
+        promoStatus = nil
+        
         PriceRuleNetworkService.fetchDataFromAPI { rulesResponse, error in
-            guard let rules = rulesResponse?.priceRules else {
-                DispatchQueue.main.async {
-                    promoStatus = "Failed to load discounts."
+            DispatchQueue.main.async {
+                guard let rules = rulesResponse?.priceRules else {
+                    self.promoStatus = "Failed to load discounts. Please try again."
+                    return
                 }
-                return
-            }
-            
-            var matchFound = false
-            let group = DispatchGroup()
-            
-            for rule in rules {
-                group.enter()
-                PriceRuleNetworkService.fetchDiscountCodes(for: rule.id) { codes, error in
-                    if let matchedCode = codes?.first(where: { $0.code.lowercased() == sanitizedCode }) {
-                        let rawValue = Double(rule.value) ?? 0
-                        print(rule.value)
-                        DispatchQueue.main.async {
-                            matchFound = true
-                            if rule.valueType == "percentage" {
-                                discountValue = cartVM.total * abs(rawValue) / 100.0
-                                print(discount)
-                            } else {
-                                discountValue = abs(rawValue)
-                                discountType = "fixed_amount"
-                            }
-                            promoStatus = "Promo applied successfully."
+                
+                // First check if the code exists in any price rule
+                let group = DispatchGroup()
+                var matchingRule: PriceRule?
+                
+                for rule in rules {
+                    group.enter()
+                    
+                    PriceRuleNetworkService.fetchDiscountCodes(for: rule.id) { codes, error in
+                        if let codes = codes, codes.contains(where: { $0.code.lowercased() == sanitizedCode }) {
+                            matchingRule = rule
                         }
+                        group.leave()
                     }
-                    group.leave()
                 }
-            }
-            
-            group.notify(queue: .main) {
-                if !matchFound {
-                    discount = 0
-                    promoStatus = "Oops! Coupon code invalid"
+                
+                group.notify(queue: .main) {
+                    if let rule = matchingRule {
+                        // Apply the discount based on the rule's configuration
+                        let discountAmount = Double(rule.value) ?? 0
+                        
+                        if rule.valueType == "percentage" {
+                            // Percentage discount (e.g., 20% off)
+                            self.discountValue = self.cartVM.total * abs(discountAmount) / 100.0
+                            self.discountType = "percentage"
+                        } else {
+                            // Fixed amount discount (e.g., $10 off)
+                            self.discountValue = abs(discountAmount)
+                            self.discountType = "fixed_amount"
+                        }
+                        
+                        self.promoStatus = "Discount applied successfully!"
+                    } else {
+                        self.promoStatus = "Invalid coupon code"
+                    }
                 }
             }
         }
     }
+//    private func applyPromoCode() {
+//        let sanitizedCode = promoCode.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+//        
+//        PriceRuleNetworkService.fetchDataFromAPI { rulesResponse, error in
+//            guard let rules = rulesResponse?.priceRules else {
+//                DispatchQueue.main.async {
+//                    promoStatus = "Failed to load discounts."
+//                }
+//                return
+//            }
+//            
+//            var matchFound = false
+//            let group = DispatchGroup()
+//            
+//            for rule in rules {
+//                group.enter()
+//                PriceRuleNetworkService.fetchDiscountCodes(for: rule.id) { codes, error in
+//                    if let matchedCode = codes?.first(where: { $0.code.lowercased() == sanitizedCode }) {
+//                        let rawValue = Double(rule.value) ?? 0
+//                        print(rule.value)
+//                        DispatchQueue.main.async {
+//                            matchFound = true
+//                            if rule.valueType == "percentage" {
+//                                discountValue = cartVM.total * abs(rawValue) / 100.0
+//                                print(discount)
+//                            } else {
+//                                discountValue = abs(rawValue)
+//                                discountType = "fixed_amount"
+//                            }
+//                            promoStatus = "Promo applied successfully."
+//                        }
+//                    }
+//                    group.leave()
+//                }
+//            }
+//            
+//            group.notify(queue: .main) {
+//                if !matchFound {
+//                    discount = 0
+//                    promoStatus = "Oops! Coupon code invalid"
+//                }
+//            }
+//        }
+//    }
     
     private func handlePaymentOptionChange() {
         guard let method = pendingPaymentMethod else { return }
