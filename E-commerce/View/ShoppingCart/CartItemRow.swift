@@ -6,7 +6,8 @@ struct CartItemRow: View {
     let updateQuantity: (Int) -> Void
     let removeItem: () -> Void
     @EnvironmentObject var currencyService: CurrencyService
-    
+    @State private var showStockAlert: Bool = false // State for showing alert
+
     var body: some View {
         HStack(spacing: 12) {
             // Product image
@@ -42,6 +43,9 @@ struct CartItemRow: View {
                             .font(.system(size: 12))
                             .foregroundColor(.gray)
                     }
+                    Text("Stock: \(item.selectedVariant.inventoryQuantity)")
+                                            .font(.system(size: 12))
+                                            .foregroundColor(item.selectedVariant.inventoryQuantity > 0 ? .gray : .red)
                 }
                 
                 // Quantity controls
@@ -64,7 +68,11 @@ struct CartItemRow: View {
                         .font(.system(size: 14, weight: .medium))
                     
                     Button(action: {
-                        updateQuantity(item.quantity + 1)
+                        if item.quantity < item.selectedVariant.inventoryQuantity {
+                            updateQuantity(item.quantity + 1)
+                        } else {
+                            showStockAlert = true // Show alert if inventory limit reached
+                        }
                     }) {
                         Image(systemName: "plus")
                             .font(.system(size: 12, weight: .bold))
@@ -96,6 +104,13 @@ struct CartItemRow: View {
                 }
                 .buttonStyle(PlainButtonStyle())
             }
+        }
+        .alert(isPresented: $showStockAlert) {
+            Alert(
+                title: Text("Out of Stock"),
+                message: Text("Cannot add more items. Only \(item.selectedVariant.inventoryQuantity) in stock."),
+                dismissButton: .default(Text("OK"))
+            )
         }
     }
 }

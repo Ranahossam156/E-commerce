@@ -134,7 +134,7 @@ struct UserInfoHeader: View {
             HStack(alignment: .center, spacing: 12) {
                 Image(systemName: "person.circle.fill")
                     .resizable()
-                    .frame(width: 50, height: 50)
+                    .frame(width: 40, height: 40)
                     .foregroundColor(.white)
                     .background(
                         LinearGradient(
@@ -306,13 +306,13 @@ struct EditProfileView: View {
             .navigationTitle("Edit Profile")
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {
-                print("Auth email: \(Auth.auth().currentUser?.email ?? "None"), UserModel email: \(userModel.email)")
+               // print("Auth email: \(Auth.auth().currentUser?.email ?? "None"), UserModel email: \(userModel.email)")
                 
                 editedName = userModel.name.isEmpty ? editedName : userModel.name
                 editedPhoneNumber = userModel.phoneNumber.isEmpty ? editedPhoneNumber : userModel.phoneNumber
                 editedEmail = userModel.email.isEmpty ? editedEmail : userModel.email
                 
-                print("EditProfileView onAppear: name=\(editedName), email=\(editedEmail), phoneNumber=\(editedPhoneNumber)")
+                //print("EditProfileView onAppear: name=\(editedName), email=\(editedEmail), phoneNumber=\(editedPhoneNumber)")
             }
         }
     }
@@ -431,7 +431,7 @@ struct MapSubView: View {
             
         }
         .onAppear {
-            print("MapSubView appeared, setting region to Egypt")
+            //print("MapSubView appeared, setting region to Egypt")
         }
     }
 }
