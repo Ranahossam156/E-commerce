@@ -262,7 +262,7 @@ struct CheckoutView: View {
                         
                         // Submit Order
                         Button(action: {
-
+                            
                             guard let selected = selectedMethod else {
                                 paymentStatus =
                                 "Please select a payment method."
@@ -305,7 +305,7 @@ struct CheckoutView: View {
                         ) {
                             showSuccessAlert = false
                             navigateToHome = true
-                            dismiss()
+                            // dismiss()
                         }
                         .frame(width: 200, height: 200)
                         .background(Color.white)
@@ -324,9 +324,38 @@ struct CheckoutView: View {
                         .cornerRadius(12)
                         .shadow(radius: 10)
                 }
+          
+                NavigationLink(
+                                 destination: MainTabView()
+                                 
+                                    .navigationBarBackButtonHidden(true)
+                                     .environmentObject(cartVM)
+                                     .environmentObject(orderViewModel)
+                                     .environmentObject(authViewModel)
+                                     .environmentObject(settingsViewModel)
+                                     .environmentObject(userModel)
+                                     .environmentObject(currencyService),
+                                 isActive: $navigateToHome,
+                                 label: { EmptyView() }
+                             )
+                
             }
+            
             .navigationTitle("Payment")
             .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {
+                        dismiss()
+                    }) {
+                        Image(systemName: "chevron.left")
+                            .foregroundColor(.black)
+                            .imageScale(.large)
+                    }
+                }
+            }
+            
             .alert(
                 "Missing Shipping Address",
                 isPresented: $showMissingAddressAlert
@@ -338,12 +367,14 @@ struct CheckoutView: View {
                 )
             }
             .alert("Missing Payment Method", isPresented: $showMissingPaymentMethodAlert) {
-                            Button("OK", role: .cancel) {}
-                        } message: {
-                            Text("Please select a payment method before placing the order.")
-                        }
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("Please select a payment method before placing the order.")
+            }
         }
     }
+    
+  
     
     private func paymentMethodCard(
         method: PaymentMethod,
@@ -392,49 +423,49 @@ struct CheckoutView: View {
     
     
     private func applyPromoCode() {
-            let sanitizedCode = promoCode.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let sanitizedCode = promoCode.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        
+        PriceRuleNetworkService.fetchDataFromAPI { rulesResponse, error in
+            guard let rules = rulesResponse?.priceRules else {
+                DispatchQueue.main.async {
+                    promoStatus = "Failed to load discounts."
+                }
+                return
+            }
             
-            PriceRuleNetworkService.fetchDataFromAPI { rulesResponse, error in
-                guard let rules = rulesResponse?.priceRules else {
-                    DispatchQueue.main.async {
-                        promoStatus = "Failed to load discounts."
-                    }
-                    return
-                }
-                
-                var matchFound = false
-                let group = DispatchGroup()
-                
-                for rule in rules {
-                    group.enter()
-                    PriceRuleNetworkService.fetchDiscountCodes(for: rule.id) { codes, error in
-                        if let matchedCode = codes?.first(where: { $0.code.lowercased() == sanitizedCode }) {
-                            let rawValue = Double(rule.value) ?? 0
-                            print(rule.value)
-                            DispatchQueue.main.async {
-                                matchFound = true
-                                if rule.valueType == "percentage" {
-                                    discountValue = cartVM.total * abs(rawValue) / 100.0
-                                    print(discount)
-                                } else {
-                                    discountValue = abs(rawValue)
-                                    discountType = "fixed_amount"
-                                }
-                                promoStatus = "Promo applied successfully."
+            var matchFound = false
+            let group = DispatchGroup()
+            
+            for rule in rules {
+                group.enter()
+                PriceRuleNetworkService.fetchDiscountCodes(for: rule.id) { codes, error in
+                    if let matchedCode = codes?.first(where: { $0.code.lowercased() == sanitizedCode }) {
+                        let rawValue = Double(rule.value) ?? 0
+                        print(rule.value)
+                        DispatchQueue.main.async {
+                            matchFound = true
+                            if rule.valueType == "percentage" {
+                                discountValue = cartVM.total * abs(rawValue) / 100.0
+                                print(discount)
+                            } else {
+                                discountValue = abs(rawValue)
+                                discountType = "fixed_amount"
                             }
+                            promoStatus = "Promo applied successfully."
                         }
-                        group.leave()
                     }
+                    group.leave()
                 }
-                
-                group.notify(queue: .main) {
-                    if !matchFound {
-                        discount = 0
-                        promoStatus = "Oops! Coupon code invalid"
-                    }
+            }
+            
+            group.notify(queue: .main) {
+                if !matchFound {
+                    discount = 0
+                    promoStatus = "Oops! Coupon code invalid"
                 }
             }
         }
+    }
     
     private func handlePaymentOptionChange() {
         guard let method = pendingPaymentMethod else { return }
@@ -457,7 +488,7 @@ struct CheckoutView: View {
                     print("Calling createOrder()")
                     self.paymentStatus = "PayPal payment successful!"
                     self.createOrder()
- 
+                    
                 } else {
                     print("PayPal Payment Failed: \(message ?? "Unknown error")")
                     self.paymentStatus = message ?? "PayPal payment failed"
@@ -477,7 +508,7 @@ struct CheckoutView: View {
             DispatchQueue.main.async {
                 paymentStatus = "Cash on Delivery confirmed"
                 createOrder()
-
+                
             }
         }
     }
@@ -517,11 +548,11 @@ struct CheckoutView: View {
         )
         
         
-//                self.cartVM.clearCart()
-                self.paymentStatus = "Order placed successfully!"
-                self.showSuccessAlert = true
-            
-
+        //                self.cartVM.clearCart()
+        self.paymentStatus = "Order placed successfully!"
+        self.showSuccessAlert = true
+        
+        
         
     }
 }
