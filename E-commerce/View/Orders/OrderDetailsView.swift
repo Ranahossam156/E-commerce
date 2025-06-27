@@ -1,16 +1,9 @@
-//
-//  Order.swift
-//  E-commerce
-//
-//  Created by MacBook on 10/06/2025.
-//
-
 import SwiftUI
 
-// MARK: - Order Detail View
 struct OrderDetailView: View {
     let order: OrderModel
-    
+    @EnvironmentObject var currencyService: CurrencyService
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
@@ -18,36 +11,38 @@ struct OrderDetailView: View {
                     Text("Order \(order.orderNumber)")
                         .font(.title2)
                         .bold()
-                    
+
                     Text([
                         order.shippingAddress?.address1,
                         order.shippingAddress?.city,
                         order.shippingAddress?.zip,
                         order.shippingAddress?.countryCode?.rawValue
-                    ].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: ", "))
+                    ]
+                    .compactMap { $0 }
+                    .filter { !$0.isEmpty }
+                    .joined(separator: ", "))
                     .font(.subheadline)
                     .foregroundColor(.secondary)
-                    
+
                     Text("\(formattedDate(from: order.createdAt))")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
-                .padding(.bottom, 8)
-                
-                ForEach(order.lineItems!) { item in
+
+                ForEach(order.lineItems ?? []) { item in
                     OrderItemView(item: item)
                 }
-                
+
                 HStack {
                     Text("Total:")
                         .font(.headline)
                     Spacer()
-                    Text(order.totalPrice ?? "")
+                    Text(formattedTotalPrice())
                         .font(.title2)
                         .bold()
-                        .foregroundColor(.green)
+                        .foregroundColor(Color("primaryColor"))
                 }
-                .padding(.top, 16)
+//                .padding(.top, 4)
             }
             .padding(20)
         }
@@ -55,7 +50,23 @@ struct OrderDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .background(Color(.systemGroupedBackground))
     }
+
+    private func formattedTotalPrice() -> String {
+        guard let raw = order.totalPrice,
+              let amount = Double(raw) else {
+            return "N/A"
+        }
+        let symbol = currencyService.getCurrencySymbol(for: currencyService.selectedCurrency)
+        let converted = currencyService.convert(price: amount)
+        return "\(symbol) \(String(format: "%.2f", converted))"
+    }
+
+    private func formattedDate(from date: Date?) -> String {
+        guard let date = date else { return "N/A" }
+        return date.formatted(.dateTime.month().day().year().hour().minute())
+    }
 }
+
 
 struct OrderItemView: View {
     let item: LineItem

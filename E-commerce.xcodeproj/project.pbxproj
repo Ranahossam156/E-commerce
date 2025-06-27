@@ -110,6 +110,7 @@
 		E1FFCD6C2E00011A007B3641 /* MainTabView 2.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FFCD6B2E00011A007B3641 /* MainTabView 2.swift */; };
 		FA1D4E002E06DE8100719988 /* EmptyOrdersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1D4DFF2E06DE8100719988 /* EmptyOrdersView.swift */; };
 		FA288BA42DF5D10B00EABD17 /* HelperExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA288BA32DF5D10B00EABD17 /* HelperExtension.swift */; };
+		FA2E45892E0CB30500FD6E81 /* OrderFirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2E45882E0CB30500FD6E81 /* OrderFirestoreService.swift */; };
 		FA524F372DEB17FB008FEA88 /* CategoryResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA524F362DEB17FB008FEA88 /* CategoryResponse.swift */; };
 		FA524F3B2DEB1920008FEA88 /* CategoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA524F3A2DEB1920008FEA88 /* CategoryService.swift */; };
 		FA524F3D2DEB1982008FEA88 /* CategoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA524F3C2DEB1982008FEA88 /* CategoryViewModel.swift */; };
@@ -149,6 +150,7 @@
 		FAD4C5CF2E06124500163A55 /* CategoryServiceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD4C5CE2E06124500163A55 /* CategoryServiceTest.swift */; };
 		FAD4C5D22E0613CF00163A55 /* MockOrderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD4C5D12E0613CF00163A55 /* MockOrderService.swift */; };
 		FAD4C5D42E06147500163A55 /* OrderServiceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD4C5D32E06147500163A55 /* OrderServiceTest.swift */; };
+		FAD555732E0DD09C003DD67F /* CouponView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD555722E0DD09C003DD67F /* CouponView.swift */; };
 		FAE411262E0099E200EDB731 /* CheckoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE411252E0099E200EDB731 /* CheckoutView.swift */; };
 		FAE4112A2E00B5CD00EDB731 /* order-success.json in Resources */ = {isa = PBXBuildFile; fileRef = FAE411292E00B5CD00EDB731 /* order-success.json */; };
 		FAF0A1AC2E03473B0077708F /* BrandCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF0A1AB2E03473B0077708F /* BrandCardView.swift */; };
@@ -254,6 +256,7 @@
 		E1FFCD6B2E00011A007B3641 /* MainTabView 2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainTabView 2.swift"; sourceTree = "<group>"; };
 		FA1D4DFF2E06DE8100719988 /* EmptyOrdersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyOrdersView.swift; sourceTree = "<group>"; };
 		FA288BA32DF5D10B00EABD17 /* HelperExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelperExtension.swift; sourceTree = "<group>"; };
+		FA2E45882E0CB30500FD6E81 /* OrderFirestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderFirestoreService.swift; sourceTree = "<group>"; };
 		FA524F362DEB17FB008FEA88 /* CategoryResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryResponse.swift; sourceTree = "<group>"; };
 		FA524F3A2DEB1920008FEA88 /* CategoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryService.swift; sourceTree = "<group>"; };
 		FA524F3C2DEB1982008FEA88 /* CategoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewModel.swift; sourceTree = "<group>"; };
@@ -294,6 +297,7 @@
 		FAD4C5CE2E06124500163A55 /* CategoryServiceTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryServiceTest.swift; sourceTree = "<group>"; };
 		FAD4C5D12E0613CF00163A55 /* MockOrderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockOrderService.swift; sourceTree = "<group>"; };
 		FAD4C5D32E06147500163A55 /* OrderServiceTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderServiceTest.swift; sourceTree = "<group>"; };
+		FAD555722E0DD09C003DD67F /* CouponView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouponView.swift; sourceTree = "<group>"; };
 		FAE411252E0099E200EDB731 /* CheckoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckoutView.swift; sourceTree = "<group>"; };
 		FAE411292E00B5CD00EDB731 /* order-success.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "order-success.json"; sourceTree = "<group>"; };
 		FAF0A1AB2E03473B0077708F /* BrandCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrandCardView.swift; sourceTree = "<group>"; };
@@ -716,6 +720,7 @@
 			isa = PBXGroup;
 			children = (
 				E1FFCD612DFFFE07007B3641 /* CartFireStoreService.swift */,
+				FA2E45882E0CB30500FD6E81 /* OrderFirestoreService.swift */,
 				E1FFCD622DFFFE07007B3641 /* FirestoreService.swift */,
 				224A2E432DECD77200233331 /* FirebaseAuthService.swift */,
 				E18540E12E04339800FAB1D7 /* CartServiceProtocol.swift */,
@@ -758,6 +763,7 @@
 				FAC88A222DE8DD350041EF40 /* PromoCarousel.swift */,
 				E1FFCD6B2E00011A007B3641 /* MainTabView 2.swift */,
 				FAF0A1AB2E03473B0077708F /* BrandCardView.swift */,
+				FAD555722E0DD09C003DD67F /* CouponView.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -1031,6 +1037,7 @@
 				224A2E422DECD2AD00233331 /* AuthViewModel.swift in Sources */,
 				FAC8895E2DE8BC780041EF40 /* BrandService.swift in Sources */,
 				FAD4C5072E05ED3400163A55 /* CheckoutItemRow.swift in Sources */,
+				FA2E45892E0CB30500FD6E81 /* OrderFirestoreService.swift in Sources */,
 				FA9AE0142DF7923F0011B599 /* OrdersView.swift in Sources */,
 				227C3BC72DE60518006B0E52 /* VariantsResponse.swift in Sources */,
 				FA1D4E002E06DE8100719988 /* EmptyOrdersView.swift in Sources */,
@@ -1067,6 +1074,7 @@
 				FA5CA25E2DF78BAC00468F98 /* OrderCard.swift in Sources */,
 				E17102F42DE4EBCB00C511CC /* CartItemRow.swift in Sources */,
 				E18540E22E04339800FAB1D7 /* CartServiceProtocol.swift in Sources */,
+				FAD555732E0DD09C003DD67F /* CouponView.swift in Sources */,
 				22FC15C72DF0D4A1000FD95C /* FavoritesModel+CoreDataProperties.swift in Sources */,
 				FA805B7A2DE898BB00853AA4 /* TabView.swift in Sources */,
 				E13937C92DF96BAD004983BB /* PayPalCoordinator.swift in Sources */,

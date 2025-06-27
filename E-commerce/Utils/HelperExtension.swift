@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 extension String {
     var capitalizingFirstLetterOnly: String {
@@ -46,3 +47,32 @@ func maskedEmail(_ email: String) -> String {
     return "\(visiblePrefix)\(masked)@\(domain)"
 }
 
+extension View {
+    func shimmer(active: Bool = true) -> some View {
+        self
+            .redacted(reason: active ? .placeholder : [])
+            .overlay(
+                GeometryReader { geometry in
+                    if active {
+                        LinearGradient(
+                            gradient: Gradient(colors: [
+                                Color.white.opacity(0.4),
+                                Color.white.opacity(0.9),
+                                Color.white.opacity(0.4)
+                            ]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                        .rotationEffect(.degrees(20))
+                        .offset(x: -geometry.size.width)
+                        .frame(width: geometry.size.width * 2)
+                        .animation(
+                            .linear(duration: 1.2).repeatForever(autoreverses: false),
+                            value: UUID()
+                        )
+                        .mask(self)
+                    }
+                }
+            )
+    }
+}
