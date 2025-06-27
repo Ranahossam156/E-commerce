@@ -30,22 +30,23 @@ struct CartItemRow: View {
                     .font(.system(size: 14, weight: .medium))
                     .lineLimit(1)
                 
-                // Show variant details (size/color)
-                HStack(spacing: 8) {
+                // Show variant details (size/color) and stock
+                VStack(alignment: .leading, spacing: 4) {
                     if !item.size.isEmpty {
                         Text("Size: \(item.size)")
-                            .font(.system(size: 12))
+                            .font(.system(size: 14))
                             .foregroundColor(.gray)
                     }
                     
                     if !item.color.isEmpty && item.color != item.size {
                         Text("Color: \(item.color)")
-                            .font(.system(size: 12))
+                            .font(.system(size: 14))
                             .foregroundColor(.gray)
                     }
+                    
                     Text("Stock: \(item.selectedVariant.inventoryQuantity)")
-                                            .font(.system(size: 12))
-                                            .foregroundColor(item.selectedVariant.inventoryQuantity > 0 ? .gray : .red)
+                        .font(.system(size: 14))
+                        .foregroundColor(item.selectedVariant.inventoryQuantity > 0 ? .gray : .red)
                 }
                 
                 // Quantity controls
@@ -68,7 +69,7 @@ struct CartItemRow: View {
                         .font(.system(size: 14, weight: .medium))
                     
                     Button(action: {
-                        if item.quantity < item.selectedVariant.inventoryQuantity {
+                        if item.quantity <= item.selectedVariant.inventoryQuantity {
                             updateQuantity(item.quantity + 1)
                         } else {
                             showStockAlert = true // Show alert if inventory limit reached
@@ -114,3 +115,4 @@ struct CartItemRow: View {
         }
     }
 }
+
