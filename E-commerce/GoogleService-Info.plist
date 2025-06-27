@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>867661230508-tb1hdrmpl84t1fi71s66uas423nu1p73.apps.googleusercontent.com</string>
+	<string>640302002694-glrqn1e4blg8ccc9jkrdpt41iv18m70e.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.867661230508-tb1hdrmpl84t1fi71s66uas423nu1p73</string>
+	<string>com.googleusercontent.apps.640302002694-glrqn1e4blg8ccc9jkrdpt41iv18m70e</string>
 	<key>API_KEY</key>
-	<string>AIzaSyDXPr5OP7ggfw12yFFjkl0t2CoHSwH5Nls</string>
+	<string>AIzaSyCmZx9-C5PKcihiHHVBp8W0iA0IiCxy3Qs</string>
 	<key>GCM_SENDER_ID</key>
-	<string>867661230508</string>
+	<string>640302002694</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>ITI.E-commerce</string>
 	<key>PROJECT_ID</key>
-	<string>ecommerce-c50a7</string>
+	<string>e-commerce2-7a7cd</string>
 	<key>STORAGE_BUCKET</key>
-	<string>ecommerce-c50a7.firebasestorage.app</string>
+	<string>e-commerce2-7a7cd.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:867661230508:ios:651804c288cd24081e4a09</string>
+	<string>1:640302002694:ios:4486cf86ed8c573e358987</string>
 </dict>
 </plist>
