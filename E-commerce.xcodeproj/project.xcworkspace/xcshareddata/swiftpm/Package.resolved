@@ -1,4 +1,5 @@
 {
+  "originHash" : "80796c2a7a3b7e226c0dbb5bbd6b40a11ef90a1db52b360ab454683f50cc6c8e",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -122,8 +123,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/onevcat/Kingfisher.git",
       "state" : {
-        "revision" : "de7c12c90fadf006cff6e6a47064df06d429d8a9",
-        "version" : "6.0.0"
+        "revision" : "010a06c4387cea2d13606222b6c08e0454e6dd2d",
+        "version" : "8.3.3"
       }
     },
     {
@@ -156,7 +157,7 @@
     {
       "identity" : "paypal-ios",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/paypal/paypal-ios",
+      "location" : "https://github.com/paypal/paypal-ios.git",
       "state" : {
         "revision" : "924418c4dafbcbd820c35c02c13acdda2d9a820e",
         "version" : "0.0.11"
@@ -199,5 +200,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

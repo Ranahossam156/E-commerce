@@ -1262,6 +1262,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "E-commerce/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Shoppigo;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1293,6 +1295,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "E-commerce/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Shoppigo;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1461,7 +1465,7 @@
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
 			requirement = {
 				kind = exactVersion;
-				version = 6.0.0;
+				version = 8.3.3;
 			};
 		};
 		227070392E0D5E3B003182DC /* XCRemoteSwiftPackageReference "paypal-ios" */ = {

@@ -60,6 +60,33 @@ struct OrderModel: Codable, Identifiable {
         case shippingLines = "shipping_lines"
         case refunds
     }
+    
+    init() {
+        self.id = 0
+        self.adminGraphqlAPIID = nil
+        self.orderNumber = 0
+        self.name = nil
+        self.createdAt = nil
+        self.processedAt = nil
+        self.financialStatus = nil
+        self.currency = nil
+        self.totalPrice = nil
+        self.totalDiscounts = nil
+        self.subtotalPrice = nil
+        self.email = nil
+        self.contactEmail = nil
+        self.confirmationNumber = nil
+        self.confirmed = nil
+        self.lineItems = nil
+        self.customer = nil
+        self.shippingAddress = nil
+        self.billingAddress = nil
+        self.discountApplications = nil
+        self.fulfillments = nil
+        self.shippingLines = nil
+        self.refunds = nil
+    }
+
 }
 
 struct LineItem: Codable, Identifiable {

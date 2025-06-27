@@ -2,17 +2,17 @@ import SwiftUI
 import Kingfisher
 
 struct BrandProductsView: View {
-    // 1️⃣ Your brand’s product list & search state
     @State private var products: [BrandProduct] = []
     @State private var searchText: String = ""
     @State private var viewUpdater = false
     @State private var didLoadData = false
-    // 2️⃣ Firestore-backed favorites VM
+    @State private var isLoading = true
+
     @StateObject private var favoritesVM = FavoritesViewModel()
     @EnvironmentObject var currencyService: CurrencyService
     @Environment(\.dismiss) private var dismiss
-
     @StateObject private var viewModel = ProductsViewModel()
+
     let vendor: String
 
     let columns = [
@@ -30,7 +30,6 @@ struct BrandProductsView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                // Search bar
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.gray)
@@ -44,21 +43,27 @@ struct BrandProductsView: View {
                 .padding(.horizontal)
                 .padding(.top, 16)
 
-                // Product grid
                 LazyVGrid(columns: columns, spacing: 20) {
-                    ForEach(filteredProducts) { product in
-                        let id64 = Int64(product.id ?? 0)
-                        let isFav = favoritesVM.favorites.contains { $0.id == id64 }
-
-                        NavigationLink(destination: ProductInfoView(productID: Int(product.id ?? 0))) {
-                            ProductCardView(
-                                product: product,
-                                isFavorited: isFav,
-                                onHeartTap: { toggleFavorite(for: product) },
-                                currencyService: currencyService
-                            )
+                    if isLoading {
+                        ForEach(0..<6, id: \.self) { _ in
+                            ProductCardView.placeholder()
+                                .shimmer()
                         }
-                        .buttonStyle(PlainButtonStyle())
+                    } else {
+                        ForEach(filteredProducts) { product in
+                            let id64 = Int64(product.id ?? 0)
+                            let isFav = favoritesVM.favorites.contains { $0.id == id64 }
+
+                            NavigationLink(destination: ProductInfoView(productID: Int(product.id ?? 0))) {
+                                ProductCardView(
+                                    product: product,
+                                    isFavorited: isFav,
+                                    onHeartTap: { toggleFavorite(for: product) },
+                                    currencyService: currencyService
+                                )
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
                     }
                 }
                 .padding()
@@ -66,33 +71,29 @@ struct BrandProductsView: View {
             }
             .navigationTitle(vendor)
             .navigationBarBackButtonHidden(true)
-             .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-             Button(action: {
-             dismiss()
-            }) {
-            Image(systemName: "chevron.left")
-             .foregroundColor(.black)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {
+                        dismiss()
+                    }) {
+                        Image(systemName: "chevron.left")
+                            .foregroundColor(.black)
+                    }
+                }
             }
-           }
-         }
             .onAppear {
                 if !didLoadData {
                     getBrandProducts()
                     didLoadData = true
                 }
-                
+
                 Task { @MainActor in
                     await favoritesVM.fetchFavorites()
                 }
             }
-            
-            
         }
-        
     }
 
-    // MARK: – Data loading
     private func getBrandProducts() {
         viewModel.getBrandProducts(vendor: vendor) { result, error in
             if let error = error {
@@ -100,12 +101,12 @@ struct BrandProductsView: View {
             } else if let result = result {
                 DispatchQueue.main.async {
                     products = result.products ?? []
+                    isLoading = false
                 }
             }
         }
     }
 
-    // MARK: – Heart toggle
     private func toggleFavorite(for product: BrandProduct) {
         let productId = Int64(product.id ?? 0)
         let model = FavoriteProductModel(
@@ -128,8 +129,6 @@ struct BrandProductsView: View {
     }
 }
 
-// MARK: – ProductCardView
-
 struct ProductCardView: View {
     let product: BrandProduct
     var isFavorited: Bool
@@ -150,21 +149,6 @@ struct ProductCardView: View {
                         .cornerRadius(12)
                         .frame(height: 120)
                 }
-
-//                Button {
-//                    onHeartTap()
-//                } label: {
-//                    Image(systemName: isFavorited ? "heart.fill" : "heart")
-//                        .resizable()
-//                        .scaledToFit()
-//                        .frame(width: 16, height: 16)
-//                        .padding(10)
-//                        .background(Color.white)
-//                        .clipShape(Circle())
-//                        .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
-//                        .foregroundColor(isFavorited ? .red : .gray)
-//                }
-//                .padding([.top, .trailing], 8)
             }
 
             Text(product.title?.uppercased() ?? "")
@@ -183,6 +167,36 @@ struct ProductCardView: View {
                 Text("$-")
                     .foregroundColor(.gray)
             }
+        }
+        .padding()
+        .background(Color.white)
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+    }
+}
+
+extension ProductCardView {
+    static func placeholder() -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Rectangle()
+                .fill(Color.gray.opacity(0.3))
+                .cornerRadius(12)
+                .frame(height: 120)
+
+            RoundedRectangle(cornerRadius: 4)
+                .fill(Color.gray.opacity(0.3))
+                .frame(height: 14)
+                .padding(.trailing, 60)
+
+            RoundedRectangle(cornerRadius: 4)
+                .fill(Color.gray.opacity(0.3))
+                .frame(height: 12)
+                .padding(.trailing, 100)
+
+            RoundedRectangle(cornerRadius: 4)
+                .fill(Color.gray.opacity(0.3))
+                .frame(height: 14)
+                .padding(.trailing, 80)
         }
         .padding()
         .background(Color.white)

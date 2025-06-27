@@ -6,7 +6,7 @@ final class OrderViewModel: ObservableObject {
     @Published var order: OrderResponse? = nil
     @Published var errorMessage: String? = nil
     @Published var userOrders: [OrderModel] = []
-
+    var orderModel = OrderModel()
 
     private let orderService = OrderService()
     private let firestoreService = OrderFireStoreService()
@@ -31,16 +31,18 @@ final class OrderViewModel: ObservableObject {
             discountType: discountType,
             currency: currency
         ) { [weak self] result in
-            DispatchQueue.main.async { [self] in
+            DispatchQueue.main.async {
                 self?.isLoading = false
                 switch result {
                 case .success(let createdOrder):
                     self?.order = createdOrder
                     self?.saveOrderToFirestore(createdOrder.order)
-            
+                    let createdOrderModel = createdOrder.order
+                    self?.userOrders.insert(createdOrderModel, at: 0)
+
                 case .failure(let error):
                     self?.errorMessage = error.localizedDescription
-                    print("Shopify Error Body: \(self?.errorMessage)")
+                    print("Shopify Error Body: \(self?.errorMessage ?? "Unknown error")")
                 }
             }
         }
@@ -59,40 +61,23 @@ final class OrderViewModel: ObservableObject {
         }
     }
 
-    
     func fetchOrders(forEmail email: String) {
-            guard let userId = Auth.auth().currentUser?.uid else { return }
-            
-            isLoading = true
-            firestoreService.loadOrders(for: userId) { [weak self] result in
-                DispatchQueue.main.async {
-                    self?.isLoading = false
-                    switch result {
-                    case .success(let orders):
-                        self?.userOrders = orders
-                    case .failure(let error):
-                        self?.errorMessage = error.localizedDescription
-                        // Fallback to Shopify if Firestore fails
-//                        self?.fetchOrdersFromShopify(forEmail: email)
-                    }
+        guard let userId = Auth.auth().currentUser?.uid else { return }
+
+        isLoading = true
+        firestoreService.loadOrders(for: userId) { [weak self] result in
+            DispatchQueue.main.async {
+                self?.isLoading = false
+                switch result {
+                case .success(let orders):
+                    self?.userOrders = orders
+                case .failure(let error):
+                    self?.errorMessage = error.localizedDescription
+                    // Optionally fetch from Shopify as a fallback
                 }
             }
         }
-
-//    func fetchOrdersFromShopify(forEmail email: String) {
-//        isLoading = true
-//        orderService.getOrders(forEmail: email) { [weak self] result in
-//            DispatchQueue.main.async {
-//                self?.isLoading = false
-//                switch result {
-//                case .success(let orders):
-//                    self?.userOrders = orders
-//                case .failure(let error):
-//                    self?.errorMessage = error.localizedDescription
-//                }
-//            }
-//        }
-//    }
+    }
 
     // MARK: - Helpers for UI Binding
 
@@ -108,12 +93,12 @@ final class OrderViewModel: ObservableObject {
 
     var totalAmountText: String {
         guard let order = order else { return "" }
-        return "\(order.order.totalPrice) \(order.order.currency)"
+        return "\(order.order.totalPrice ?? "") \(order.order.currency?.rawValue ?? "")"
     }
 
     var orderDateText: String {
-        guard let dateString = order?.order.createdAt else { return "" }
-        return "\(dateString)"  // "YYYY-MM-DD"
+        guard let date = order?.order.createdAt else { return "" }
+        return "\(date)"
     }
 
     var shippingAddressText: String {
