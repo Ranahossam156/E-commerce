@@ -1,5 +1,4 @@
 {
-  "originHash" : "80796c2a7a3b7e226c0dbb5bbd6b40a11ef90a1db52b360ab454683f50cc6c8e",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -13,10 +12,10 @@
     {
       "identity" : "alamofire",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Alamofire/Alamofire.git",
+      "location" : "https://github.com/Alamofire/Alamofire",
       "state" : {
-        "revision" : "513364f870f6bfc468f9d2ff0a95caccc10044c5",
-        "version" : "5.10.2"
+        "revision" : "f455c2975872ccd2d9c81594c658af65716e9b9a",
+        "version" : "5.9.1"
       }
     },
     {
@@ -123,8 +122,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/onevcat/Kingfisher.git",
       "state" : {
-        "revision" : "7deda23bbdca612076c5c315003d8638a08ed0f1",
-        "version" : "8.3.2"
+        "revision" : "de7c12c90fadf006cff6e6a47064df06d429d8a9",
+        "version" : "6.0.0"
       }
     },
     {
@@ -141,8 +140,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/airbnb/lottie-spm.git",
       "state" : {
-        "revision" : "04f2fd18cc9404a0a0917265a449002674f24ec9",
-        "version" : "4.5.2"
+        "branch" : "main",
+        "revision" : "04f2fd18cc9404a0a0917265a449002674f24ec9"
       }
     },
     {
@@ -157,7 +156,7 @@
     {
       "identity" : "paypal-ios",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/paypal/paypal-ios.git",
+      "location" : "https://github.com/paypal/paypal-ios",
       "state" : {
         "revision" : "924418c4dafbcbd820c35c02c13acdda2d9a820e",
         "version" : "0.0.11"
@@ -195,10 +194,10 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-protobuf.git",
       "state" : {
-        "revision" : "102a647b573f60f73afdce5613a51d71349fe507",
-        "version" : "1.30.0"
+        "revision" : "9f0c76544701845ad98716f3f6a774a892152bcb",
+        "version" : "1.26.0"
       }
     }
   ],
-  "version" : 3
+  "version" : 2
 }

@@ -1,6 +1,7 @@
 import SwiftUI
 import Kingfisher
 import FirebaseAuth
+
 struct ProductInfoView: View {
 
     @Environment(\.presentationMode) var presentationMode
@@ -20,6 +21,7 @@ struct ProductInfoView: View {
     @State private var navigateToCart = false
     @EnvironmentObject var currencyService: CurrencyService
 
+    @State private var autoScrollTimer: Timer?
 
     let productID: Int
 
@@ -249,15 +251,17 @@ struct ProductInfoView: View {
                 EmptyView()
             }
         )
-       // .toolbar(.hidden, for: .tabBar)
         .onAppear {
             setupInitialState()
             setupPageControlAppearance()
-
+        }
+        .onDisappear {
+            stopAutoScroll()
         }
         .safeAreaInset(edge: .top) {
-          Color.clear.frame(height: 0)
-        }        .background(Color.white)
+            Color.clear.frame(height: 0)
+        }
+        .background(Color.white)
         .navigationTitle("Product Details")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
@@ -281,7 +285,6 @@ struct ProductInfoView: View {
                 }
                 .disabled(isDisabled)
             }
-
         }
     }
 
@@ -307,21 +310,16 @@ struct ProductInfoView: View {
                 imageURLs: imageURLs
             )
             Task {
-              isFavorited = true
-              await FavoriteManager.shared.addToFavorites(product: model)
-              guard let userId = Auth.auth().currentUser?.uid else { return }
-              do {
-                try await FirestoreService.shared.uploadFavorites([model], for: userId)
-                print(" Uploaded new favorite to Firestore")
-              } catch {
-                print("Failed to upload favorite:", error)
-              }
-              //NotificationCenter.default.post(name: .favoritesChanged, object: nil)
+                isFavorited = true
+                await FavoriteManager.shared.addToFavorites(product: model)
+                guard let userId = Auth.auth().currentUser?.uid else { return }
+                do {
+                    try await FirestoreService.shared.uploadFavorites([model], for: userId)
+                } catch {
+                    print("Failed to upload favorite:", error)
+                }
             }
-
         }
-            //   NotificationCenter.default.post(name: .favoritesChanged, object: nil)
-
     }
 
     private func setupInitialState() {
@@ -329,6 +327,7 @@ struct ProductInfoView: View {
         if NetworkMonitor.shared.isConnected {
             isOfflineMode = false
             viewModel.getProductByID(productID: productID)
+            startAutoScroll()
         } else {
             isOfflineMode = true
             if let savedProduct = FavoriteManager.shared.getFavoriteById(id: Int64(productID)) {
@@ -337,6 +336,7 @@ struct ProductInfoView: View {
                 DispatchQueue.main.async {
                     viewModel.singleProductResponse = SingleProductResponse(product: product)
                     imageLoadTrigger.toggle()
+                    startAutoScroll()
                 }
             } else {
                 DispatchQueue.main.async {
@@ -357,6 +357,21 @@ struct ProductInfoView: View {
             }
             return matches
         }
+    }
+
+    private func startAutoScroll() {
+        stopAutoScroll()
+        autoScrollTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { _ in
+            guard let images = viewModel.singleProductResponse?.product.images, !images.isEmpty else { return }
+            withAnimation {
+                selectedImageIndex = (selectedImageIndex + 1) % images.count
+            }
+        }
+    }
+
+    private func stopAutoScroll() {
+        autoScrollTimer?.invalidate()
+        autoScrollTimer = nil
     }
 }
 
@@ -390,6 +405,7 @@ extension Color {
         }
     }
 }
+
 private func setupPageControlAppearance() {
     UIPageControl.appearance().currentPageIndicatorTintColor = UIColor.darkGray
     UIPageControl.appearance().pageIndicatorTintColor = UIColor.lightGray

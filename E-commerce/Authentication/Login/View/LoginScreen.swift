@@ -11,7 +11,8 @@ struct LoginScreen: View {
                 if viewModel.isLoading {
                        ProgressView("Signing in...")
                    } else if viewModel.isAuthenticated {
-                       MainTabView()
+                       MainTabView().navigationBarBackButtonHidden()
+                       
                    } else {
                        loginForm
                    }

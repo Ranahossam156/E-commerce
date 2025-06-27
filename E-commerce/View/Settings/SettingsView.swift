@@ -21,7 +21,6 @@ struct SettingsView: View {
     @State private var isDataLoaded = false
     
     var body: some View {
-        NavigationView {
             ZStack {
                 Color(.systemBackground)
                     .ignoresSafeArea()
@@ -78,14 +77,14 @@ struct SettingsView: View {
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    Text("Settings")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(Color("primaryColor"))
-                }
-            }
+//            .toolbar {
+//                ToolbarItem(placement: .principal) {
+//                    Text("Settings")
+//                        .font(.title2)
+//                        .fontWeight(.bold)
+//                        //.foregroundColor(Color("primaryColor"))
+//                }
+//            }
             .onAppear {
                 print("SettingsView onAppear called")
                 viewModel.loadSettings()
@@ -98,7 +97,7 @@ struct SettingsView: View {
                     print("Data loaded: \(isDataLoaded)")
                 }
             }
-        }
+        
     }
     
     private func loadUserDataIfNeeded() {
@@ -324,7 +323,7 @@ struct SettingsSection: View {
     @EnvironmentObject var userModel: UserModel
     
     var body: some View {
-        Section(header: Text("Settings").font(.subheadline).foregroundColor(.gray).padding(.leading, 12)) {
+        Section(/*header: Text("Settings").font(.subheadline).foregroundColor(.gray).padding(.leading, 12)*/) {
             NavigationLink(destination: OrdersView()) {
                 HStack {
                     Image(systemName: "list.bullet.rectangle")

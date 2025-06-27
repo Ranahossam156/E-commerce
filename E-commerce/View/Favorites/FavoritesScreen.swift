@@ -1,9 +1,10 @@
 import SwiftUI
 
 struct FavoriteScreen: View {
-    @EnvironmentObject var authViewModel: AuthViewModel // Inject AuthViewModel
+    @EnvironmentObject var authViewModel: AuthViewModel
     @StateObject private var viewModel = FavoritesViewModel()
     @State private var searchText: String = ""
+    @State private var isUserLoggedIn = false
 
     let columns = [GridItem(.flexible()), GridItem(.flexible())]
 
@@ -20,13 +21,13 @@ struct FavoriteScreen: View {
                     .font(.title3.bold())
                     .padding(.top)
 
-                if authViewModel.isAuthenticated {
+                if isUserLoggedIn {
                     SearchBar(text: $searchText)
                 }
 
                 Group {
-                    if authViewModel.isAuthenticated {
-                        // MARK: - Authenticated User Content
+                    
+                    if isUserLoggedIn {
                         if viewModel.isLoading {
                             ProgressView()
                         } else if let error = viewModel.errorMessage {
@@ -85,11 +86,12 @@ struct FavoriteScreen: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .navigationTitle("Favorites")
+            //.navigationTitle("Favorites")
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {
-                // Only fetch favorites if authenticated
-                if authViewModel.isAuthenticated {
+                isUserLoggedIn = UserDefaults.standard.bool(forKey: "isLoggedIn")
+
+                if isUserLoggedIn{
                     Task { @MainActor in
                         await viewModel.fetchFavorites()
                     }

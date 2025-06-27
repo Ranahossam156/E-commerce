@@ -19,7 +19,7 @@ struct BrandsSectionView: View {
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 20) {
                     ForEach(brands) { brand in
-                        NavigationLink(destination: BrandProductsView(vendor: brand.title ?? "")) {
+                        NavigationLink(destination: BrandProductsView(vendor: brand.title ?? "").navigationBarBackButtonHidden()) {
                             BrandCardView(brand: brand)
                         }
                     }

@@ -3,4 +3,69 @@
    uuid = "1B9ADA88-C51F-4124-ACE3-7E06F72B7575"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "03B2853F-4866-42C5-8FEA-C925B99500C3"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "E-commerce/ViewModel/FavoritesViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "41"
+            endingLineNumber = "41"
+            landmarkName = "removeFavorite(id:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "03B2853F-4866-42C5-8FEA-C925B99500C3 - 8d176b4f3ddf5837"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for E_commerce.FavoritesViewModel.removeFavorite(id: Swift.Int64) async -&gt; ()"
+                  moduleName = "E-commerce"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/macos/Desktop/Rana%20IOS%20Projects/Swift/E-commerce/E-commerce/ViewModel/FavoritesViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "43"
+                  endingLineNumber = "43"
+                  offsetFromSymbolStart = "605">
+               </Location>
+               <Location
+                  uuid = "03B2853F-4866-42C5-8FEA-C925B99500C3 - d4a736b855b77144"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(2) await resume partial function for E_commerce.FavoritesViewModel.removeFavorite(id: Swift.Int64) async -&gt; ()"
+                  moduleName = "E-commerce"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/macos/Desktop/Rana%20IOS%20Projects/Swift/E-commerce/E-commerce/ViewModel/FavoritesViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "43"
+                  endingLineNumber = "43"
+                  offsetFromSymbolStart = "49">
+               </Location>
+               <Location
+                  uuid = "03B2853F-4866-42C5-8FEA-C925B99500C3 - de78f395f69f3234"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(4) suspend resume partial function for E_commerce.FavoritesViewModel.removeFavorite(id: Swift.Int64) async -&gt; ()"
+                  moduleName = "E-commerce"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/macos/Desktop/Rana%20IOS%20Projects/Swift/E-commerce/E-commerce/ViewModel/FavoritesViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "43"
+                  endingLineNumber = "43"
+                  offsetFromSymbolStart = "92">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

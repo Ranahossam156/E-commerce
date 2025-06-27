@@ -7,7 +7,7 @@
 
 import Foundation
 
-class ProductsViewModel{
+class ProductsViewModel : ObservableObject{
     func getBrandProducts(vendor: String, completion: @escaping (ProductsResponse?, Error?) -> Void){
         BrandProductNetworkService.fetchDataFromAPI(vendor: vendor){ response, error in
             if let error = error {
