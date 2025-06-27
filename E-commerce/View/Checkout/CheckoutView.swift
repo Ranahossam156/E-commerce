@@ -326,7 +326,7 @@ struct CheckoutView: View {
                 }
           
                 NavigationLink(
-                                 destination: MainTabView()
+                                 destination: HomeView()
                                  
                                     .navigationBarBackButtonHidden(true)
                                      .environmentObject(cartVM)
