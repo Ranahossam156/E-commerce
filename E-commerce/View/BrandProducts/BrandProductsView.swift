@@ -6,12 +6,13 @@ struct BrandProductsView: View {
     @State private var products: [BrandProduct] = []
     @State private var searchText: String = ""
     @State private var viewUpdater = false
-
+    @State private var didLoadData = false
     // 2️⃣ Firestore-backed favorites VM
     @StateObject private var favoritesVM = FavoritesViewModel()
     @EnvironmentObject var currencyService: CurrencyService
+    @Environment(\.dismiss) private var dismiss
 
-    let viewModel = ProductsViewModel()
+    @StateObject private var viewModel = ProductsViewModel()
     let vendor: String
 
     let columns = [
@@ -64,13 +65,31 @@ struct BrandProductsView: View {
                 .id(viewUpdater)
             }
             .navigationTitle(vendor)
+            .navigationBarBackButtonHidden(true)
+             .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+             Button(action: {
+             dismiss()
+            }) {
+            Image(systemName: "chevron.left")
+             .foregroundColor(.black)
+            }
+           }
+         }
             .onAppear {
-                getBrandProducts()
+                if !didLoadData {
+                    getBrandProducts()
+                    didLoadData = true
+                }
+                
                 Task { @MainActor in
                     await favoritesVM.fetchFavorites()
                 }
             }
+            
+            
         }
+        
     }
 
     // MARK: – Data loading

@@ -8,33 +8,33 @@
 import SwiftUI
 
 struct PromoCarousel: View {
-    
-    @ObservedObject var viewModel: CouponViewModel
     @State private var currentIndex = 0
     @State private var showCopiedAlert = false
     @State private var copiedCode = ""
     
     let timer = Timer.publish(every: 3, on: .main, in: .common).autoconnect()
     
+    // Just the coupon codes you want to display
+    let couponCodes = ["WELCOME10", "ORDER10", "SAVE10", "WELCOME20"]
+    
     var body: some View {
         VStack {
-            let items = Array(viewModel.priceRules.prefix(5))
-            
             TabView(selection: $currentIndex) {
-                ForEach(0..<items.count, id: \.self) { index in
-                    let priceRule = items[index]
+                ForEach(0..<couponCodes.count, id: \.self) { index in
+                    let code = couponCodes[index]
                     
+                    // Your existing TicketCouponView with no changes
                     TicketCouponView(
-                        discountText: priceRule.couponCode,
+                        discountText: code,
                         headline: "Special Gift For You",
                         subheadline: "For Next Purchase",
-                        description: "Use code \(priceRule.couponCode) at checkout to save instantly."
+                        description: "Use code \(code) at checkout to save instantly."
                     )
                     .tag(index)
                     .padding(.horizontal, 16)
                     .onTapGesture {
-                        UIPasteboard.general.string = priceRule.couponCode
-                        copiedCode = priceRule.couponCode
+                        UIPasteboard.general.string = code
+                        copiedCode = code
                         showCopiedAlert = true
                     }
                 }
@@ -42,24 +42,22 @@ struct PromoCarousel: View {
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             .frame(height: 180)
             .onReceive(timer) { _ in
-                if items.count > 0 {
+                if couponCodes.count > 0 {
                     withAnimation {
-                        currentIndex = (currentIndex + 1) % items.count
+                        currentIndex = (currentIndex + 1) % couponCodes.count
                     }
                 }
             }
 
+            // Your existing indicator dots
             HStack(spacing: 8) {
-                ForEach(0..<items.count, id: \.self) { index in
+                ForEach(0..<couponCodes.count, id: \.self) { index in
                     Circle()
                         .fill(index == currentIndex ? Color("primaryColor") : Color.gray.opacity(0.3))
                         .frame(width: 8, height: 8)
                 }
             }
             .padding(.top, 4)
-        }
-        .onAppear {
-            viewModel.fetchPriceRules()
         }
         .alert("Copied!", isPresented: $showCopiedAlert) {
             Button("OK", role: .cancel) { }
@@ -68,7 +66,6 @@ struct PromoCarousel: View {
         }
     }
 }
-
 struct TicketCouponView: View {
     let discountText: String
     let headline: String
@@ -132,11 +129,7 @@ struct TicketCouponView: View {
     }
 }
 
-struct PromoCarousel_Previews: PreviewProvider {
-    static var previews: some View {
-        PromoCarousel(viewModel: CouponViewModel())
-    }
-}
+
 
 // MARK: - Selective Corner Radius Helper
 

@@ -62,6 +62,7 @@ struct LogoutSection: View {
                         print("Before sign out")
                         try Auth.auth().signOut()
                         print("After sign out")
+                        UserDefaults.standard.set(false, forKey: "isLoggedIn")
                         authViewModel.isAuthenticated = false
                         userModel.name = ""
                         userModel.email = ""

@@ -1,4 +1,3 @@
-// SearchItemView.swift
 
 import SwiftUI
 import Kingfisher

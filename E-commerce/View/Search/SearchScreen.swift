@@ -1,17 +1,15 @@
-// SearchScreen.swift
 
 import SwiftUI
 import Kingfisher
 
 struct SearchScreen: View {
-    // MARK: – ViewModels
     @StateObject private var viewModel = SearchViewModel()
     @EnvironmentObject var favoritesViewModel: FavoritesViewModel
 
-    // MARK: – UI state
+    @Environment(\.dismiss) var dismiss
+    
     @State private var searchText = ""
 
-    // MARK: – Filtered products
     private var filteredProducts: [Product] {
         let all = viewModel.allProductsResponse?.products ?? []
         guard !searchText.isEmpty else { return all }
@@ -22,7 +20,6 @@ struct SearchScreen: View {
         }
     }
 
-    // MARK: – Grid layout
     private let columns = [
         GridItem(.flexible()),
         GridItem(.flexible())
@@ -30,13 +27,7 @@ struct SearchScreen: View {
 
     var body: some View {
         ZStack {
-            VStack(spacing: 16) {
-                // Title
-                Text("Search")
-                    .font(.title3.bold())
-                    .padding(.top)
-
-                // Search field
+            VStack(spacing: 0) {
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.gray)
@@ -50,7 +41,6 @@ struct SearchScreen: View {
                 .padding(.horizontal)
                 .padding(.top, 16)
 
-                // Results grid
                 ScrollView {
                     LazyVGrid(columns: columns, spacing: 20) {
                         ForEach(filteredProducts, id: \.id) { product in
@@ -70,7 +60,6 @@ struct SearchScreen: View {
             }
             .background(Color.white)
 
-            // Bottom safe area spacer
             VStack {
                 Spacer()
                 Rectangle()
@@ -78,14 +67,24 @@ struct SearchScreen: View {
                     .frame(height: 20)
             }
         }
+        .navigationTitle("Search")
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: {
+                    dismiss()
+                }) {
+                    Image(systemName: "chevron.left")
+                        .foregroundColor(.black)
+                }
+            }
+        }
         .onAppear {
-            // Load all products
             viewModel.getAllProducts(productID: 0)
-            // Load current favorites from Firestore
             Task { @MainActor in
                 await favoritesViewModel.fetchFavorites()
             }
-            // Disable UIKit animations while scrolling
             DispatchQueue.main.async { UIView.setAnimationsEnabled(false) }
         }
         .onDisappear {

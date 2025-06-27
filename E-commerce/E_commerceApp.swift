@@ -30,7 +30,8 @@ struct E_commerceApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+
+            SplashScreen()
                 .environmentObject(authViewModel)
                 .environmentObject(userModel)
                 .environmentObject(orderViewModel)

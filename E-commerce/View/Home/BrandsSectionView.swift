@@ -31,7 +31,7 @@ struct BrandsSectionView: View {
                         }
                     } else {
                         ForEach(brands) { brand in
-                            NavigationLink(destination: BrandProductsView(vendor: brand.title ?? "")) {
+                            NavigationLink(destination: BrandProductsView(vendor: brand.title ?? "").navigationBarBackButtonHidden()) {
                                 BrandCardView(brand: brand)
                             }
                         }

@@ -145,7 +145,7 @@ struct CategoriesView: View {
                 .id(viewUpdater)
             }
         }
-        .navigationTitle("Categories")
+        //.navigationTitle("Categories")
         .onAppear {
             loadCategories()
             Task { @MainActor in await favoritesVM.fetchFavorites() }

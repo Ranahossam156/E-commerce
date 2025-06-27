@@ -59,7 +59,6 @@ class FavoriteManager {
                 context.delete(objectToDelete)
                 CoreDataManager.shared.save()
 
-                // Ensure valid user ID
                 guard let userId = Auth.auth().currentUser?.uid else {
                     print("No authenticated user. Cannot delete from Firestore.")
                     return

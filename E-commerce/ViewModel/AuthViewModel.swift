@@ -21,6 +21,19 @@ class AuthViewModel: ObservableObject {
     @Published var navigateToLogin = false
     private var verificationTimer: Timer?
     @Published var isLoading = false
+    init() {
+        checkIfUserIsAuthenticated()
+    }
+
+    func checkIfUserIsAuthenticated() {
+        if let user = Auth.auth().currentUser {
+            isAuthenticated = user.isEmailVerified
+            print("User already logged in and email isVerified = \(user.isEmailVerified)")
+        } else {
+            isAuthenticated = false
+            print("No user logged in")
+        }
+    }
 
     func startCountdown() {
         countdownSeconds = 30
@@ -138,6 +151,7 @@ class AuthViewModel: ObservableObject {
                 case .success:
                     if Auth.auth().currentUser?.isEmailVerified == true {
                         self?.isAuthenticated = true
+                        UserDefaults.standard.set(true, forKey: "isLoggedIn")
                         print("Login success!")
                     } else {
                         self?.errorMessage = "Please verify your email first."
@@ -172,6 +186,7 @@ class AuthViewModel: ObservableObject {
                 switch result {
                 case .success:
                     self?.isAuthenticated = true
+                    UserDefaults.standard.set(true, forKey: "isLoggedIn")
                     print("Google Sign-In success")
                     self?.showVerificationScreen = false
                     self?.navigateToLogin = false
@@ -190,13 +205,6 @@ class AuthViewModel: ObservableObject {
     private func isStrongPassword(_ password: String) -> Bool {
         let passwordRegEx = #"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$"#
         return NSPredicate(format: "SELF MATCHES %@", passwordRegEx).evaluate(with: password)
-    }
-    func checkIfUserIsAuthenticated() {
-        if let user = Auth.auth().currentUser {
-            isAuthenticated = user.isEmailVerified
-        } else {
-            isAuthenticated = false
-        }
     }
 
 

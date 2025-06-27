@@ -12,7 +12,7 @@ struct HomeContentView: View {
     var body: some View {
         ScrollView{
             VStack {
-                PromoCarousel(viewModel: CouponViewModel()) 
+                PromoCarousel() 
                 BrandsSectionView()
                 Spacer()
             }

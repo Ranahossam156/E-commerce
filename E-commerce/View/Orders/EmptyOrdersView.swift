@@ -32,6 +32,4 @@ struct EmptyOrdersView: View {
 }
 
 
-#Preview {
-    EmptyOrdersView()
-}
+
